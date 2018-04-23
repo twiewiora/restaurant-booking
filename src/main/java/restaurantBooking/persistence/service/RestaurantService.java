@@ -8,11 +8,11 @@ import restaurantBooking.persistence.repository.RestaurantRepository;
 
 import java.util.List;
 
-@Component
-@Transactional
+//@Component
+//@Transactional
 public class RestaurantService {
 
-    @Autowired
+//    @Autowired
     private RestaurantRepository restaurantRepository;
 
     public RestaurantService(){
