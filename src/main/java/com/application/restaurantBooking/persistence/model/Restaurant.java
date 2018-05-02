@@ -1,4 +1,4 @@
-package restaurantBooking.persistence.model;
+package com.application.restaurantBooking.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
