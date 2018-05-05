@@ -1,0 +1,1 @@
+web: java -jar target/restaurant-booking-1.0.jar
