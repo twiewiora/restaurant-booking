@@ -18,6 +18,8 @@ public class RestaurantTable {
 
     private Integer reservedPlaces;
 
+    private Boolean isReserved;
+
     public RestaurantTable() {
     }
 
@@ -43,5 +45,13 @@ public class RestaurantTable {
 
     public void setReservedPlaces(Integer reservedPlaces) {
         this.reservedPlaces = reservedPlaces;
+    }
+
+    public Boolean isReserved() {
+        return isReserved;
+    }
+
+    public void setReserved(Boolean reserved) {
+        this.isReserved = reserved;
     }
 }
