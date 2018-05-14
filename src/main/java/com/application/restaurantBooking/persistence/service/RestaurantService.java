@@ -1,6 +1,8 @@
 package com.application.restaurantBooking.persistence.service;
 
 import com.application.restaurantBooking.persistence.model.Restaurant;
+import com.application.restaurantBooking.persistence.model.RestaurantTable;
+import com.application.restaurantBooking.persistence.model.Restorer;
 
 import java.util.List;
 
@@ -10,8 +12,12 @@ public interface RestaurantService {
 
     Restaurant getById(Long id);
 
-    Restaurant saveOrUpdate(Restaurant restaurant);
+    Restaurant createRestaurant(String name, String address, Restorer restorer);
 
-    void delete(Long id);
+    Restaurant createRestaurant(String name, String address, Restorer restorer, String tags);
+
+    void deleteRestaurant(Long id);
+
+    List<RestaurantTable> getFreeTables(Long restaurantID);
 
 }
