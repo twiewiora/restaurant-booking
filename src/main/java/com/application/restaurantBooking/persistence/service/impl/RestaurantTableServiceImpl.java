@@ -1,9 +1,10 @@
-package com.application.restaurantBooking.persistence.service;
+package com.application.restaurantBooking.persistence.service.impl;
 
 import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.repository.RestaurantTableRepository;
+import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,9 @@
-package com.application.restaurantBooking.persistence.service;
+package com.application.restaurantBooking.persistence.service.impl;
 
 import com.application.restaurantBooking.persistence.builder.RestorerBuilder;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.repository.RestorerRepository;
+import com.application.restaurantBooking.persistence.service.RestorerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

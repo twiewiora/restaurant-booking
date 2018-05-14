@@ -1,10 +1,11 @@
-package com.application.restaurantBooking.persistence.service;
+package com.application.restaurantBooking.persistence.service.impl;
 
 import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.repository.RestaurantRepository;
+import com.application.restaurantBooking.persistence.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> getAll() {
-        List<Restaurant> restaurants = new ArrayList<>();
-        restaurantRepository.findAll().forEach(restaurants::add);
-        return restaurants;
+        return new ArrayList<>(restaurantRepository.findAll());
     }
 
     @Override
