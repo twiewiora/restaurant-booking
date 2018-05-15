@@ -20,6 +20,16 @@ public class ClientBuilder {
         return this;
     }
 
+    public ClientBuilder phoneBumber(String phoneNumber) {
+        client.setPhoneNumber(phoneNumber);
+        return this;
+    }
+
+    public ClientBuilder email(String email) {
+        client.setEmail(email);
+        return this;
+    }
+
     public Client build() {
         return client;
     }

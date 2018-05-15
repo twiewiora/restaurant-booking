@@ -1,9 +1,12 @@
 package com.application.restaurantBooking.persistence.builder;
 
+import com.application.restaurantBooking.persistence.model.OpenHours;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.model.Tag;
 
+import java.time.DayOfWeek;
+import java.util.Map;
 import java.util.Set;
 
 public class RestaurantBuilder {
@@ -36,6 +39,11 @@ public class RestaurantBuilder {
 
     public RestaurantBuilder tags(Set<Tag> tags) {
         restaurant.setTags(tags);
+        return this;
+    }
+
+    public RestaurantBuilder openHours(Map<DayOfWeek, OpenHours> openHoursMap) {
+        restaurant.setOpenHoursMap(openHoursMap);
         return this;
     }
 
