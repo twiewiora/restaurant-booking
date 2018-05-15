@@ -14,15 +14,12 @@ public class RestaurantController {
 
     private RestaurantService restaurantService;
 
-    private final String URL_GET_ALL_RESTAURANTS = "/restaurants/getAll";
-    private final String URL_GET_RESTAURANT_BY_ID = "/restaurant/id{id}";
-
     @Autowired
     public RestaurantController(RestaurantService restaurantService){
         this.restaurantService = restaurantService;
     }
 
-    @RequestMapping(value = URL_GET_ALL_RESTAURANTS,
+    @RequestMapping(value = UrlRequests.GET_ALL_RESTAURANTS,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
     public String getAllRestaurants() {
@@ -35,7 +32,7 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = URL_GET_RESTAURANT_BY_ID,
+    @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_ID,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
     public String getTaskById(@PathVariable String id){
