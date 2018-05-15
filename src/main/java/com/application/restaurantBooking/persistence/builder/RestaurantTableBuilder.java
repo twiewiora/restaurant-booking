@@ -21,11 +21,6 @@ public class RestaurantTableBuilder {
         return this;
     }
 
-    public RestaurantTableBuilder reservedPlaces(Integer reservedPlaces) {
-        restaurantTable.setReservedPlaces(reservedPlaces);
-        return this;
-    }
-
     public RestaurantTable build() {
         return restaurantTable;
     }

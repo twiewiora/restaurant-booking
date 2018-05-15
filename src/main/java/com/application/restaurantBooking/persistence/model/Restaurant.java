@@ -3,9 +3,8 @@ package com.application.restaurantBooking.persistence.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.DayOfWeek;
+import java.util.*;
 
 @Entity
 @Table(name = "restaurant")
@@ -18,19 +17,24 @@ public class Restaurant {
     @JsonProperty
     private String name;
 
-    private String address;
+    private String city;
+
+    private String street;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restorer_id", nullable = false)
     private Restorer restorer;
 
-    private String tags;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private Set<Tag> tags = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = CascadeType.ALL)
     private Set<RestaurantTable> restaurantTables = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Client> clients = new HashSet<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
 
     public Restaurant(){
     }
@@ -43,12 +47,20 @@ public class Restaurant {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getCity() {
+        return city;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public Restorer getRestorer() {
@@ -59,11 +71,11 @@ public class Restaurant {
         this.restorer = restorer;
     }
 
-    public String getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
@@ -75,11 +87,11 @@ public class Restaurant {
         this.restaurantTables = restaurantTables;
     }
 
-    public Set<Client> getClients() {
-        return clients;
+    public Map<DayOfWeek, OpenHours> getOpenHoursMap() {
+        return openHoursMap;
     }
 
-    public void setClients(Set<Client> clients) {
-        this.clients = clients;
+    public void setOpenHoursMap(Map<DayOfWeek, OpenHours> openHoursMap) {
+        this.openHoursMap = openHoursMap;
     }
 }

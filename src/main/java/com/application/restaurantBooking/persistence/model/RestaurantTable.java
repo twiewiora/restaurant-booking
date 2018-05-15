@@ -1,6 +1,8 @@
 package com.application.restaurantBooking.persistence.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "restaurantTable")
@@ -14,9 +16,10 @@ public class RestaurantTable {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    private Integer maxPlaces;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurantTable", cascade = CascadeType.ALL)
+    private Set<Reservation> reservation = new HashSet<>();
 
-    private Integer reservedPlaces;
+    private Integer maxPlaces;
 
     private Boolean isReserved;
 
@@ -31,20 +34,20 @@ public class RestaurantTable {
         this.restaurant = restaurant;
     }
 
+    public Set<Reservation> getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Set<Reservation> reservation) {
+        this.reservation = reservation;
+    }
+
     public Integer getMaxPlaces() {
         return maxPlaces;
     }
 
     public void setMaxPlaces(Integer maxPlaces) {
         this.maxPlaces = maxPlaces;
-    }
-
-    public Integer getReservedPlaces() {
-        return reservedPlaces;
-    }
-
-    public void setReservedPlaces(Integer reservedPlaces) {
-        this.reservedPlaces = reservedPlaces;
     }
 
     public Boolean isReserved() {

@@ -2,6 +2,9 @@ package com.application.restaurantBooking.persistence.builder;
 
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.Restorer;
+import com.application.restaurantBooking.persistence.model.Tag;
+
+import java.util.Set;
 
 public class RestaurantBuilder {
 
@@ -16,8 +19,13 @@ public class RestaurantBuilder {
         return this;
     }
 
-    public RestaurantBuilder address(String address) {
-        restaurant.setAddress(address);
+    public RestaurantBuilder city(String city) {
+        restaurant.setCity(city);
+        return this;
+    }
+
+    public RestaurantBuilder street(String street) {
+        restaurant.setStreet(street);
         return this;
     }
 
@@ -26,7 +34,7 @@ public class RestaurantBuilder {
         return this;
     }
 
-    public RestaurantBuilder tags(String tags) {
+    public RestaurantBuilder tags(Set<Tag> tags) {
         restaurant.setTags(tags);
         return this;
     }

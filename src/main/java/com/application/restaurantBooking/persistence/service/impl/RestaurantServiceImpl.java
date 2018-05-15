@@ -4,13 +4,16 @@ import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
+import com.application.restaurantBooking.persistence.model.Tag;
 import com.application.restaurantBooking.persistence.repository.RestaurantRepository;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -33,14 +36,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant createRestaurant(String name, String address, Restorer restorer) {
-        return createRestaurant(name, address, restorer, "");
+    public Restaurant createRestaurant(String name, String city, String street, Restorer restorer) {
+        return createRestaurant(name, city, street, restorer, Collections.emptySet());
     }
 
     @Override
-    public Restaurant createRestaurant(String name, String address, Restorer restorer, String tags) {
+    public Restaurant createRestaurant(String name, String city, String street, Restorer restorer, Set<Tag> tags) {
         Restaurant restaurant = new RestaurantBuilder()
-                .name(name).address(address).restorer(restorer).tags(tags).build();
+                .name(name).city(city).street(street).restorer(restorer).tags(tags).build();
         restaurantRepository.save(restaurant);
         return restaurant;
     }

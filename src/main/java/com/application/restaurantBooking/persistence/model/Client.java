@@ -1,7 +1,8 @@
 package com.application.restaurantBooking.persistence.model;
 
 import javax.persistence.*;
-import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -16,8 +17,15 @@ public class Client {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "clients")
-    private Set<Restaurant> visitedRestaurants;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL)
+    private Set<Reservation> reservations;
+
+    private String phoneNumber;
+
+    private String email;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    private Map<Tag, Integer> clientTagsMap = new HashMap<>();
 
     public Client(){
     }
@@ -38,11 +46,35 @@ public class Client {
         this.password = password;
     }
 
-    public Set<Restaurant> getVisitedRestaurants() {
-        return visitedRestaurants;
+    public Set<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setVisitedRestaurants(Set<Restaurant> visitedRestaurants) {
-        this.visitedRestaurants = visitedRestaurants;
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Map<Tag, Integer> getClientTagsMap() {
+        return clientTagsMap;
+    }
+
+    public void setClientTagsMap(Map<Tag, Integer> clientTagsMap) {
+        this.clientTagsMap = clientTagsMap;
     }
 }
