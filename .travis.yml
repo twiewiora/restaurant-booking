@@ -1,0 +1,18 @@
+sudo: required
+
+language: node_js
+node_js:
+  - "8.11.1"
+
+script:
+  - ng build --env=prod
+
+deploy:
+  provider: heroku
+  api_key: 50981cc6-59ef-407e-b4f1-b7a80bd847c4
+  app:
+    deployment_front: restaurant-booker
+
+cache:
+  directories:
+    - node_modules
