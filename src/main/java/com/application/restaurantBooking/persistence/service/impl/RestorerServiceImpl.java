@@ -23,8 +23,8 @@ public class RestorerServiceImpl implements RestorerService {
     }
 
     @Override
-    public Restorer createRestorer(String login, String password) {
-        Restorer restorer = new RestorerBuilder().login(login).password(password).build();
+    public Restorer createRestorer(String username, String password) {
+        Restorer restorer = new RestorerBuilder().username(username).password(password).build();
         restorerRepository.save(restorer);
         return restorer;
     }
