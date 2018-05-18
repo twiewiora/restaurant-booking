@@ -109,7 +109,6 @@ public class AuthenticationController {
        return ResponseEntity.ok(registrationRequest);
     }
 
-
     @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
