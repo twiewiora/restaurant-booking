@@ -34,6 +34,7 @@ import java.util.Objects;
 import static com.application.restaurantbooking.persistence.model.AuthorityName.*;
 
 @RestController
+@CrossOrigin(origins = UrlRequests.URL_TO_CROSS_ORIGIN)
 public class AuthenticationController {
 
     @Value("${jwt.header}")

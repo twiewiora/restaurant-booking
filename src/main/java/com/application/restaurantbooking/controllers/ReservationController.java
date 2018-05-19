@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = UrlRequests.URL_TO_CROSS_ORIGIN)
 public class ReservationController {
 
     private static final Logger LOGGER = Logger.getLogger(ReservationController.class.getName());

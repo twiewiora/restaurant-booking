@@ -27,8 +27,7 @@ public class JwtTokenUtil implements Serializable {
     @Transient
     private Clock clock = DefaultClock.INSTANCE;
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private String secret = System.getenv("JWT_SECRET");
 
     @Value("${jwt.expiration}")
     private Long expiration;

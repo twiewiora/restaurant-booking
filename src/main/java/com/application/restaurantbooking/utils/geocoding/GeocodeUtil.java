@@ -7,7 +7,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -25,8 +24,7 @@ public class GeocodeUtil {
 
     private static final Logger LOGGER = Logger.getLogger(GeocodeUtil.class.getName());
 
-    @Value("${api.geocode.key}")
-    private String apiKey;
+    private String apiKey = System.getenv("API_GEOCODE_KEY");
 
     public GeocodeUtil() {
         // empty constructor for spring @Component

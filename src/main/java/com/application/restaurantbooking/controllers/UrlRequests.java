@@ -4,6 +4,8 @@ public class UrlRequests {
 
     private UrlRequests(){
     }
+    
+    public static final String URL_TO_CROSS_ORIGIN = "https://restaurant-booker.herokuapp.com";
 
     // validation for users
     public static final String VALIDATE_RESTORER = "/api/restorer/validate";
