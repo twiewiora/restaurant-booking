@@ -21,8 +21,10 @@ public class Restaurant {
 
     private String street;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restorer_id", nullable = false)
+    private String phoneNumber;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant")
     private Restorer restorer;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -37,6 +39,14 @@ public class Restaurant {
     private Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
 
     public Restaurant(){
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -61,6 +71,14 @@ public class Restaurant {
 
     public void setStreet(String street) {
         this.street = street;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public Restorer getRestorer() {

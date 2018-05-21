@@ -1,5 +1,7 @@
 package com.application.restaurantBooking.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,18 +14,28 @@ public class RestaurantTable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurantTable", cascade = CascadeType.ALL)
     private Set<Reservation> reservation = new HashSet<>();
 
     private Integer maxPlaces;
 
-    private Boolean isReserved;
+    private Boolean isReserved = false;
 
     public RestaurantTable() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Restaurant getRestaurant() {

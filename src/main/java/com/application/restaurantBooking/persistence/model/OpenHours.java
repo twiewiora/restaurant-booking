@@ -24,6 +24,14 @@ public class OpenHours {
     public OpenHours(){
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Date getOpenHour() {
         return openHour;
     }

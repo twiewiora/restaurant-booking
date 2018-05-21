@@ -23,16 +23,6 @@ public class RestorerBuilder {
         return this;
     }
 
-    public RestorerBuilder phoneNumber(String phoneNumber) {
-        restorer.setPhoneNumber(phoneNumber);
-        return this;
-    }
-
-    public RestorerBuilder email(String email) {
-        restorer.setEmail(email);
-        return this;
-    }
-
     public RestorerBuilder enabled(Boolean enabled) {
         restorer.setEnabled(enabled);
         return this;
