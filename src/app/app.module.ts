@@ -10,6 +10,8 @@ import {TokenInterceptor} from "./service/token-interceptor";
 import { MainComponent } from './component/main/main.component';
 import {AppRoutingModule} from "./app-routing.module";
 import { StartComponent } from './component/start/start.component';
+import {AuthGuard} from "./guard/auth-guard";
+import {HomeGuard} from "./guard/home-guard";
 
 
 @NgModule({
@@ -28,6 +30,8 @@ import { StartComponent } from './component/start/start.component';
     AppRoutingModule
   ],
   providers: [
+    AuthGuard,
+    HomeGuard,
     AuthenticationService,
     {
       provide: HTTP_INTERCEPTORS,
