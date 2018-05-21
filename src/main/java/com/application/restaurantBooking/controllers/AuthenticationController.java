@@ -43,28 +43,36 @@ public class AuthenticationController {
     @Value("${jwt.header}")
     private String tokenHeader;
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
     private RestorerRepository restorerRepository;
 
-    @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
+    private JwtUserDetailsService jwtUserDetailsService;
 
-    @Autowired
     private AuthorityRepository authorityRepository;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    @Qualifier("jwtUserDetailsService")
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    BCryptPasswordEncoder bCryptPasswordEncoder,
+                                    RestorerRepository restorerRepository,
+                                    JwtUserDetailsService jwtUserDetailsService,
+                                    AuthorityRepository authorityRepository,
+                                    JwtTokenUtil jwtTokenUtil,
+                                    @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.restorerRepository = restorerRepository;
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.authorityRepository = authorityRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsService = userDetailsService;
+    }
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
