@@ -15,15 +15,13 @@ const options = {
 @Injectable()
 export class AuthenticationService {
 
-  baseUrl: string = 'http://localhost:8080';
-
   constructor(private _router: Router,
               private http: HttpClient) {
   }
 
   logout() {
     localStorage.removeItem("jwt");
-    this._router.navigate(['/login']);
+    this._router.navigate(['/start']);
   }
 
   login(username: string, password: string): Observable<Response> {
@@ -37,7 +35,7 @@ export class AuthenticationService {
         const token = response.token;
         localStorage.setItem("jwt", `${token}`);
 
-        this._router.navigate(['/home']);
+        this._router.navigate(['/reservation']);
 
         return response;
       });
@@ -59,8 +57,7 @@ export class AuthenticationService {
     }
   }
 
-  isSignedIn(): boolean {
+  isLoggedIn(): boolean {
     return localStorage.getItem('jwt') !== null;
   }
-
 }
