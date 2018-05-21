@@ -87,34 +87,33 @@ public class AuthenticationController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
     @Transactional
     public ResponseEntity<?> register(@RequestBody RegistrationRequest registrationRequest) throws URISyntaxException {
-       try{
-           JwtRestorer jwtRestorer = (JwtRestorer) jwtUserDetailsService.loadUserByUsername(registrationRequest.getUsername());
-           return ResponseEntity.ok("A restorer of the given username already exists");
-       }
-       catch(UsernameNotFoundException e){
-           try{
-               RegistrationValidation registrationValidation = new RegistrationValidation();
-               if(registrationValidation.validate(registrationRequest)){
-                   LinkedList<Authority> authorityList = new LinkedList<>();
-                   authorityList.add(authorityRepository.findByName(ROLE_RESTORER));
-                   authorityList.add(authorityRepository.findByName(ROLE_ADMIN));
-                   RestorerBuilder restorerBuilder = new RestorerBuilder();
-                   Restorer restorer = restorerBuilder.username(registrationRequest.getUsername())
-                           .password(bCryptPasswordEncoder.encode(registrationRequest.getPassword()))
-                           .authorities(authorityList)
-                           .build();
-                   restorerRepository.save(restorer);
-                   return ResponseEntity.ok("New Restorer created");
-               }
-           }catch(Exception ex){
-               return ResponseEntity.ok("Incorrect registration data");
-           }
+        try {
+            JwtRestorer jwtRestorer = (JwtRestorer) jwtUserDetailsService.loadUserByUsername(registrationRequest.getUsername());
+            return ResponseEntity.noContent().build(); //ResponseEntity.ok(new Message("A restorer of the given username already exists"));
+        } catch (UsernameNotFoundException e) {
+            try {
+                RegistrationValidation registrationValidation = new RegistrationValidation();
+                if (registrationValidation.validate(registrationRequest)) {
+                    LinkedList<Authority> authorityList = new LinkedList<>();
+                    authorityList.add(authorityRepository.findByName(ROLE_RESTORER));
+                    authorityList.add(authorityRepository.findByName(ROLE_ADMIN));
+                    RestorerBuilder restorerBuilder = new RestorerBuilder();
+                    Restorer restorer = restorerBuilder.username(registrationRequest.getUsername())
+                            .password(bCryptPasswordEncoder.encode(registrationRequest.getPassword()))
+                            .authorities(authorityList)
+                            .build();
+                    restorerRepository.save(restorer);
+                    return ResponseEntity.noContent().build(); //correct
+                }
+            } catch (Exception ex) {
+                return ResponseEntity.noContent().build(); //incorrect data
+            }
 
-       }
-       return ResponseEntity.ok(registrationRequest);
+        }
+        return ResponseEntity.ok(registrationRequest);
     }
 
     @ExceptionHandler({AuthenticationException.class})
@@ -135,6 +134,26 @@ public class AuthenticationController {
             throw new AuthenticationException("User is disabled!", e);
         } catch (BadCredentialsException e) {
             throw new AuthenticationException("Bad credentials!", e);
+        }
+    }
+
+
+    class Message {
+        private String text;
+
+        Message(String text) {
+            this.text = text;
+        }
+
+        public Message() {
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
         }
     }
 }
