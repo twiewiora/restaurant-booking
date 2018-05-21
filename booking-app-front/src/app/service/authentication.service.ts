@@ -23,7 +23,7 @@ export class AuthenticationService {
 
   logout() {
     localStorage.removeItem("jwt");
-    this._router.navigate(['/login']);
+    this._router.navigate(['/start']);
   }
 
   login(username: string, password: string): Observable<Response> {

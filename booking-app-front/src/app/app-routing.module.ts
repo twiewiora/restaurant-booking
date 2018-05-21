@@ -4,11 +4,13 @@ import {RegistrationComponent} from "./component/registration/registration.compo
 import {LoginComponent} from "./component/login/login.component";
 import {MainComponent} from "./component/main/main.component";
 import {StartComponent} from "./component/start/start.component";
+import {AuthGuard} from "./guard/auth-guard";
+import {HomeGuard} from "./guard/home-guard";
 
 const routes: Routes = [
-  { path: '', redirectTo: '/start', pathMatch: 'full' },
+  { path: '', redirectTo: '/start', pathMatch: 'full'},
   { path: 'start', component: StartComponent},
-  { path: 'home', component: MainComponent},
+  { path: 'home', component: MainComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent},
   { path: 'registration', component: RegistrationComponent}
 ];
