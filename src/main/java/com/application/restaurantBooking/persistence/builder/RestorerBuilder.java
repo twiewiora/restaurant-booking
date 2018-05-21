@@ -1,6 +1,9 @@
 package com.application.restaurantBooking.persistence.builder;
 
+import com.application.restaurantBooking.persistence.model.Authority;
 import com.application.restaurantBooking.persistence.model.Restorer;
+
+import java.util.List;
 
 public class RestorerBuilder {
 
@@ -10,8 +13,8 @@ public class RestorerBuilder {
         restorer = new Restorer();
     }
 
-    public RestorerBuilder login(String login) {
-        restorer.setLogin(login);
+    public RestorerBuilder username(String username) {
+        restorer.setUsername(username);
         return this;
     }
 
@@ -27,6 +30,16 @@ public class RestorerBuilder {
 
     public RestorerBuilder email(String email) {
         restorer.setEmail(email);
+        return this;
+    }
+
+    public RestorerBuilder enabled(Boolean enabled) {
+        restorer.setEnabled(enabled);
+        return this;
+    }
+
+    public RestorerBuilder authorities(List<Authority> authorities) {
+        restorer.setAuthorities(authorities);
         return this;
     }
 

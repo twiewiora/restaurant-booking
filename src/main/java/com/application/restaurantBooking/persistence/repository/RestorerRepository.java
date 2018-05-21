@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RestorerRepository extends JpaRepository<Restorer, Long> {
+    Restorer findByUsername(String username);
 
 }
