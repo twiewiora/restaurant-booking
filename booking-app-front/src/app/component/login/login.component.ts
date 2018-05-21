@@ -30,13 +30,4 @@ export class LoginComponent implements OnInit {
     })
       .subscribe();
   }
-
-
-  private sayHello(): void {
-    this.result = 'loading...';
-    this.http.get('/api/hello-world').subscribe((response: any) => {
-      this.result = response.message
-    });
-  }
-
 }

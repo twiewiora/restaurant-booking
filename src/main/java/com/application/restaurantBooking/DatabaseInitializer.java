@@ -9,6 +9,7 @@ import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -29,6 +30,9 @@ public class DatabaseInitializer {
     private RestaurantTableService restaurantTableService;
 
     @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
     public DatabaseInitializer(RestorerService restorerService,
                                RestaurantService restaurantService,
                                RestaurantTableService restaurantTableService) {
@@ -38,7 +42,7 @@ public class DatabaseInitializer {
     }
 
     public void initializeDatabase() {
-        Restorer restorer = restorerService.createRestorer("test", "test1");
+        Restorer restorer = restorerService.createRestorer("test", bCryptPasswordEncoder.encode("test1"));
         Set<Tag> tags = new HashSet<>();
         tags.add(Tag.KEBAB);
         tags.add(Tag.PIZZA);

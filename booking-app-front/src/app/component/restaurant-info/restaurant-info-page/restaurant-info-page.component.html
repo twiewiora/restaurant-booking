@@ -1,0 +1,24 @@
+<div class="container">
+  <p>
+    restaurant-info-page works!
+  </p>
+
+  <h4>Open:</h4>
+  <div *ngFor="let openDay of openDays ">
+    <h5>{{openDay.weekday}}</h5>
+    <div *ngIf="openDay.isSet">
+      open: {{openDay.openHour}} - {{openDay.closeHour}}
+    </div>
+    <div *ngIf="!openDay.isSet">
+      closed
+    </div>
+  </div>
+
+
+  WEDNESDAY
+  <div *ngIf="oneDay">
+    {{oneDay.closeHour}}
+    {{oneDay.openHour}}
+  </div>
+  <app-open-hours></app-open-hours>
+</div>
