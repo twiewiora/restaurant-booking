@@ -14,9 +14,9 @@ public class UrlRequests {
 
     public static final String POST_RESTAURANT_UPDATE = "/restaurant/update";
 
-    public static final String GET_OPEN_HOURS_ALL = "/openHours/restaurantId={id}";
+    public static final String GET_OPEN_HOURS_ALL = "/openHours/restaurantId={id}/all";
 
-    public static final String GET_OPEN_HOURS_DAY = "/openHours/restaurantId={id}&day={date}";
+    public static final String GET_OPEN_HOURS_DAY = "/openHours/restaurantId={id}/day={day}";
 
     public static final String POST_OPEN_HOURS_UPDATE = "/openHours/update";
 

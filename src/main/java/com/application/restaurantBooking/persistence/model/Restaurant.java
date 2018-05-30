@@ -34,8 +34,9 @@ public class Restaurant {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = CascadeType.ALL)
     private Set<RestaurantTable> restaurantTables = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Enumerated(EnumType.STRING)
+    @MapKeyClass(value = DayOfWeek.class)
+    @MapKeyEnumerated(value = EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = OpenHours.class)
     private Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
 
     public Restaurant(){
