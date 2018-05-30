@@ -26,16 +26,12 @@ import com.application.restaurantBooking.jwt.jwtService.JwtUserDetailsService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Value("${jwt.header}")
@@ -43,6 +39,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${jwt.route.authentication.path}")
     private String authenticationPath;
+
+    @Autowired
+    public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                             JwtTokenUtil jwtTokenUtil,
+                             JwtUserDetailsService jwtUserDetailsService,
+                             BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.unauthorizedHandler = jwtAuthenticationEntryPoint;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -56,7 +63,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {

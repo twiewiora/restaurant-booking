@@ -2,6 +2,7 @@ package com.application.restaurantBooking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -14,6 +15,8 @@ public class RestaurantBookingApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(RestaurantBookingApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(RestaurantBookingApplication.class, args);
+
+        context.getBean(DatabaseInitializer.class).initializeDatabase();
 	}
 }

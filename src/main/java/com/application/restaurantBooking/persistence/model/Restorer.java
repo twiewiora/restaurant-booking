@@ -1,11 +1,8 @@
 package com.application.restaurantBooking.persistence.model;
 
 import javax.persistence.*;
-import javax.persistence.Table;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "restorer")
@@ -19,12 +16,8 @@ public class Restorer {
 
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restorer", cascade = CascadeType.ALL)
-    private Set<Restaurant> restaurants = new HashSet<>();
-
-    private String phoneNumber;
-
-    private String email;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "restorer", cascade = CascadeType.ALL)
+    private Restaurant restaurant;
 
     private Boolean enabled = true;
 
@@ -40,12 +33,8 @@ public class Restorer {
     }
 
     public Restorer(String username,
-                    String phoneNumber,
-                    String email,
                     String password) {
         this.username = username;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
         this.password = password;
     }
 
@@ -67,28 +56,12 @@ public class Restorer {
         this.password = password;
     }
 
-    public Set<Restaurant> getRestaurants() {
-        return restaurants;
+    public Restaurant getRestaurant() {
+        return restaurant;
     }
 
-    public void setRestaurants(Set<Restaurant> restaurants) {
-        this.restaurants = restaurants;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 
     public Boolean getEnabled() {

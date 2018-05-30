@@ -29,7 +29,19 @@ public class Reservation {
 
     private Integer reservationLength;
 
+    private String comment;
+
+    private Boolean isCancelled = false;
+
     public Reservation(){
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Client getClient() {
@@ -70,5 +82,21 @@ public class Reservation {
 
     public void setReservationLength(Integer reservationLength) {
         this.reservationLength = reservationLength;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Boolean isCancelled() {
+        return isCancelled;
+    }
+
+    public void setCancelled(Boolean cancelled) {
+        isCancelled = cancelled;
     }
 }

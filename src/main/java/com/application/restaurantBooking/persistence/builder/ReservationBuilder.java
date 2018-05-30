@@ -39,6 +39,16 @@ public class ReservationBuilder {
         return this;
     }
 
+    public ReservationBuilder comment(String comment) {
+        reservation.setComment(comment);
+        return this;
+    }
+
+    public ReservationBuilder cancelled(Boolean cancelled) {
+        reservation.setCancelled(cancelled);
+        return this;
+    }
+
     public Reservation build() {
         return reservation;
     }

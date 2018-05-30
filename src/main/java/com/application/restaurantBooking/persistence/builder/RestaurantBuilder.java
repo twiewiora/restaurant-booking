@@ -32,6 +32,11 @@ public class RestaurantBuilder {
         return this;
     }
 
+    public RestaurantBuilder phoneNumber(String phoneNumber) {
+        restaurant.setPhoneNumber(phoneNumber);
+        return this;
+    }
+
     public RestaurantBuilder restorer(Restorer restorer) {
         restaurant.setRestorer(restorer);
         return this;

@@ -18,8 +18,6 @@ public final class JwtRestorerFactory {
         return new JwtRestorer(
                 restorer.getId(),
                 restorer.getUsername(),
-                restorer.getPhoneNumber(),
-                restorer.getEmail(),
                 restorer.getPassword(),
                 mapToGrantedAuthorities(restorer.getAuthorities()),
                 restorer.getEnabled()

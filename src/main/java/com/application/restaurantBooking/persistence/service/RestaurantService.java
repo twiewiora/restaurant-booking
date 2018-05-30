@@ -1,25 +1,24 @@
 package com.application.restaurantBooking.persistence.service;
 
+import com.application.restaurantBooking.persistence.model.OpenHours;
 import com.application.restaurantBooking.persistence.model.Restaurant;
-import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.model.Tag;
 
-import java.util.List;
+import java.time.DayOfWeek;
+import java.util.Map;
 import java.util.Set;
 
 public interface RestaurantService {
 
-    List<Restaurant> getAll();
-
     Restaurant getById(Long id);
 
-    Restaurant createRestaurant(String name, String city, String street, Restorer restorer);
+    Restaurant createRestaurant(String name, String city, String street, String phoneNumber, Restorer restorer, Set<Tag> tags);
 
-    Restaurant createRestaurant(String name, String city, String street, Restorer restorer, Set<Tag> tags);
+    void updateRestaurant(Restaurant restaurant);
 
-    void deleteRestaurant(Long id);
+    void updateRestaurantTags(Long restaurantId, Set<Tag> tags);
 
-    List<RestaurantTable> getFreeTables(Long restaurantID);
+    void updateOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap);
 
 }
