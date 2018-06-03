@@ -38,7 +38,7 @@ public class RestaurantController {
     @RequestMapping(value = UrlRequests.POST_RESTAURANT_ADD,
             method = RequestMethod.POST,
             consumes = "application/json; charset=UTF-8")
-    public void createRestaurant(@RequestBody String json){
+    public void createRestaurant(@RequestBody String json) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(json);
@@ -62,7 +62,7 @@ public class RestaurantController {
     @RequestMapping(value = UrlRequests.POST_RESTAURANT_UPDATE,
             method = RequestMethod.POST,
             consumes = "application/json; charset=UTF-8")
-    public void updateRestaurant(@RequestBody String json){
+    public void updateRestaurant(@RequestBody String json) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(json);
