@@ -2,7 +2,8 @@
   table-page works!
 </p>
 
-<app-add-table></app-add-table>
+<app-add-table
+  (tableAdded)=onTableAdded($event)></app-add-table>
 
 <div *ngFor="let table of tables">
   <div>

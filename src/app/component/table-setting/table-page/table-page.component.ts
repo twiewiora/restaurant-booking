@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
 
@@ -11,17 +11,29 @@ export class TablePageComponent implements OnInit {
 
   tables: ITable[];
 
-  constructor(private tableService: TableService) { }
+  constructor(private tableService: TableService) {
+  }
 
   ngOnInit() {
-    this.tableService.getTables(2).subscribe(
+    this.getAllTables(2);
+  }
+
+  deleteTable(table: ITable) {
+    this.tableService.deleteTable(table).subscribe((any) => {
+        this.getAllTables(2);
+      }
+    );
+  }
+
+  getAllTables(restaurantId: number){
+    this.tableService.getTables(restaurantId).subscribe(
       (tables: Table[]) => {
         this.tables = <Table[]> tables;
       });
   }
 
-  deleteTable(table: ITable) {
-    this.tableService.deleteTable(table).subscribe();
+  onTableAdded(tableAdded: boolean) {
+    tableAdded ? this.getAllTables(2): null;
   }
 
 }

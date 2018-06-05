@@ -12,9 +12,9 @@ import {TablePageComponent} from "./component/table-setting/table-page/table-pag
 
 const routes: Routes = [
   {path: '', redirectTo: '/start', pathMatch: 'full'},
-  {path: 'start', component: StartComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'registration', component: RegistrationComponent},
+  {path: 'start', component: StartComponent, canActivate: [HomeGuard]},
+  {path: 'login', component: LoginComponent, canActivate: [HomeGuard]},
+  {path: 'registration', component: RegistrationComponent, canActivate: [HomeGuard]},
   {path: 'reservation', component: ReservationPageComponent, canActivate: [AuthGuard]},
   {path: 'tableSettings', component: TablePageComponent, canActivate: [AuthGuard]},
   {path: 'info', component: RestaurantInfoPageComponent, canActivate: [AuthGuard]}
