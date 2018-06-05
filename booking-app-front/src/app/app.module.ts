@@ -18,7 +18,7 @@ import { ReservationPageComponent } from './component/reservation/reservation-pa
 import { RestaurantInfoPageComponent } from './component/restaurant-info/restaurant-info-page/restaurant-info-page.component';
 import { TopBarComponent } from './component/top-bar/top-bar.component';
 import {TableService} from "./service/table.service";
-import {TimeTableService} from "./service/timeTable.service";
+import {OpenHoursService} from "./service/open-hours.service";
 import {RestaurantInfoService} from "./service/restaurantInfo.service";
 import {ReservationService} from "./service/reservation.service";
 import { OpenHoursComponent } from './component/restaurant-info/open-hours/open-hours.component';
@@ -55,7 +55,7 @@ import { OpenHoursComponent } from './component/restaurant-info/open-hours/open-
       multi: true
     },
     TableService,
-    TimeTableService,
+    OpenHoursService,
     RestaurantInfoService,
     ReservationService
   ],

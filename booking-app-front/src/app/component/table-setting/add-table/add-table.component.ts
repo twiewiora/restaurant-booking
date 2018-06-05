@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
 
@@ -10,6 +10,7 @@ import {ITable, Table} from "../../../model/table";
 export class AddTableComponent implements OnInit {
 
   table: Table = new Table();
+  @Output() tableAdded = new EventEmitter<boolean>();
 
   constructor(private tableService: TableService) {
   }
@@ -19,7 +20,10 @@ export class AddTableComponent implements OnInit {
 
   addTable(table: ITable) {
     table.restaurantId = 2;
-    this.tableService.addTable(table).subscribe();
+    this.tableService.addTable(table).subscribe( any =>
+    {
+      this.tableAdded.emit(true);
+    });
   }
 
 }

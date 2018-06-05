@@ -7,7 +7,7 @@ export class HomeGuard implements CanActivate {
   constructor(private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (localStorage.getItem('jwt')) {
+    if (!localStorage.getItem('jwt')) {
       // logged in so return true
       return true;
     }
