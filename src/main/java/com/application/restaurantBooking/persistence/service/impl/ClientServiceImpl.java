@@ -1,6 +1,5 @@
 package com.application.restaurantBooking.persistence.service.impl;
 
-import com.application.restaurantBooking.persistence.builder.ClientBuilder;
 import com.application.restaurantBooking.persistence.model.Client;
 import com.application.restaurantBooking.persistence.repository.ClientRepository;
 import com.application.restaurantBooking.persistence.service.ClientService;
@@ -23,8 +22,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client createClient(String login, String password) {
-        Client client = new ClientBuilder().login(login).password(password).build();
+    public Client createClient(Client client) {
         clientRepository.save(client);
         return client;
     }

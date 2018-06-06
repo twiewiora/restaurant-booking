@@ -8,6 +8,4 @@ public interface RestorerService {
 
     Restorer createRestorer(Restorer restorer);
 
-    Restorer createRestorer(String login, String password);
-
 }

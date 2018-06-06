@@ -22,9 +22,9 @@ public class UrlRequests {
 
     public static final String POST_OPEN_HOURS_UPDATE = "/api/openHours/update";
 
-    public static final String URL_POST_ADD_RESERVATION = "/reservation/add";
+    public static final String POST_RESERVATION_ADD = "/api/reservation/add";
 
-    public static final String URL_DELETE_RESERVATION = "/reservation/delete/reservationId={id}";
+    public static final String DELETE_RESERVATION = "/api/reservation/delete/reservationId={id}";
 
 //
 

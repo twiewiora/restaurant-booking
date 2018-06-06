@@ -2,6 +2,7 @@ package com.application.restaurantBooking.controllers;
 
 import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
+import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantBooking.persistence.model.OpenHours;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.Restorer;
@@ -46,8 +47,6 @@ public class RestaurantController {
         this.restorerService = restorerService;
     }
 
-
-
     @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
@@ -79,8 +78,15 @@ public class RestaurantController {
                         tags.add(Tag.valueOf(tag.asText().toUpperCase()));
                     }
                 }
-                restaurantService.createRestaurant(jsonNode.get("name").asText(), jsonNode.get("city").asText(),
-                        jsonNode.get("street").asText(), jsonNode.get("phoneNumber").asText(), restorer, tags);
+                Restaurant restaurant = new RestaurantBuilder()
+                        .name(jsonNode.get("name").asText())
+                        .city(jsonNode.get("city").asText())
+                        .street(jsonNode.get("street").asText())
+                        .phoneNumber(jsonNode.get("phoneNumber").asText())
+                        .restorer(restorer)
+                        .tags(tags)
+                        .build();
+                restaurantService.createRestaurant(restaurant);
             }
         } catch (IOException e) {
             e.printStackTrace();

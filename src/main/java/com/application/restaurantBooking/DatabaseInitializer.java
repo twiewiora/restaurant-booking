@@ -1,10 +1,10 @@
 package com.application.restaurantBooking;
 
 import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
-import com.application.restaurantBooking.persistence.model.OpenHours;
-import com.application.restaurantBooking.persistence.model.Restaurant;
-import com.application.restaurantBooking.persistence.model.Restorer;
-import com.application.restaurantBooking.persistence.model.Tag;
+import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
+import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
+import com.application.restaurantBooking.persistence.builder.RestorerBuilder;
+import com.application.restaurantBooking.persistence.model.*;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
@@ -43,15 +43,39 @@ public class DatabaseInitializer {
     }
 
     public void initializeDatabase() {
-        Restorer restorer = restorerService.createRestorer("test", bCryptPasswordEncoder.encode("test1"));
+        Restorer restorer = new RestorerBuilder()
+                .username("test")
+                .password(bCryptPasswordEncoder.encode("test1"))
+                .build();
+        restorerService.createRestorer(restorer);
         Set<Tag> tags = new HashSet<>();
         tags.add(Tag.KEBAB);
         tags.add(Tag.PIZZA);
-        Restaurant restaurant = restaurantService.createRestaurant("name", "city", "street", "", restorer, tags);
+        Restaurant restaurant = new RestaurantBuilder()
+                .name("name")
+                .city("city")
+                .street("street")
+                .phoneNumber("")
+                .restorer(restorer)
+                .tags(tags)
+                .build();
+        restaurantService.createRestaurant(restaurant);
 
-        restaurantTableService.createRestaurantTable(restaurant, 12);
-        restaurantTableService.createRestaurantTable(restaurant, 5);
-        restaurantTableService.createRestaurantTable(restaurant, 2);
+        RestaurantTable restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(12)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
+        restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(5)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
+        restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(2)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
 
         SimpleDateFormat f = new SimpleDateFormat("HH:mm");
         Map<DayOfWeek, OpenHours> map = new HashMap<>();

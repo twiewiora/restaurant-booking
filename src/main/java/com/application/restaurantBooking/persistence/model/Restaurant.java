@@ -24,7 +24,7 @@ public class Restaurant {
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restorer")
+    @JoinColumn(name = "restorer_id", nullable = false)
     private Restorer restorer;
 
     @ElementCollection(fetch = FetchType.LAZY)

@@ -1,7 +1,5 @@
 package com.application.restaurantBooking.persistence.service.impl;
 
-import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
-import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.repository.RestaurantTableRepository;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
@@ -24,9 +22,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     }
 
     @Override
-    public RestaurantTable createRestaurantTable(Restaurant restaurant, Integer maxPlaces) {
-        RestaurantTable restaurantTable = new RestaurantTableBuilder()
-                .restaurant(restaurant).maxPlaces(maxPlaces).build();
+    public RestaurantTable createRestaurantTable(RestaurantTable restaurantTable) {
         restaurantTableRepository.save(restaurantTable);
         return restaurantTable;
     }

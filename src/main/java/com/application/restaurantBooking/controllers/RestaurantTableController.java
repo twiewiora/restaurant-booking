@@ -1,5 +1,6 @@
 package com.application.restaurantBooking.controllers;
 
+import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
@@ -53,7 +54,11 @@ public class RestaurantTableController {
             JsonNode mainNode = objectMapper.readTree(json);
             Restaurant restaurant = restaurantService
                     .getById(Long.decode(mainNode.get("restaurantId").asText()));
-            restaurantTableService.createRestaurantTable(restaurant, mainNode.get("maxPlaces").asInt());
+            RestaurantTable restaurantTable = new RestaurantTableBuilder()
+                    .restaurant(restaurant)
+                    .maxPlaces(mainNode.get("maxPlaces").asInt())
+                    .build();
+            restaurantTableService.createRestaurantTable(restaurantTable);
         } catch (IOException e) {
             e.printStackTrace();
         }

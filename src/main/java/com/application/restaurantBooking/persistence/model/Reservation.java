@@ -1,5 +1,6 @@
 package com.application.restaurantBooking.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,12 +14,14 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id")
     private Client client;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurantTable_id", nullable = false)
+    @JoinColumn(name = "restaurantTable_id")
     private RestaurantTable restaurantTable;
 
     private Integer reservedPlaces;
