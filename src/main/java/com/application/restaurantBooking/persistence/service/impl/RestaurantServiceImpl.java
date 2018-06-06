@@ -57,7 +57,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void updateOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap) {
+    public void addOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap) {
         Restaurant restaurant = getById(restaurantId);
         openHoursMap.values().forEach(openHours -> openHoursRepository.save(openHours));
         openHoursMap.forEach(restaurant.getOpenHoursMap()::put);

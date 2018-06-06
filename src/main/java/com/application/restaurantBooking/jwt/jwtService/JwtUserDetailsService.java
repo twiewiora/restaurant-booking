@@ -2,22 +2,26 @@ package com.application.restaurantBooking.jwt.jwtService;
 
 import com.application.restaurantBooking.jwt.jwtFactory.JwtRestorerFactory;
 import com.application.restaurantBooking.persistence.model.Restorer;
+import com.application.restaurantBooking.persistence.service.RestorerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.application.restaurantBooking.persistence.repository.RestorerRepository;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
+    private RestorerService restorerService;
+
     @Autowired
-    private RestorerRepository restorerRepository;
+    public JwtUserDetailsService(RestorerService restorerService) {
+        this.restorerService = restorerService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Restorer restorer = restorerRepository.findByUsername(username);
+        Restorer restorer = restorerService.getByUsername(username);
 
         if (restorer == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));

@@ -19,6 +19,6 @@ public interface RestaurantService {
 
     void updateRestaurantTags(Long restaurantId, Set<Tag> tags);
 
-    void updateOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap);
+    void addOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap);
 
 }

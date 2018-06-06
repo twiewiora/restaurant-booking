@@ -1,15 +1,18 @@
 package com.application.restaurantBooking.controllers;
 
 import com.application.restaurantBooking.exceptions.authentication.AuthenticationException;
-import com.application.restaurantBooking.jwt.RegistrationValidation;
-import com.application.restaurantBooking.jwt.jwtModel.JwtRestorer;
 import com.application.restaurantBooking.jwt.RegistrationRequest;
+import com.application.restaurantBooking.jwt.RegistrationValidation;
+import com.application.restaurantBooking.jwt.jwtModel.JwtAuthenticationRequest;
+import com.application.restaurantBooking.jwt.jwtModel.JwtRestorer;
+import com.application.restaurantBooking.jwt.jwtService.JwtAuthenticationResponse;
+import com.application.restaurantBooking.jwt.jwtService.JwtUserDetailsService;
+import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.RestorerBuilder;
 import com.application.restaurantBooking.persistence.model.Authority;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.repository.AuthorityRepository;
-import com.application.restaurantBooking.persistence.repository.RestorerRepository;
-import com.application.restaurantBooking.jwt.jwtService.JwtUserDetailsService;
+import com.application.restaurantBooking.persistence.service.RestorerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +28,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
-
-import com.application.restaurantBooking.jwt.jwtModel.JwtAuthenticationRequest;
-import com.application.restaurantBooking.jwt.jwtService.JwtAuthenticationResponse;
 
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -47,7 +46,7 @@ public class AuthenticationController {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private RestorerRepository restorerRepository;
+    private RestorerService restorerService;
 
     private JwtUserDetailsService jwtUserDetailsService;
 
@@ -60,14 +59,14 @@ public class AuthenticationController {
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     BCryptPasswordEncoder bCryptPasswordEncoder,
-                                    RestorerRepository restorerRepository,
+                                    RestorerService restorerService,
                                     JwtUserDetailsService jwtUserDetailsService,
                                     AuthorityRepository authorityRepository,
                                     JwtTokenUtil jwtTokenUtil,
                                     @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.restorerRepository = restorerRepository;
+        this.restorerService = restorerService;
         this.jwtUserDetailsService = jwtUserDetailsService;
         this.authorityRepository = authorityRepository;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -105,7 +104,7 @@ public class AuthenticationController {
                             .password(bCryptPasswordEncoder.encode(registrationRequest.getPassword()))
                             .authorities(authorityList)
                             .build();
-                    restorerRepository.save(restorer);
+                    restorerService.createRestorer(restorer);
                     return ResponseEntity.noContent().build(); //correct
                 }
             } catch (Exception ex) {

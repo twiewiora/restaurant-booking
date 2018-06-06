@@ -1,5 +1,6 @@
 package com.application.restaurantBooking.controllers;
 
+import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
 import com.application.restaurantBooking.persistence.model.OpenHours;
 import com.application.restaurantBooking.persistence.model.Restaurant;
@@ -11,8 +12,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,24 +28,49 @@ import java.util.Set;
 @RestController
 public class RestaurantController {
 
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    private JwtTokenUtil jwtTokenUtil;
+
     private RestaurantService restaurantService;
 
     private RestorerService restorerService;
 
     @Autowired
-    public RestaurantController(RestaurantService restaurantService, RestorerService restorerService) {
+    public RestaurantController(JwtTokenUtil jwtTokenUtil,
+                                RestaurantService restaurantService,
+                                RestorerService restorerService) {
+        this.jwtTokenUtil = jwtTokenUtil;
         this.restaurantService = restaurantService;
         this.restorerService = restorerService;
+    }
+
+
+
+    @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getRestaurantByRestorerJwt(HttpServletRequest request) {
+        Restaurant restaurant = getRestorerByJwt(request).getRestaurant();
+        ObjectMapper mapper = new ObjectMapper();
+        if (restaurant != null) {
+            return mapper.createObjectNode()
+                    .put("restaurantId", restaurant.getId())
+                    .toString();
+        } else {
+            return UrlRequests.ERROR;
+        }
     }
 
     @RequestMapping(value = UrlRequests.POST_RESTAURANT_ADD,
             method = RequestMethod.POST,
             consumes = "application/json; charset=UTF-8")
-    public void createRestaurant(@RequestBody String json) {
+    public void createRestaurant(HttpServletRequest request, @RequestBody String json) {
+        Restorer restorer = getRestorerByJwt(request);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(json);
-            Restorer restorer = restorerService.getById(jsonNode.get("restorerId").asLong());
             if (restorer != null) {
                 JsonNode tagsNode = jsonNode.get("tags");
                 Set<Tag> tags = new HashSet<>();
@@ -146,11 +174,17 @@ public class RestaurantController {
                         openHoursMap.put(dayOfWeek, day);
                     }
                 }
-                restaurantService.updateOpenHours(restaurant.getId(), openHoursMap);
+                restaurantService.addOpenHours(restaurant.getId(), openHoursMap);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    private Restorer getRestorerByJwt(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return restorerService.getByUsername(username);
     }
 
 }

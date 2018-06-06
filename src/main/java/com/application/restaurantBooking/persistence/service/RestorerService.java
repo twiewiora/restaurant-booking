@@ -4,10 +4,10 @@ import com.application.restaurantBooking.persistence.model.Restorer;
 
 public interface RestorerService {
 
-    Restorer getById(Long id);
+    Restorer getByUsername(String username);
+
+    Restorer createRestorer(Restorer restorer);
 
     Restorer createRestorer(String login, String password);
-
-    void deleteRestorer(Long id);
 
 }
