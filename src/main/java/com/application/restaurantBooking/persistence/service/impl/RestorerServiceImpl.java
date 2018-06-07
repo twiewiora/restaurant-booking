@@ -1,6 +1,5 @@
 package com.application.restaurantBooking.persistence.service.impl;
 
-import com.application.restaurantBooking.persistence.builder.RestorerBuilder;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.repository.RestorerRepository;
 import com.application.restaurantBooking.persistence.service.RestorerService;
@@ -18,19 +17,13 @@ public class RestorerServiceImpl implements RestorerService {
     }
 
     @Override
-    public Restorer getById(Long id) {
-        return restorerRepository.findById(id).orElse(null);
+    public Restorer getByUsername(String username) {
+        return restorerRepository.findByUsername(username);
     }
 
     @Override
-    public Restorer createRestorer(String username, String password) {
-        Restorer restorer = new RestorerBuilder().username(username).password(password).build();
+    public Restorer createRestorer(Restorer restorer) {
         restorerRepository.save(restorer);
         return restorer;
-    }
-
-    @Override
-    public void deleteRestorer(Long id) {
-        restorerRepository.deleteById(id);
     }
 }

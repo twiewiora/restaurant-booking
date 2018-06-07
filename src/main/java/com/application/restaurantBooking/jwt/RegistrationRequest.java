@@ -2,9 +2,6 @@ package com.application.restaurantBooking.jwt;
 
 import java.io.Serializable;
 
-/**
- * Created by stephan on 20.03.16.
- */
 public class  RegistrationRequest implements Serializable {
 
     private String username;

@@ -1,10 +1,8 @@
 package com.application.restaurantBooking;
 
-import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
-import com.application.restaurantBooking.persistence.model.OpenHours;
-import com.application.restaurantBooking.persistence.model.Restaurant;
-import com.application.restaurantBooking.persistence.model.Restorer;
-import com.application.restaurantBooking.persistence.model.Tag;
+import com.application.restaurantBooking.persistence.builder.*;
+import com.application.restaurantBooking.persistence.model.*;
+import com.application.restaurantBooking.persistence.service.ReservationService;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
@@ -29,32 +27,87 @@ public class DatabaseInitializer {
 
     private RestaurantTableService restaurantTableService;
 
-    @Autowired
+    private ReservationService reservationService;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public DatabaseInitializer(RestorerService restorerService,
                                RestaurantService restaurantService,
-                               RestaurantTableService restaurantTableService) {
+                               RestaurantTableService restaurantTableService,
+                               BCryptPasswordEncoder bCryptPasswordEncoder,
+                               ReservationService reservationService) {
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.restaurantTableService = restaurantTableService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.reservationService = reservationService;
     }
 
     public void initializeDatabase() {
-        Restorer restorer = restorerService.createRestorer("test", bCryptPasswordEncoder.encode("test1"));
+        Restorer restorer = new RestorerBuilder()
+                .username("test")
+                .password(bCryptPasswordEncoder.encode("test1"))
+                .build();
+        restorerService.createRestorer(restorer);
         Set<Tag> tags = new HashSet<>();
         tags.add(Tag.KEBAB);
         tags.add(Tag.PIZZA);
-        Restaurant restaurant = restaurantService.createRestaurant("name", "city", "street", "", restorer, tags);
+        Restaurant restaurant = new RestaurantBuilder()
+                .name("name")
+                .city("city")
+                .street("street")
+                .phoneNumber("")
+                .restorer(restorer)
+                .tags(tags)
+                .build();
+        restaurantService.createRestaurant(restaurant);
 
-        restaurantTableService.createRestaurantTable(restaurant, 12);
-        restaurantTableService.createRestaurantTable(restaurant, 5);
-        restaurantTableService.createRestaurantTable(restaurant, 2);
+        RestaurantTable restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(12)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
+        restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(5)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
+        restaurantTable = new RestaurantTableBuilder()
+                .restaurant(restaurant)
+                .maxPlaces(2)
+                .build();
+        restaurantTableService.createRestaurantTable(restaurantTable);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
         SimpleDateFormat f = new SimpleDateFormat("HH:mm");
         Map<DayOfWeek, OpenHours> map = new HashMap<>();
         try {
+            Reservation reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-10_12:30"))
+                    .reservationLength(2)
+                    .reservedPlaces(10)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+            reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-15_22:30"))
+                    .reservationLength(1)
+                    .reservedPlaces(5)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+            reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-5_21:00"))
+                    .reservationLength(3)
+                    .reservedPlaces(7)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+
             OpenHours day1 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
             OpenHours day2 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
             OpenHours day3 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
@@ -62,17 +115,15 @@ public class DatabaseInitializer {
             map.put(DayOfWeek.MONDAY, day1);
             map.put(DayOfWeek.THURSDAY, day2);
             map.put(DayOfWeek.WEDNESDAY, day3);
-            restaurantService.updateOpenHours(restaurant.getId(), map);
+            restaurantService.addOpenHours(restaurant.getId(), map);
 
             OpenHours day4 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("20:30")).build();
             OpenHours day5 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("19:30")).build();
             map.put(DayOfWeek.MONDAY, day4);
             map.put(DayOfWeek.SUNDAY, day5);
-            restaurantService.updateOpenHours(restaurant.getId(), map);
+            restaurantService.addOpenHours(restaurant.getId(), map);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
     }
 }

@@ -1,9 +1,7 @@
 package com.application.restaurantBooking.persistence.service.impl;
 
-import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantBooking.persistence.model.OpenHours;
 import com.application.restaurantBooking.persistence.model.Restaurant;
-import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.model.Tag;
 import com.application.restaurantBooking.persistence.repository.OpenHoursRepository;
 import com.application.restaurantBooking.persistence.repository.RestaurantRepository;
@@ -35,11 +33,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant createRestaurant(String name, String city, String street, String phoneNumber, Restorer restorer,
-                                       Set<Tag> tags) {
-        Restaurant restaurant = new RestaurantBuilder()
-                .name(name).city(city).street(street).phoneNumber(phoneNumber).restorer(restorer)
-                .tags(tags).build();
+    public Restaurant createRestaurant(Restaurant restaurant) {
         restaurantRepository.save(restaurant);
         return restaurant;
     }
@@ -57,7 +51,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void updateOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap) {
+    public void addOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap) {
         Restaurant restaurant = getById(restaurantId);
         openHoursMap.values().forEach(openHours -> openHoursRepository.save(openHours));
         openHoursMap.forEach(restaurant.getOpenHoursMap()::put);
