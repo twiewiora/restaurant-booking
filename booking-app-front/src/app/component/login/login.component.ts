@@ -28,6 +28,8 @@ export class LoginComponent implements OnInit {
 
       return Observable.throw(err);
     })
-      .subscribe();
+      .subscribe( _ => {
+
+      });
   }
 }

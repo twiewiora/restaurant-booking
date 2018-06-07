@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {User} from "../model/user";
 import {Observable} from "rxjs/Rx";
 import 'rxjs/add/operator/map';
+import {RestaurantInfoService} from "./restaurantInfo.service";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -16,7 +17,8 @@ const options = {
 export class AuthenticationService {
 
   constructor(private _router: Router,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private restaurantService: RestaurantInfoService) {
   }
 
   logout() {
@@ -35,7 +37,17 @@ export class AuthenticationService {
         const token = response.token;
         localStorage.setItem("jwt", `${token}`);
 
-        this._router.navigate(['/reservation']);
+        this.restaurantService.getRestaurant()
+          .subscribe(
+            data => {
+              debugger;
+              this._router.navigate(['/reservation']);
+            },
+            _ => {
+              debugger;
+              this._router.navigate(['/initialize']);
+            });
+
 
         return response;
       });
@@ -45,7 +57,7 @@ export class AuthenticationService {
     const body = user.toJSON();
 
 
-    return  this.http.post<User>(`api/auth/register`, body, options)
+    return this.http.post<User>(`api/auth/register`, body, options)
       .do(() => {
         this._router.navigate(['/start'])
       });

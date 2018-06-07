@@ -3,5 +3,14 @@
     restaurant-info-page works!
   </p>
   <button (click)="toggleEdit()">Edit</button>
+
+  {{restaurant.city}}
+  {{restaurant.id}}
+  {{restaurant.street}}
+  {{restaurant.phoneNumber}}
+  <div *ngFor="let tag of restaurant.tags">
+    {{tag}}
+  </div>
+
   <app-open-hours [edit]="edit" ></app-open-hours>
 </div>

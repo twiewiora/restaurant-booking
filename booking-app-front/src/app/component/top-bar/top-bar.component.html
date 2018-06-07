@@ -1,17 +1,25 @@
-<div><code>observable|async</code>: Time: {{ time$ | async }}</div>
+<nav class="navbar navbar-expand-lg  navbar-expand-md  navbar-expand-sm navbar-dark bg-primary sticky-top">
 
-<div [ngSwitch]="isLoggedInAsRestorer()">
-  <div *ngSwitchCase="true">
-    <div>
-      <a href="/reservation">Reservations</a>
-      <a href="/tableSettings">Table Settings</a>
-      <a href="/info">Restaurant Info</a>
+  <a class="navbar-brand" href="/">Booking-App</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div *ngIf="isLoggedInAsRestorer()"
+        class="navbar-nav mr-auto">
+        <a class="nav-item nav-link" href="/reservation">Reservations</a>
+        <a class="nav-item nav-link" href="/tableSettings">Table Settings</a>
+        <a class="nav-item nav-link" href="/info">Restaurant Info</a>
     </div>
-    <button (click)="sayHello()">Say Hello man!</button>
-    <span>{{ result }}</span>
-    <button (click)="logout()">logout</button>
+    <div class="right-side-navbar mr-sm-2">
+      <span class="adjust-time-display navbar-text text-white">{{ time$ | async }}</span>
+
+      <div *ngIf="isLoggedInAsRestorer()">
+        <button class="btn btn-outline-failure my-2 my-sm-0" (click)="logout()">logout</button>
+      </div>
+    </div>
+
   </div>
-  <div *ngSwitchDefault>
-    Restaurant Booking App Restorer
-  </div>
-</div>
+</nav>

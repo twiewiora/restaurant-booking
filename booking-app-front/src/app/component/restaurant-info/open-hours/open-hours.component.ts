@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OpenHours} from "../../../model/open-hours";
+import {OpenHours, Weekday} from "../../../model/open-hours";
 import {OpenHoursService} from "../../../service/open-hours.service";
 
 @Component({
@@ -9,25 +9,24 @@ import {OpenHoursService} from "../../../service/open-hours.service";
 })
 export class OpenHoursComponent implements OnInit {
   @Input() edit: boolean;
-  OpenHoursArray: OpenHours[];
+  OpenHoursWeek: Map<Weekday, OpenHours>;
 
   constructor(private openHoursService: OpenHoursService) {
   }
 
   ngOnInit() {
-    this.getOpeningHours(2);
+    this.getOpeningHours();
   }
 
-  updateOpenHours(){
-    this.openHoursService.updateOpenHours(2, OpenHours.toJson(2, this.OpenHoursArray)).subscribe(any => {
-      this.getOpeningHours(2);
+  updateOpenHours() {
+    this.openHoursService.updateOpenHours(OpenHours.toJson(this.OpenHoursWeek)).subscribe(any => {
+      this.getOpeningHours();
     })
   }
 
-  getOpeningHours(restaurantId: number){
-    this.openHoursService.getOpeningHoursForAllDays(restaurantId).subscribe(request => {
-      this.OpenHoursArray = OpenHours.fromJsonArray(request);
+  getOpeningHours() {
+    this.openHoursService.getOpeningHoursForAllDays().subscribe(request => {
+      this.OpenHoursWeek = OpenHours.fromJsonArray(request);
     });
   }
-
 }

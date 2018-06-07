@@ -4,7 +4,6 @@ import {HttpClient} from "@angular/common/http";
 import {of} from "rxjs/observable/of";
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
-import {ITable, Table} from "../model/table";
 import {IRestaurant, Restaurant} from "../model/restaurant";
 
 @Injectable()
@@ -14,6 +13,12 @@ export class RestaurantInfoService {
               private http: HttpClient) {
   }
 
+  getRestaurant(): Observable<IRestaurant> {
+    return this.http.get<IRestaurant>(`/api/restaurant`)
+      // .pipe(
+      //   catchError(this.handleError('getRestaurant', new Restaurant()))
+      // );
+  }
 
   createRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
     return this.http.post<IRestaurant>(`/api/restaurant/add`, restaurant.toJson())
@@ -21,6 +26,7 @@ export class RestaurantInfoService {
         catchError(this.handleError('createRestaurant', new Restaurant()))
       );
   }
+
 
   updateRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
     return this.http.post<IRestaurant>(`/api/restaurant/update`, restaurant.toJson())
@@ -30,8 +36,7 @@ export class RestaurantInfoService {
   }
 
 
-
-  private handleError<T> (operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
@@ -41,7 +46,7 @@ export class RestaurantInfoService {
       // this.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
-      return of(result as T);
+      return error;
     };
   }
 }
