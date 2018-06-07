@@ -1,24 +1,23 @@
-<h4>Open:</h4>
+<div class="container">
 
-
-<div *ngIf="!edit">
-  <div *ngFor="let openHours of OpenHoursArray ">
-    <h5>{{openHours.weekday}}</h5>
-    <div *ngIf="openHours.isSet">
-      open: {{openHours.openHour}} - {{openHours.closeHour}}
+  <h4>Open:</h4>
+  <div *ngFor="let openHours of OpenHoursWeek | mapValues">
+    <h5>{{openHours.key}}</h5>
+    <div *ngIf="!edit">
+      <div *ngIf="openHours.value.isSet()">
+        open: {{openHours.value.openHour}} - {{openHours.value.closeHour}}
+      </div>
+      <div *ngIf="!openHours.value.isSet()">
+        closed
+      </div>
     </div>
-    <div *ngIf="!openHours.isSet">
-      closed
+    <div *ngIf="edit">
+      <input type="time" [(ngModel)]="openHours.value.openHour"/>
+      -
+      <input type="time" [(ngModel)]="openHours.value.closeHour"/>
     </div>
   </div>
-</div>
-
-<div *ngIf="edit">
-  <div *ngFor="let openHours of OpenHoursArray ">
-    <h5>{{openHours.weekday}}</h5>
-    <input [(ngModel)]="openHours.openHour"/>
-    -
-    <input [(ngModel)]="openHours.closeHour"/>
+  <div *ngIf="edit">
+    <button (click)="updateOpenHours()">Update</button>
   </div>
-  <button (click)="updateOpenHours()">Update</button>
 </div>

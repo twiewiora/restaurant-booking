@@ -1,16 +1,4 @@
-<p>
-  table-page works!
-</p>
-
-<app-add-table
-  (tableAdded)=onTableAdded($event)></app-add-table>
-
-<div *ngFor="let table of tables">
-  <div>
-    {{table.id}}
-    {{table.maxPlaces}}
-    {{table.comment}}
-    <button (click)="deleteTable(table)">delete</button>
-  </div>
+<div class="container">
+  <app-add-table></app-add-table>
+  <app-table-list></app-table-list>
 </div>
-

@@ -13,7 +13,7 @@ export class TopBarComponent implements OnInit {
   result: string;
 
   time$ = new Observable<string>((observer: Observer<string>) => {
-    setInterval(() => observer.next(new Date().toString()), 1000);
+    setInterval(() => observer.next(new Date().toLocaleString()), 1000);
   });
 
   constructor(private authenticationService: AuthenticationService,
@@ -23,20 +23,8 @@ export class TopBarComponent implements OnInit {
   ngOnInit() {
   }
 
-  private sayHello(): void {
-    this.result = 'loading...';
-    this.http.get('/api/hello-world').subscribe((response: any) => {
-      this.result = response.message
-    });
-  }
-
   public isLoggedInAsRestorer(): boolean{
     return this.authenticationService.isLoggedIn();
-  }
-
-
-  public isLoggedOut(): boolean{
-    return !this.authenticationService.isLoggedIn();
   }
 
   logout() {

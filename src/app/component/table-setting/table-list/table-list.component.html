@@ -1,0 +1,10 @@
+<div class="container">
+  <div *ngFor="let table of tables">
+    <div>
+      {{table.id}}
+      {{table.maxPlaces}}
+      {{table.comment}}
+      <button (click)="deleteTable(table)">delete</button>
+    </div>
+  </div>
+</div>

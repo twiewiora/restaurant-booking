@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {RestaurantInfoService} from "../../../service/restaurantInfo.service";
+import {IRestaurant} from "../../../model/restaurant";
 
 @Component({
   selector: 'app-restaurant-info-page',
@@ -7,17 +9,26 @@ import {Component, OnInit} from '@angular/core';
 })
 export class RestaurantInfoPageComponent implements OnInit {
 
+  restaurant: IRestaurant;
   edit: boolean = false;
 
   //oneDay: OpenHours;
 
-  constructor() {
+  constructor(private restaurantInfoService: RestaurantInfoService) {
   }
 
   ngOnInit() {
+    this.getRestaurant();
+
     // this.openHoursService.getOpeningHoursForDay(2, "WEDNESDAY").subscribe(request => {
     //   this.oneDay = <OpenHours> request;
     // });
+  }
+
+  getRestaurant(){
+    this.restaurantInfoService.getRestaurant().subscribe( result => {
+      this.restaurant = result;
+    });
   }
 
   toggleEdit(){
