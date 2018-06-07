@@ -1,0 +1,17 @@
+GET     /api/tables
+POST	/api/table/add {"maxPlaces": "10"}
+POST	/api/table/update {"tableId": "5", "maxPlaces": "10"}
+DELETE	/api/table/delete/tableId=5
+
+GET	    /api/restaurant
+POST	/api/restaurant/add {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+POST	/api/restaurant/update {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+
+GET	    /api/openHours/all
+GET	    /api/openHours/day=monday
+POST	/api/openHours/update {"FRIDAY": ["12:30:00", "19:30:00"], "MONDAY": ["12:30:00", "22:30:00"]}
+
+POST	/api/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
+DELETE	/api/reservation/delete/reservationId=10
+GET	    /api/reservation/forTable/tableId=5/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
+GET	    /api/reservation/all/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
