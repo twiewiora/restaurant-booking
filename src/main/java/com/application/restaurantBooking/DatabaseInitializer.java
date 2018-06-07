@@ -1,10 +1,8 @@
 package com.application.restaurantBooking;
 
-import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
-import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
-import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
-import com.application.restaurantBooking.persistence.builder.RestorerBuilder;
+import com.application.restaurantBooking.persistence.builder.*;
 import com.application.restaurantBooking.persistence.model.*;
+import com.application.restaurantBooking.persistence.service.ReservationService;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
@@ -29,17 +27,21 @@ public class DatabaseInitializer {
 
     private RestaurantTableService restaurantTableService;
 
+    private ReservationService reservationService;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public DatabaseInitializer(RestorerService restorerService,
                                RestaurantService restaurantService,
                                RestaurantTableService restaurantTableService,
-                               BCryptPasswordEncoder bCryptPasswordEncoder) {
+                               BCryptPasswordEncoder bCryptPasswordEncoder,
+                               ReservationService reservationService) {
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.restaurantTableService = restaurantTableService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.reservationService = reservationService;
     }
 
     public void initializeDatabase() {
@@ -77,9 +79,35 @@ public class DatabaseInitializer {
                 .build();
         restaurantTableService.createRestaurantTable(restaurantTable);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
         SimpleDateFormat f = new SimpleDateFormat("HH:mm");
         Map<DayOfWeek, OpenHours> map = new HashMap<>();
         try {
+            Reservation reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-10_12:30"))
+                    .reservationLength(2)
+                    .reservedPlaces(10)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+            reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-15_22:30"))
+                    .reservationLength(1)
+                    .reservedPlaces(5)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+            reservation = new ReservationBuilder()
+                    .restaurantTable(restaurantTable)
+                    .reservationDate(sdf.parse("2018-06-5_21:00"))
+                    .reservationLength(3)
+                    .reservedPlaces(7)
+                    .comment("comments...")
+                    .build();
+            reservationService.createReservation(reservation);
+
             OpenHours day1 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
             OpenHours day2 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
             OpenHours day3 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
@@ -97,7 +125,5 @@ public class DatabaseInitializer {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
     }
 }

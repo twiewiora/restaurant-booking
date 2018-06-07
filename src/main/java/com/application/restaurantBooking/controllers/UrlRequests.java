@@ -26,10 +26,8 @@ public class UrlRequests {
 
     public static final String DELETE_RESERVATION = "/api/reservation/delete/reservationId={id}";
 
-//
+    public static final String GET_RESERVATIONS_ONE_TABLE = "/api/reservation/list/tableId={id}/dateFrom={from}/dateTo={to}";
 
-    public static final String URL_GET_RESERVATIONS_ONE_TABLE = "/reservation/list/tableId={tableId}&dateFrom={dateFrom}&dateTo={dateTo}";
-
-    public static final String URL_GET_RESERVATIONS_ALL_TABLES = "/reservation/list/dateFrom={dateFrom}&dateTo={dateTo}";
+    public static final String GET_RESERVATIONS_ALL_TABLES = "/api/reservation/list/dateFrom={from}/dateTo={to}";
 
 }
