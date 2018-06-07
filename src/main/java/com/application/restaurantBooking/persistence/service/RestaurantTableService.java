@@ -10,4 +10,6 @@ public interface RestaurantTableService {
 
     void deleteRestaurantTable(Long id);
 
+    void updateRestaurantTable(RestaurantTable restaurantTable);
+
 }

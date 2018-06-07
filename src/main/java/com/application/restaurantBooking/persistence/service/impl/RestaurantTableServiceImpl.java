@@ -31,4 +31,9 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     public void deleteRestaurantTable(Long id) {
         restaurantTableRepository.deleteById(id);
     }
+
+    @Override
+    public void updateRestaurantTable(RestaurantTable restaurantTable) {
+        restaurantTableRepository.updateRestaurantTable(restaurantTable.getId(), restaurantTable.getMaxPlaces());
+    }
 }

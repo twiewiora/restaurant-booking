@@ -1,76 +1,176 @@
 package com.application.restaurantBooking.controllers;
 
+import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.RestaurantTableBuilder;
 import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
-import com.application.restaurantBooking.persistence.service.RestaurantService;
+import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
+import com.application.restaurantBooking.persistence.service.RestorerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
 public class RestaurantTableController {
 
-    private RestaurantService restaurantService;
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    private JwtTokenUtil jwtTokenUtil;
+
+    private RestorerService restorerService;
 
     private RestaurantTableService restaurantTableService;
 
     @Autowired
-    public RestaurantTableController(RestaurantService restaurantService,
+    public RestaurantTableController(JwtTokenUtil jwtTokenUtil,
+                                     RestorerService restorerService,
                                      RestaurantTableService restaurantTableService){
-        this.restaurantService = restaurantService;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.restorerService = restorerService;
         this.restaurantTableService = restaurantTableService;
     }
 
     @RequestMapping(value = UrlRequests.GET_TABLES_FOR_RESTAURANT,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
-    public String getAllTablesForRestaurant(@PathVariable String id) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public String getAllTablesForRestaurant(HttpServletRequest request,
+                                            HttpServletResponse response) {
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restorer.getRestaurant();
+
         try {
-            Restaurant restaurant = restaurantService.getById(Long.decode(id));
             if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                response.setStatus(HttpServletResponse.SC_OK);
                 return objectMapper.writeValueAsString(restaurant.getRestaurantTables());
             } else {
-                return UrlRequests.ERROR;
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return UrlRequests.ERROR;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
     @RequestMapping(value = UrlRequests.POST_TABLE_ADD,
             method = RequestMethod.POST,
-            consumes = "application/json; charset=UTF-8")
-    public void createRestaurantTable(@RequestBody String json){
-        ObjectMapper objectMapper = new ObjectMapper();
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String createRestaurantTable(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        @RequestBody String json){
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restorer.getRestaurant();
+
         try {
-            JsonNode mainNode = objectMapper.readTree(json);
-            Restaurant restaurant = restaurantService
-                    .getById(Long.decode(mainNode.get("restaurantId").asText()));
-            RestaurantTable restaurantTable = new RestaurantTableBuilder()
-                    .restaurant(restaurant)
-                    .maxPlaces(mainNode.get("maxPlaces").asInt())
-                    .build();
-            restaurantTableService.createRestaurantTable(restaurantTable);
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode mainNode = objectMapper.readTree(json);
+                RestaurantTable restaurantTable = new RestaurantTableBuilder()
+                        .restaurant(restaurant)
+                        .maxPlaces(mainNode.get("maxPlaces").asInt())
+                        .build();
+                restaurantTableService.createRestaurantTable(restaurantTable);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+                return AcceptResponses.RESTAURANT_TABLE_CREATED;
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.POST_TABLE_UPDATE,
+            method = RequestMethod.POST,
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String updateRestaurantTable(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        @RequestBody String json){
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restorer.getRestaurant();
+
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(json);
+                RestaurantTable restaurantTable = restorer.getRestaurant().getRestaurantTables().stream()
+                        .filter(table -> table.getId().equals(jsonNode.get("tableId").asLong())).findFirst().orElse(null);
+                if (restaurantTable != null) {
+                    restaurantTable.setMaxPlaces(jsonNode.get("maxPlaces").asInt());
+                    restaurantTableService.updateRestaurantTable(restaurantTable);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return AcceptResponses.RESTAURANT_TABLE_UPDATED;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
     @RequestMapping(value = UrlRequests.DELETE_TABLE,
-            method = RequestMethod.DELETE)
-    public void deleteRestaurantTable(@PathVariable String id){
-        RestaurantTable restaurantTable = restaurantTableService.getById(Long.decode(id));
+            method = RequestMethod.DELETE,
+            produces = "application/json; charset=UTF-8")
+    public String deleteRestaurantTable(HttpServletRequest request,
+                                      HttpServletResponse response,
+                                      @PathVariable String id){
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        RestaurantTable restaurantTable = restorer.getRestaurant().getRestaurantTables().stream()
+                .filter(table -> table.getId().equals(Long.decode(id))).findFirst().orElse(null);
+
         if (restaurantTable != null) {
             restaurantTableService.deleteRestaurantTable(Long.decode(id));
+            response.setStatus(HttpServletResponse.SC_OK);
+            return AcceptResponses.RESTAURANT_TABLE_DELETED;
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
         }
+    }
+
+    private Restorer getRestorerByJwt(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return restorerService.getByUsername(username);
     }
 
 }

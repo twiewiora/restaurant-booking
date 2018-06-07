@@ -7,7 +7,6 @@ import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.service.ReservationService;
-import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,36 +33,42 @@ public class ReservationController {
 
     private JwtTokenUtil jwtTokenUtil;
 
-    private ReservationService reservationService;
-
-    private RestaurantTableService restaurantTableService;
-
     private RestorerService restorerService;
+
+    private ReservationService reservationService;
 
     @Autowired
     public ReservationController(JwtTokenUtil jwtTokenUtil,
-                                 ReservationService reservationService,
-                                 RestaurantTableService restaurantTableService,
-                                 RestorerService restorerService) {
+                                 RestorerService restorerService,
+                                 ReservationService reservationService) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.reservationService = reservationService;
-        this.restaurantTableService = restaurantTableService;
         this.restorerService = restorerService;
+        this.reservationService = reservationService;
     }
 
     @RequestMapping(value = UrlRequests.POST_RESERVATION_ADD,
             method = RequestMethod.POST,
-            consumes = "application/json; charset=UTF-8")
-    public void createReservation(@RequestBody String json) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String createReservation(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @RequestBody String json) {
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(json);
-            RestaurantTable restaurantTable = restaurantTableService
-                    .getById(jsonNode.get("tableId").asLong());
-            Reservation reservation;
+            RestaurantTable restaurantTable = restorer.getRestaurant().getRestaurantTables().stream()
+                    .filter(table -> table.getId().equals(jsonNode.get("tableId").asLong()))
+                    .findFirst()
+                    .orElse(null);
             if (restaurantTable != null) {
-                reservation = new ReservationBuilder()
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                Reservation reservation = new ReservationBuilder()
                         .restaurantTable(restaurantTable)
                         .reservationDate(sdf.parse(jsonNode.get("date").asText()))
                         .reservationLength(jsonNode.get("length").asInt())
@@ -71,46 +77,86 @@ public class ReservationController {
                         .build();
 
                 reservationService.createReservation(reservation);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+                return AcceptResponses.RESERVATION_CREATED;
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
     @RequestMapping(value = UrlRequests.DELETE_RESERVATION,
-            method = RequestMethod.DELETE)
-    public void deleteReservation(@PathVariable String id){
-        Reservation reservation = reservationService.getById(Long.decode(id));
+            method = RequestMethod.DELETE,
+            produces = "application/json; charset=UTF-8")
+    public String deleteReservation(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @PathVariable String id){
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Set<Reservation> reservations = new HashSet<>();
+        restorer.getRestaurant().getRestaurantTables().forEach(table -> reservations.addAll(table.getReservation()));
+        Reservation reservation = reservations.stream()
+                .filter(res -> res.getId().equals(Long.decode(id)))
+                .findFirst()
+                .orElse(null);
+
         if (reservation != null) {
             reservationService.deleteReservation(Long.decode(id));
+            response.setStatus(HttpServletResponse.SC_OK);
+            return AcceptResponses.RESERVATION_DELETED;
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ErrorResponses.RESERVATION_NOT_FOUND;
         }
     }
 
     @RequestMapping(value = UrlRequests.GET_RESERVATIONS_ONE_TABLE,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
-    public String getReservationsForTable(@PathVariable String id,
+    public String getReservationsForTable(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          @PathVariable String id,
                                           @PathVariable String from,
                                           @PathVariable String to) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        RestaurantTable restaurantTable = restaurantTableService.getById(Long.parseLong(id));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        RestaurantTable restaurantTable = restorer.getRestaurant().getRestaurantTables().stream()
+                .filter(table -> table.getId().equals(Long.parseLong(id)))
+                .findFirst()
+                .orElse(null);
+
         try {
-            Date dateFrom = sdf.parse(from);
-            Date dateTo = sdf.parse(to);
             if (restaurantTable != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                Date dateFrom = sdf.parse(from);
+                Date dateTo = sdf.parse(to);
                 Set<Reservation> reservations = restaurantTable.getReservation();
                 Set<Reservation> filteredReservations = reservations.stream()
                         .filter(reservation -> reservation.getReservationDate().after(dateFrom)
                                 && reservation.getReservationDate().before(dateTo))
                         .collect(Collectors.toSet());
+                response.setStatus(HttpServletResponse.SC_OK);
                 return objectMapper.writeValueAsString(filteredReservations);
             } else {
-                return UrlRequests.ERROR;
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
             }
         } catch (JsonProcessingException | ParseException e) {
             e.printStackTrace();
-            return UrlRequests.ERROR;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
@@ -118,28 +164,37 @@ public class ReservationController {
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
     public String getReservationsForAllTables(HttpServletRequest request,
+                                              HttpServletResponse response,
                                               @PathVariable String from,
                                               @PathVariable String to) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Restaurant restaurant = getRestorerByJwt(request).getRestaurant();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
         try {
-            Date dateFrom = sdf.parse(from);
-            Date dateTo = sdf.parse(to);
+            Restaurant restaurant = restorer.getRestaurant();
             if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                Date dateFrom = sdf.parse(from);
+                Date dateTo = sdf.parse(to);
                 Set<Reservation> reservations = new HashSet<>();
                 restaurant.getRestaurantTables().forEach(table -> reservations.addAll(table.getReservation()));
                 Set<Reservation> filteredReservations = reservations.stream()
                         .filter(reservation -> reservation.getReservationDate().after(dateFrom)
                                 && reservation.getReservationDate().before(dateTo))
                         .collect(Collectors.toSet());
+                response.setStatus(HttpServletResponse.SC_OK);
                 return objectMapper.writeValueAsString(filteredReservations);
             } else {
-                return UrlRequests.ERROR;
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
             }
         } catch (JsonProcessingException | ParseException e) {
             e.printStackTrace();
-            return UrlRequests.ERROR;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
