@@ -1,5 +1,7 @@
 package com.application.restaurantBooking.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public class Restaurant {
 
     private String phoneNumber;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restorer_id", nullable = false)
     private Restorer restorer;
@@ -31,9 +34,11 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private Set<Tag> tags = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = CascadeType.ALL)
     private Set<RestaurantTable> restaurantTables = new HashSet<>();
 
+    @JsonIgnore
     @MapKeyClass(value = DayOfWeek.class)
     @MapKeyEnumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = OpenHours.class)

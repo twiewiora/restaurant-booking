@@ -60,13 +60,19 @@ public class RestaurantController {
         }
         Restaurant restaurant = restorer.getRestaurant();
 
-        if (restaurant != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            response.setStatus(HttpServletResponse.SC_OK);
-            return mapper.createObjectNode().put("restaurantId", restaurant.getId()).toString();
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ErrorResponses.RESTAURANT_NOT_FOUND;
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                response.setStatus(HttpServletResponse.SC_OK);
+                return objectMapper.writeValueAsString(restaurant);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
         }
     }
 
