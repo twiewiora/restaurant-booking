@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,16 +47,22 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void updateRestaurantTags(Long restaurantId, Set<Tag> tags) {
-        Restaurant restaurant = getById(restaurantId);
+    public void updateRestaurantTags(Restaurant restaurant, Set<Tag> tags) {
         restaurant.setTags(tags);
     }
 
     @Override
-    public void addOpenHours(Long restaurantId, Map<DayOfWeek, OpenHours> openHoursMap) {
-        Restaurant restaurant = getById(restaurantId);
+    public void addOpenHours(Restaurant restaurant, Map<DayOfWeek, OpenHours> openHoursMap) {
         openHoursMap.values().forEach(openHours -> openHoursRepository.save(openHours));
         openHoursMap.forEach(restaurant.getOpenHoursMap()::put);
         restaurantRepository.save(restaurant);
+    }
+
+    @Override
+    public void deleteOpenHours(Restaurant restaurant) {
+        List<OpenHours> oldOpenHours = new ArrayList<>(restaurant.getOpenHoursMap().values());
+        restaurant.getOpenHoursMap().clear();
+        restaurantRepository.save(restaurant);
+        oldOpenHours.forEach(openHours -> openHoursRepository.delete(openHours));
     }
 }

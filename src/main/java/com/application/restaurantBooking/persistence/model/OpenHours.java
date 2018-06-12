@@ -13,6 +13,9 @@ public class OpenHours {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Transient
+    private Boolean isClose = false;
+
     @Temporal(TemporalType.TIME)
     @DateTimeFormat(pattern = "HH:mm")
     private Date openHour;
@@ -30,6 +33,10 @@ public class OpenHours {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getIsClose() {
+        return isClose;
     }
 
     public Date getOpenHour() {

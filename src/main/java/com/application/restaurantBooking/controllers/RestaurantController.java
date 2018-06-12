@@ -22,10 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class RestaurantController {
@@ -148,7 +145,7 @@ public class RestaurantController {
                 }
                 restaurant.setTags(tags);
                 restaurantService.updateRestaurant(restaurant);
-                restaurantService.updateRestaurantTags(restaurant.getId(), tags);
+                restaurantService.updateRestaurantTags(restaurant, tags);
                 response.setStatus(HttpServletResponse.SC_OK);
                 return AcceptResponses.RESTAURANT_UPDATED;
             } else {
@@ -207,8 +204,12 @@ public class RestaurantController {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap()
-                        .get(DayOfWeek.valueOf(day.toUpperCase())));
+                OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.valueOf(day.toUpperCase()));
+                if (openHours != null) {
+                    return objectMapper.writeValueAsString(openHours);
+                } else {
+                    return objectMapper.createObjectNode().put("isClose", true).toString();
+                }
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
@@ -242,7 +243,7 @@ public class RestaurantController {
                 Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
                 for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
                     JsonNode dayNode = jsonNode.get(dayOfWeek.toString().toLowerCase());
-                    if (dayNode.isArray()) {
+                    if (dayNode != null && dayNode.isArray()) {
                         OpenHours day = new OpenHoursBuilder()
                                 .openHour(sdf.parse(dayNode.get(0).asText()))
                                 .closeHour(sdf.parse(dayNode.get(1).asText()))
@@ -250,7 +251,8 @@ public class RestaurantController {
                         openHoursMap.put(dayOfWeek, day);
                     }
                 }
-                restaurantService.addOpenHours(restaurant.getId(), openHoursMap);
+                restaurantService.deleteOpenHours(restaurant);
+                restaurantService.addOpenHours(restaurant, openHoursMap);
                 response.setStatus(HttpServletResponse.SC_OK);
                 return AcceptResponses.OPEN_HOURS_UPDATED;
             } else {

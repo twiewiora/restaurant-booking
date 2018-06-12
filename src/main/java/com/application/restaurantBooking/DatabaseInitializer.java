@@ -115,13 +115,13 @@ public class DatabaseInitializer {
             map.put(DayOfWeek.MONDAY, day1);
             map.put(DayOfWeek.THURSDAY, day2);
             map.put(DayOfWeek.WEDNESDAY, day3);
-            restaurantService.addOpenHours(restaurant.getId(), map);
+            restaurantService.addOpenHours(restaurant, map);
 
             OpenHours day4 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("20:30")).build();
             OpenHours day5 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("19:30")).build();
-            map.put(DayOfWeek.MONDAY, day4);
+            map.put(DayOfWeek.SATURDAY, day4);
             map.put(DayOfWeek.SUNDAY, day5);
-            restaurantService.addOpenHours(restaurant.getId(), map);
+            restaurantService.addOpenHours(restaurant, map);
         } catch (ParseException e) {
             e.printStackTrace();
         }

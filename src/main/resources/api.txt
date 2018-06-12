@@ -9,7 +9,7 @@ POST	/api/restaurant/update {"name": "NAME", "city": "CITY", "street": "STREET",
 
 GET	    /api/openHours/all
 GET	    /api/openHours/day=monday
-POST	/api/openHours/update {"FRIDAY": ["12:30:00", "19:30:00"], "MONDAY": ["12:30:00", "22:30:00"]}
+POST	/api/openHours/update {"friday": ["12:30", "19:30"], "monday": ["12:30", "22:30"]}
 
 POST	/api/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
 DELETE	/api/reservation/delete/reservationId=10
