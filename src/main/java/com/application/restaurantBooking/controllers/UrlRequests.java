@@ -12,6 +12,8 @@ public class UrlRequests {
 
     public static final String GET_RESTAURANT_BY_RESTORER = "/api/restaurant";
 
+    public static final String GET_ALL_RESTAURANTS = "/api/restaurant/list";
+
     public static final String POST_RESTAURANT_ADD = "/api/restaurant/add";
 
     public static final String POST_RESTAURANT_UPDATE = "/api/restaurant/update";

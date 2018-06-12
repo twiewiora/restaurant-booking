@@ -35,6 +35,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> getAll() {
+        return restaurantRepository.findAll();
+    }
+
+    @Override
     public Restaurant createRestaurant(Restaurant restaurant) {
         restaurantRepository.save(restaurant);
         return restaurant;
