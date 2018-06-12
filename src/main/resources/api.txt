@@ -14,5 +14,6 @@ POST	/api/openHours/update {"friday": ["12:30", "19:30"], "monday": ["12:30", "2
 
 POST	/api/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
 DELETE	/api/reservation/delete/reservationId=10
+POST    /api/reservation/cancel//reservationId=10
 GET	    /api/reservation/forTable/tableId=5/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
 GET	    /api/reservation/all/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
