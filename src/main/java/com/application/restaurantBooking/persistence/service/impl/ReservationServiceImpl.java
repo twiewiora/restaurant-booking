@@ -31,4 +31,10 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservation(Long id) {
         reservationRepository.deleteById(id);
     }
+
+    @Override
+    public void cancelReservation(Reservation reservation) {
+        reservation.setCancelled(true);
+        reservationRepository.save(reservation);
+    }
 }

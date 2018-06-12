@@ -90,6 +90,34 @@ public class ReservationController {
         }
     }
 
+    @RequestMapping(value = UrlRequests.POST_RESERVATION_CANCEL,
+            method = RequestMethod.POST,
+            produces = "application/json; charset=UTF-8")
+    public String cancelReservation(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @PathVariable String id) {
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Set<Reservation> reservations = new HashSet<>();
+        restorer.getRestaurant().getRestaurantTables().forEach(table -> reservations.addAll(table.getReservation()));
+        Reservation reservation = reservations.stream()
+                .filter(res -> res.getId().equals(Long.decode(id)))
+                .findFirst()
+                .orElse(null);
+
+        if (reservation != null) {
+            reservationService.cancelReservation(reservation);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return AcceptResponses.RESERVATION_CANCELLED;
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ErrorResponses.RESERVATION_NOT_FOUND;
+        }
+    }
+
     @RequestMapping(value = UrlRequests.DELETE_RESERVATION,
             method = RequestMethod.DELETE,
             produces = "application/json; charset=UTF-8")

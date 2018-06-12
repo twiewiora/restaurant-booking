@@ -24,6 +24,8 @@ public class UrlRequests {
 
     public static final String POST_RESERVATION_ADD = "/api/reservation/add";
 
+    public static final String POST_RESERVATION_CANCEL = "/api/reservation/cancel/reservationId={id}";
+
     public static final String DELETE_RESERVATION = "/api/reservation/delete/reservationId={id}";
 
     public static final String GET_RESERVATIONS_ONE_TABLE = "/api/reservation/forTable/tableId={id}/dateFrom={from}/dateTo={to}";

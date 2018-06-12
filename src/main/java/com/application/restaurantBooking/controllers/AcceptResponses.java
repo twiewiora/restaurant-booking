@@ -30,4 +30,7 @@ public class AcceptResponses {
     public static final String RESERVATION_DELETED = mapper
             .createObjectNode().put("desc", "Reservation deleted").toString();
 
+    public static final String RESERVATION_CANCELLED = mapper
+            .createObjectNode().put("desc", "Reservation cancelled").toString();
+
 }
