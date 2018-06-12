@@ -20,7 +20,7 @@ public class RestaurantTable {
     private Restaurant restaurant;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurantTable", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurantTable", orphanRemoval = true)
     private Set<Reservation> reservation = new HashSet<>();
 
     private Integer maxPlaces;

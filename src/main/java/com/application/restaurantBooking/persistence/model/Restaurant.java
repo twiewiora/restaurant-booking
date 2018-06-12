@@ -31,7 +31,7 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private Set<Tag> tags = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", orphanRemoval = true)
     private Set<RestaurantTable> restaurantTables = new HashSet<>();
 
     @MapKeyClass(value = DayOfWeek.class)

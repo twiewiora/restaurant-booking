@@ -16,7 +16,7 @@ public class Restorer {
 
     private String password;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "restorer", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "restorer", orphanRemoval = true)
     private Restaurant restaurant;
 
     private Boolean enabled = true;
