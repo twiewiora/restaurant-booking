@@ -266,6 +266,21 @@ public class RestaurantController {
         }
     }
 
+    @RequestMapping(value = UrlRequests.GET_TAGS,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getTags(HttpServletResponse response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.setStatus(HttpServletResponse.SC_OK);
+            return objectMapper.writeValueAsString(Tag.values());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
     private Restorer getRestorerByJwt(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader).substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);

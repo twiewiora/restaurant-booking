@@ -6,6 +6,7 @@ DELETE	/api/table/delete/tableId=5
 GET	    /api/restaurant
 POST	/api/restaurant/add {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
 POST	/api/restaurant/update {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+GET     /api/
 
 GET	    /api/openHours/all
 GET	    /api/openHours/day=monday
