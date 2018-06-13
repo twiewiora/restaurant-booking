@@ -23,6 +23,9 @@ export class AuthenticationService {
 
   logout() {
     localStorage.removeItem("jwt");
+    if (localStorage.getItem("rest")) {
+      localStorage.removeItem("rest");
+    }
     this._router.navigate(['/start']);
   }
 
@@ -40,11 +43,10 @@ export class AuthenticationService {
         this.restaurantService.getRestaurant()
           .subscribe(
             data => {
-              debugger;
+              localStorage.setItem("rest", "ok");
               this._router.navigate(['/reservation']);
             },
-            _ => {
-              debugger;
+            err =>{
               this._router.navigate(['/initialize']);
             });
 
