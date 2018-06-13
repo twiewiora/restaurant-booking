@@ -16,11 +16,22 @@ export enum Weekday {
 
 export class OpenHours implements IOpenHours {
   id: number;
-  openHour: string;
-  closeHour: string;
+  openHour: string = '';
+  closeHour: string = '';
   weekday: Weekday;
 
   constructor() {
+  }
+
+  public static createNewOpenHoursWeek(): Map<Weekday,OpenHours>{
+    let openHoursWeek: Map<Weekday, OpenHours> = new Map<Weekday,OpenHours>();
+    for (let dayValue in Weekday) {
+      let weekday = dayValue.toUpperCase();
+      let openHours = new OpenHours();
+      openHours.weekday = <Weekday>weekday;
+      openHoursWeek.set(<Weekday>weekday, openHours);
+    }
+    return openHoursWeek;
   }
 
   public static fromJsonArray(json: string): Map<Weekday, OpenHours> {

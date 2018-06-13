@@ -1,10 +1,17 @@
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {of} from "rxjs/observable/of";
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
 import {IRestaurant, Restaurant} from "../model/restaurant";
+
+const headers = new HttpHeaders({
+  'Content-Type': 'application/json'
+});
+const options = {
+  headers: headers,
+};
 
 @Injectable()
 export class RestaurantInfoService {
@@ -15,13 +22,13 @@ export class RestaurantInfoService {
 
   getRestaurant(): Observable<IRestaurant> {
     return this.http.get<IRestaurant>(`/api/restaurant`)
-      // .pipe(
-      //   catchError(this.handleError('getRestaurant', new Restaurant()))
-      // );
+      .pipe(
+        catchError(this.handleError('getRestaurant', new Restaurant()))
+      );
   }
 
   createRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
-    return this.http.post<IRestaurant>(`/api/restaurant/add`, restaurant.toJson())
+    return this.http.post<IRestaurant>(`/api/restaurant/add`, restaurant.toJson(), options)
       .pipe(
         catchError(this.handleError('createRestaurant', new Restaurant()))
       );
@@ -29,7 +36,7 @@ export class RestaurantInfoService {
 
 
   updateRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
-    return this.http.post<IRestaurant>(`/api/restaurant/update`, restaurant.toJson())
+    return this.http.post<IRestaurant>(`/api/restaurant/update`, restaurant.toJson(), options)
       .pipe(
         catchError(this.handleError('updateRestaurant', new Restaurant()))
       );

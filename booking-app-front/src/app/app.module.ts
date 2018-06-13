@@ -29,6 +29,7 @@ import {MapValuesPipe} from "./component/pipes/map-values-pipe";
 import { AddReservationComponent } from './component/reservation/add-reservation/add-reservation.component';
 import { InitialComponent } from './component/initial/initial.component';
 import {InitialGuard} from "./guard/initial-guard";
+import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-info/restaurant-info.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {InitialGuard} from "./guard/initial-guard";
     TableListComponent,
     MapValuesPipe,
     AddReservationComponent,
-    InitialComponent
+    InitialComponent,
+    RestaurantInfoComponent
   ],
   imports: [
     NgbModule.forRoot(),

@@ -15,7 +15,7 @@ export class OpenHoursComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOpeningHours();
+    this.getOpeningHours()
   }
 
   updateOpenHours() {
@@ -26,7 +26,10 @@ export class OpenHoursComponent implements OnInit {
 
   getOpeningHours() {
     this.openHoursService.getOpeningHoursForAllDays().subscribe(request => {
-      this.OpenHoursWeek = OpenHours.fromJsonArray(request);
-    });
+        this.OpenHoursWeek = OpenHours.fromJsonArray(request);
+      },
+      _ => {
+        this.OpenHoursWeek = OpenHours.createNewOpenHoursWeek();
+      });
   }
 }

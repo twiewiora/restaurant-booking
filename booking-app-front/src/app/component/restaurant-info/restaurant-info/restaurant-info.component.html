@@ -1,0 +1,41 @@
+<div class="container">
+  <div *ngIf="!edit">
+    {{restaurant.city}}
+    {{restaurant.id}}
+    {{restaurant.street}}
+    {{restaurant.phoneNumber}}
+    <div *ngFor="let tag of restaurant.tags">
+      {{tag}}
+    </div>
+  </div>
+  <div *ngIf="edit">
+    <form>
+      <div class="form-group">
+        <label for="name">name</label>
+        <input type="text" [(ngModel)]="restaurant.name" class="form-control" id="name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="city">city</label>
+        <input type="text" [(ngModel)]="restaurant.city" class="form-control" id="city" name="city" required>
+      </div>
+
+      <div class="form-group">
+        <label for="street">street</label>
+        <input type="text" [(ngModel)]="restaurant.street" class="form-control" id="street" name="street" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">tel</label>
+        <input type="number" [(ngModel)]="restaurant.phoneNumber" class="form-control" id="phone" name="phone">
+      </div>
+
+      <div class="form-group">
+        <label for="tags">Tags</label>
+        <input type="text" [(ngModel)]="restaurant.tags" class="form-control" id="tags" name="tags" required>
+      </div>
+
+      <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
+    </form>
+  </div>
+</div>
