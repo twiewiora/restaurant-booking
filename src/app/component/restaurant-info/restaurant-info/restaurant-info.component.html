@@ -1,41 +1,58 @@
 <div class="container">
+
   <div *ngIf="!edit">
-    {{restaurant.city}}
-    {{restaurant.id}}
-    {{restaurant.street}}
-    {{restaurant.phoneNumber}}
-    <div *ngFor="let tag of restaurant.tags">
-      {{tag}}
-    </div>
+
+    <dl class="row">
+      <dt class="col-sm-3">Name</dt>
+      <dd class="col-sm-9">{{restaurant.name}}</dd>
+
+      <dt class="col-sm-3">City</dt>
+      <dd class="col-sm-9">{{restaurant.name}}</dd>
+
+      <dt class="col-sm-3">Street</dt>
+      <dd class="col-sm-9">{{restaurant.street}}</dd>
+
+      <dt class="col-sm-3">PhoneNumber</dt>
+      <dd class="col-sm-9">{{restaurant.phoneNumber}}</dd>
+
+      <dt class="col-sm-3">Tags</dt>
+      <tag-input class="col-sm-9"
+                 [ngModel]="restaurant.tags"
+                 [removable]="false"
+                 [hideForm]="true"></tag-input>
+    </dl>
   </div>
   <div *ngIf="edit">
-    <form>
-      <div class="form-group">
-        <label for="name">name</label>
-        <input type="text" [(ngModel)]="restaurant.name" class="form-control" id="name" name="name" required>
-      </div>
 
-      <div class="form-group">
-        <label for="city">city</label>
-        <input type="text" [(ngModel)]="restaurant.city" class="form-control" id="city" name="city" required>
-      </div>
+    <label for="name">Name</label>
+    <input type="text" [(ngModel)]="restaurant.name" class="form-control" id="name" name="name" required>
 
-      <div class="form-group">
-        <label for="street">street</label>
-        <input type="text" [(ngModel)]="restaurant.street" class="form-control" id="street" name="street" required>
-      </div>
+    <label for="city">City</label>
+    <input type="text" [(ngModel)]="restaurant.city" class="form-control" id="city" name="city" required>
 
-      <div class="form-group">
-        <label for="phone">tel</label>
-        <input type="number" [(ngModel)]="restaurant.phoneNumber" class="form-control" id="phone" name="phone">
-      </div>
+    <label for="street">Street</label>
+    <input type="text" [(ngModel)]="restaurant.street" class="form-control" id="street" name="street" required>
 
-      <div class="form-group">
-        <label for="tags">Tags</label>
-        <input type="text" [(ngModel)]="restaurant.tags" class="form-control" id="tags" name="tags" required>
-      </div>
+    <label for="phone">Tel</label>
+    <input type="number" [(ngModel)]="restaurant.phoneNumber" class="form-control" id="phone" name="phone">
 
-      <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
-    </form>
+    <label>Tags</label>
+
+    <tag-input [(ngModel)]="restaurant.tags"
+               [onlyFromAutocomplete]="true"
+               [modelAsStrings]="true">
+      <tag-input-dropdown
+        [showDropdownIfEmpty]="false"
+        [autocompleteItems]="autocompleteItems">
+      </tag-input-dropdown>
+    </tag-input>
+
+    <!--<div *ngIf="isCreate()">-->
+    <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
+    <!--</div>-->
+    <!--<div *ngIf="isUpdate()">-->
+    <button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>
+    <!--</div>-->
+
   </div>
 </div>

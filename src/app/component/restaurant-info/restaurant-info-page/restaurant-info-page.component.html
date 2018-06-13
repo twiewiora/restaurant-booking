@@ -1,4 +1,5 @@
 <div class="container">
-  <app-restaurant-info [edit]="edit"></app-restaurant-info>
+  <button (click)="toggleEdit()">edit</button>
+  <app-restaurant-info [edit]="edit" [action]="action"></app-restaurant-info>
   <app-open-hours [edit]="edit"></app-open-hours>
 </div>

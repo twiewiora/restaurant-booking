@@ -30,6 +30,8 @@ import { AddReservationComponent } from './component/reservation/add-reservation
 import { InitialComponent } from './component/initial/initial.component';
 import {InitialGuard} from "./guard/initial-guard";
 import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-info/restaurant-info.component';
+import {RlTagInputModule} from "angular2-tags/dist";
+import {TagInputModule} from "ngx-chips";
 
 
 @NgModule({
@@ -53,6 +55,8 @@ import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-
   ],
   imports: [
     NgbModule.forRoot(),
+    RlTagInputModule,
+    TagInputModule,
     BrowserModule,
     HttpClientModule,
     FormsModule,

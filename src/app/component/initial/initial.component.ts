@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Action} from "../restaurant-info/restaurant-info/restaurant-info.component";
 
 @Component({
   selector: 'app-initial',
@@ -8,6 +9,7 @@ import {Component, OnInit} from '@angular/core';
 
 export class InitialComponent implements OnInit {
   edit: boolean = true;
+  action: Action = Action.Create;
 
   constructor() {
   }

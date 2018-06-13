@@ -28,15 +28,16 @@ export class RestaurantInfoService {
   }
 
   createRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
-    return this.http.post<IRestaurant>(`/api/restaurant/add`, restaurant.toJson(), options)
+    return this.http.post<IRestaurant>(`/api/restaurant/add`, Restaurant.toJson(restaurant), options)
       .pipe(
         catchError(this.handleError('createRestaurant', new Restaurant()))
       );
   }
 
 
-  updateRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
-    return this.http.post<IRestaurant>(`/api/restaurant/update`, restaurant.toJson(), options)
+  updateRestaurant(restaurant: IRestaurant): Observable<Restaurant> {
+    debugger;
+    return this.http.post<Restaurant>(`/api/restaurant/update`, Restaurant.toJson(restaurant), options)
       .pipe(
         catchError(this.handleError('updateRestaurant', new Restaurant()))
       );
