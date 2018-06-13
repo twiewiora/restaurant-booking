@@ -6,7 +6,6 @@ export interface IRestaurant{
   street: string;
   phoneNumber: number;
   tags: string[];
-  toJson(): string;
 
 }
 
@@ -15,22 +14,22 @@ export class Restaurant implements IRestaurant {
 
   restorerId: number;
   id: number;
-  name: string;
-  city: string;
-  street: string;
+  name: string = '';
+  city: string = '';
+  street: string = '';
   phoneNumber: number;
-  tags: string[];
+  tags: string[] = [];
 
   constructor() { }
 
-  toJson(): string {
+  static toJson(restaurant: IRestaurant): string {
+    debugger;
     return JSON.stringify({
-      restorerId: this.restorerId,
-      name: this.name,
-      city: this.city,
-      street: this.street,
-      phoneNumber: this.phoneNumber,
-      tags: this.tags
+      name: restaurant.name,
+      city: restaurant.city,
+      street: restaurant.street,
+      phoneNumber: restaurant.phoneNumber,
+      tags: restaurant.tags
     });
   }
 

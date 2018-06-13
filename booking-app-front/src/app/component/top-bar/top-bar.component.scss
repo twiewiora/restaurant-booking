@@ -1,0 +1,12 @@
+@import "../../../styles";
+
+.right-side-navbar {
+  display: flex;
+
+  .adjust-time-display {
+    align-self: center;
+    padding-right: $main-padding-length;
+  }
+}
+
+

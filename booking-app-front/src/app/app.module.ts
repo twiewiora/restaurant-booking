@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './component/login/login.component';
@@ -18,15 +19,23 @@ import { ReservationPageComponent } from './component/reservation/reservation-pa
 import { RestaurantInfoPageComponent } from './component/restaurant-info/restaurant-info-page/restaurant-info-page.component';
 import { TopBarComponent } from './component/top-bar/top-bar.component';
 import {TableService} from "./service/table.service";
-import {TimeTableService} from "./service/timeTable.service";
+import {OpenHoursService} from "./service/open-hours.service";
 import {RestaurantInfoService} from "./service/restaurantInfo.service";
 import {ReservationService} from "./service/reservation.service";
 import { OpenHoursComponent } from './component/restaurant-info/open-hours/open-hours.component';
+import { TableListComponent } from './component/table-setting/table-list/table-list.component';
+import {TableCommunicationService} from "./component/table-setting/table-communication.service";
+import {MapValuesPipe} from "./component/pipes/map-values-pipe";
+import { AddReservationComponent } from './component/reservation/add-reservation/add-reservation.component';
+import { InitialComponent } from './component/initial/initial.component';
+import {InitialGuard} from "./guard/initial-guard";
+import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-info/restaurant-info.component';
+import {RlTagInputModule} from "angular2-tags/dist";
+import {TagInputModule} from "ngx-chips";
 
 
 @NgModule({
   declarations: [
-    AppComponent,
     AppComponent,
     LoginComponent,
     RegistrationComponent,
@@ -37,9 +46,17 @@ import { OpenHoursComponent } from './component/restaurant-info/open-hours/open-
     ReservationPageComponent,
     RestaurantInfoPageComponent,
     TopBarComponent,
-    OpenHoursComponent
+    OpenHoursComponent,
+    TableListComponent,
+    MapValuesPipe,
+    AddReservationComponent,
+    InitialComponent,
+    RestaurantInfoComponent
   ],
   imports: [
+    NgbModule.forRoot(),
+    RlTagInputModule,
+    TagInputModule,
     BrowserModule,
     HttpClientModule,
     FormsModule,
@@ -48,16 +65,18 @@ import { OpenHoursComponent } from './component/restaurant-info/open-hours/open-
   providers: [
     AuthGuard,
     HomeGuard,
-    AuthenticationService,
+    InitialGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
     },
+    AuthenticationService,
     TableService,
-    TimeTableService,
+    OpenHoursService,
     RestaurantInfoService,
-    ReservationService
+    ReservationService,
+    TableCommunicationService
   ],
   bootstrap: [AppComponent]
 })

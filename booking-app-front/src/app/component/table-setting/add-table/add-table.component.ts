@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
+import {TableCommunicationService} from "../table-communication.service";
 
 @Component({
   selector: 'app-add-table',
@@ -11,7 +12,8 @@ export class AddTableComponent implements OnInit {
 
   table: Table = new Table();
 
-  constructor(private tableService: TableService) {
+  constructor(private tableService: TableService,
+              private tableCommunicationService: TableCommunicationService) {
   }
 
   ngOnInit() {
@@ -19,7 +21,10 @@ export class AddTableComponent implements OnInit {
 
   addTable(table: ITable) {
     table.restaurantId = 2;
-    this.tableService.addTable(table).subscribe();
+    this.tableService.addTable(table).subscribe( any =>
+    {
+      this.tableCommunicationService.tableAdded(true);
+    });
   }
 
 }

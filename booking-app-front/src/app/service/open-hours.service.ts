@@ -4,8 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {of} from "rxjs/observable/of";
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
-import {ITimeTable, OpenDay, TimeTable} from "../model/timetable";
-import {WeekDay} from "@angular/common";
+import {OpenHours} from "../model/open-hours";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -15,30 +14,34 @@ const options = {
 };
 
 @Injectable()
-export class TimeTableService {
+export class OpenHoursService {
 
   constructor(private _router: Router,
               private http: HttpClient) {
   }
 
 
-  getOpeningHoursForAllDays(restaurantId: number): Observable<any> {
-    return this.http.get<any>(`/api/openHours/restaurantId=${restaurantId}/all`)
+  getOpeningHoursForAllDays(): Observable<any> {
+    return this.http.get<any>(`/api/openHours//all`)
       .pipe(
         catchError(this.handleError('getOpeningHoursForAllDays', [])));
   }
 
-  getOpeningHoursForDay(restaurantId: number, day: string): Observable<OpenDay> {
-    return this.http.get<OpenDay>(`/api/openHours/restaurantId=${restaurantId}/day=${day}`)
+  getOpeningHoursForDay(day: string): Observable<OpenHours> {
+    return this.http.get<OpenHours>(`/api/openHours/day=${day}`)
       .pipe(
-        catchError(this.handleError('getOpeningHoursForDay', new OpenDay()))
+        catchError(this.handleError('getOpeningHoursForDay', new OpenHours()))
       );
   }
 
-  updateOpenHours(restaurantId: number, json: string): Observable<any> {
+// {"restaurantId": 2, "wednesday":["12:30:00", "22:30:00"], "monday":["12:30:00", "22:30:00"],  "tuesday":["12:30:00", "22:30:00"],  "thursday":["12:30:00", "22:30:00"],
+//   "friday":["12:30:00", "22:30:00"],  "saturday":["12:30:00", "22:30:00"],  "sunday":["12:30:00", "22:30:00"]
+// }
+
+  updateOpenHours(json: string): Observable<any> {
     return this.http.post<any>(`/api/openHours/update`, json, options)
       .pipe(
-        catchError(this.handleError('getOpeningHoursForAllDays', new TimeTable()))
+        catchError(this.handleError('getOpeningHoursForAllDays', []))
       );
   }
 

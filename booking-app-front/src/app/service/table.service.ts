@@ -20,8 +20,8 @@ export class TableService {
               private http: HttpClient) {
   }
 
-  getTables(id: number): Observable<ITable[]> {
-    return this.http.get<ITable[]>(`/api/table/restaurantId=${id}`)
+  getTables(): Observable<ITable[]> {
+    return this.http.get<ITable[]>(`/api/tables`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );
@@ -29,6 +29,13 @@ export class TableService {
 
   addTable(table: ITable): Observable<ITable> {
     return this.http.post<ITable>(`/api/table/add`, table.toJson(), options)
+      .pipe(
+        catchError(this.handleError('addTable', new Table()))
+      );
+  }
+
+  updateTable(table: ITable): Observable<ITable> {
+    return this.http.post<ITable>(`/api/table/update`, table.toJson(), options)
       .pipe(
         catchError(this.handleError('addTable', new Table()))
       );

@@ -1,3 +1,24 @@
-<p>
-  open-hours works!
-</p>
+<div class="container">
+
+  {{edit}}
+  <h4>Open:</h4>
+  <div *ngFor="let openHours of OpenHoursWeek | mapValues">
+    <h5>{{openHours.key}}</h5>
+    <div *ngIf="!edit">
+      <div *ngIf="openHours.value.isSet()">
+        open: {{openHours.value.openHour}} - {{openHours.value.closeHour}}
+      </div>
+      <div *ngIf="!openHours.value.isSet()">
+        closed
+      </div>
+    </div>
+    <div *ngIf="edit">
+      <input type="time" [(ngModel)]="openHours.value.openHour"/>
+      -
+      <input type="time" [(ngModel)]="openHours.value.closeHour"/>
+    </div>
+  </div>
+  <div *ngIf="edit">
+    <button (click)="updateOpenHours()">Update</button>
+  </div>
+</div>
