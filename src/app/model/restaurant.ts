@@ -15,11 +15,11 @@ export class Restaurant implements IRestaurant {
 
   restorerId: number;
   id: number;
-  name: string;
-  city: string;
-  street: string;
+  name: string = '';
+  city: string = '';
+  street: string = '';
   phoneNumber: number;
-  tags: string[];
+  tags: string[] = [];
 
   constructor() { }
 
