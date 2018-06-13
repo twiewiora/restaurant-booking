@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {RestaurantInfoService} from "../../../service/restaurantInfo.service";
 import {IRestaurant} from "../../../model/restaurant";
+import {Action} from "../restaurant-info/restaurant-info.component";
 
 @Component({
   selector: 'app-restaurant-info-page',
@@ -11,6 +12,7 @@ export class RestaurantInfoPageComponent implements OnInit {
 
   restaurant: IRestaurant;
   edit: boolean = false;
+  action: Action = Action.Update;
 
   //oneDay: OpenHours;
 
