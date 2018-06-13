@@ -39,7 +39,6 @@ export class OpenHours implements IOpenHours {
   }
 
   public static toJson(openHoursWeek: Map<Weekday,OpenHours>): string {
-    debugger;
     return JSON.stringify({
       sunday: [openHoursWeek.get(Weekday.Sunday).openHour, openHoursWeek.get(Weekday.Sunday).closeHour],
       monday: [openHoursWeek.get(Weekday.Monday).openHour, openHoursWeek.get(Weekday.Monday).closeHour],

@@ -11,9 +11,13 @@ export class HomeGuard implements CanActivate {
       // logged in so return true
       return true;
     }
-
-    // not logged in so redirect to login page with the return url
-    this.router.navigate(['/reservations'], { queryParams: { returnUrl: state.url }});
-    return false;
+    if(localStorage.getItem('rest')){
+      this.router.navigate(['/reservation'], { queryParams: { returnUrl: state.url }});
+      return false;
+    }
+    else{
+      this.router.navigate(['/initialize'], { queryParams: { returnUrl: state.url }});
+      return false;
+    }
   }
 }

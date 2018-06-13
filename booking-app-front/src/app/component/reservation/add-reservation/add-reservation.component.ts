@@ -18,7 +18,6 @@ export class AddReservationComponent implements OnInit {
   }
 
   addReservation(reservation: IReservation) {
-    debugger;
     this.reservation.dateReservation = this.reservation.dateReservation.replace('T', '_');
     debugger;
     this.reservationService.addReservation(reservation).subscribe(any => {
