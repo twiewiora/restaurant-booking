@@ -4,6 +4,8 @@ public class UrlRequests {
 
     public static final String GET_TABLES_FOR_RESTAURANT = "/api/tables";
 
+    public static final String GET_TABLES_BY_SEARCH = "/api/tables/search";
+
     public static final String POST_TABLE_ADD = "/api/table/add";
 
     public static final String POST_TABLE_UPDATE = "/api/table/update";
@@ -17,6 +19,8 @@ public class UrlRequests {
     public static final String POST_RESTAURANT_ADD = "/api/restaurant/add";
 
     public static final String POST_RESTAURANT_UPDATE = "/api/restaurant/update";
+
+    public static final String GET_RESTAURANT_FREE_DATES = "/api/restaurant{id}/freeDates";
 
     public static final String GET_OPEN_HOURS_ALL = "/api/openHours/all";
 
@@ -33,6 +37,8 @@ public class UrlRequests {
     public static final String GET_RESERVATIONS_ONE_TABLE = "/api/reservation/forTable/tableId={id}/dateFrom={from}/dateTo={to}";
 
     public static final String GET_RESERVATIONS_ALL_TABLES = "/api/reservation/all/dateFrom={from}/dateTo={to}";
+
+    public static final String POST_RESERVATION_ADD_BY_CLIENT = "/api/restaurant{id}/reservation/add";
 
     public static final String GET_TAGS = "/api/tags";
 

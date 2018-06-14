@@ -7,6 +7,8 @@ import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.service.RestaurantTableService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
+import com.application.restaurantBooking.utils.TableSearcher;
+import com.application.restaurantBooking.utils.TableSearcherRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 @RestController
 public class RestaurantTableController {
@@ -30,13 +35,17 @@ public class RestaurantTableController {
 
     private RestaurantTableService restaurantTableService;
 
+    private TableSearcher tableSearcher;
+
     @Autowired
     public RestaurantTableController(JwtTokenUtil jwtTokenUtil,
                                      RestorerService restorerService,
-                                     RestaurantTableService restaurantTableService){
+                                     RestaurantTableService restaurantTableService,
+                                     TableSearcher tableSearcher){
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
         this.restaurantTableService = restaurantTableService;
+        this.tableSearcher = tableSearcher;
     }
 
     @RequestMapping(value = UrlRequests.GET_TABLES_FOR_RESTAURANT,
@@ -61,6 +70,41 @@ public class RestaurantTableController {
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
             }
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.GET_TABLES_BY_SEARCH,
+            method = RequestMethod.GET,
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String getTablesBySearch(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @RequestBody String json) {
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restorer.getRestaurant();
+
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(json);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
+                        jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
+                List<RestaurantTable> tables = tableSearcher.searchTableByRequest(restaurant, tableRequest);
+                response.setStatus(HttpServletResponse.SC_OK);
+                return objectMapper.writeValueAsString(tables);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;
