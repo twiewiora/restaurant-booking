@@ -3,15 +3,15 @@ package com.application.restaurantBooking.controllers;
 import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
 import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
-import com.application.restaurantBooking.persistence.model.OpenHours;
-import com.application.restaurantBooking.persistence.model.Restaurant;
-import com.application.restaurantBooking.persistence.model.Restorer;
-import com.application.restaurantBooking.persistence.model.Tag;
+import com.application.restaurantBooking.persistence.model.*;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
+import com.application.restaurantBooking.utils.TableSearcher;
+import com.application.restaurantBooking.utils.TableSearcherRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -36,13 +36,17 @@ public class RestaurantController {
 
     private RestaurantService restaurantService;
 
+    private TableSearcher tableSearcher;
+
     @Autowired
     public RestaurantController(JwtTokenUtil jwtTokenUtil,
                                 RestorerService restorerService,
-                                RestaurantService restaurantService) {
+                                RestaurantService restaurantService,
+                                TableSearcher tableSearcher) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
+        this.tableSearcher = tableSearcher;
     }
 
     @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
@@ -288,8 +292,44 @@ public class RestaurantController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(HttpServletResponse.SC_OK);
-            return objectMapper.writeValueAsString(restaurantService.getAll());
+            ArrayNode restaurantArray = objectMapper.createArrayNode();
+            for (Restaurant restaurant : restaurantService.getAll()) {
+                restaurantArray.add(objectMapper.writeValueAsString(restaurant));
+            }
+            return objectMapper.createObjectNode().putPOJO("restaurants", restaurantArray).toString();
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
+            method = RequestMethod.GET,
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String getTablesBySearch(HttpServletResponse response,
+                                    @RequestBody String json,
+                                    @PathVariable String id) {
+        Restaurant restaurant = restaurantService.getById(Long.decode(id));
+
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(json);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
+                        jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
+                List<String> proposalHours = tableSearcher.getProposalStartHourReservation(restaurant, tableRequest);
+                response.setStatus(HttpServletResponse.SC_OK);
+                ArrayNode proposalArray = objectMapper.createArrayNode();
+                proposalHours.forEach(proposalArray::add);
+                return objectMapper.createObjectNode().putPOJO("proposalHours", proposalArray).toString();
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;

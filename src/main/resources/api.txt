@@ -1,6 +1,7 @@
 # Restorer
 
 GET     /api/tables
+GET     /api/tables/search {"date": "2018-06-06_16:16", "length": "2", "places": "5"}
 POST	/api/table/add {"maxPlaces": "10"}
 POST	/api/table/update {"tableId": "5", "maxPlaces": "10"}
 DELETE	/api/table/delete/tableId=5
@@ -23,3 +24,6 @@ GET	    /api/reservation/all/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
 # Client
 
 GET     /api/restaurant/list
+
+GET     /api/restaurant{id}/freeDates {"date": "2018-06-06", "length": "2", "places": "5"}
+POST	/api/restaurant{id}/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}

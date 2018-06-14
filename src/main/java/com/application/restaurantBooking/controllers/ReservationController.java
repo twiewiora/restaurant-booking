@@ -7,6 +7,7 @@ import com.application.restaurantBooking.persistence.model.Restaurant;
 import com.application.restaurantBooking.persistence.model.RestaurantTable;
 import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.service.ReservationService;
+import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,13 +38,17 @@ public class ReservationController {
 
     private ReservationService reservationService;
 
+    private RestaurantService restaurantService;
+
     @Autowired
     public ReservationController(JwtTokenUtil jwtTokenUtil,
                                  RestorerService restorerService,
-                                 ReservationService reservationService) {
+                                 ReservationService reservationService,
+                                 RestaurantService restaurantService) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
         this.reservationService = reservationService;
+        this.restaurantService = restaurantService;
     }
 
     @RequestMapping(value = UrlRequests.POST_RESERVATION_ADD,
@@ -220,6 +225,50 @@ public class ReservationController {
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
             }
         } catch (JsonProcessingException | ParseException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.POST_RESERVATION_ADD_BY_CLIENT,
+            method = RequestMethod.POST,
+            consumes = "application/json; charset=UTF-8",
+            produces = "application/json; charset=UTF-8")
+    public String createReservationByClient(HttpServletResponse response,
+                                            @RequestBody String json,
+                                            @PathVariable String id) {
+        Restaurant restaurant = restaurantService.getById(Long.decode(id));
+        if (restaurant == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ErrorResponses.RESTAURANT_NOT_FOUND;
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(json);
+            RestaurantTable restaurantTable = restaurant.getRestaurantTables().stream()
+                    .filter(table -> table.getId().equals(jsonNode.get("tableId").asLong()))
+                    .findFirst()
+                    .orElse(null);
+            if (restaurantTable != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                Reservation reservation = new ReservationBuilder()
+                        .restaurantTable(restaurantTable)
+                        .reservationDate(sdf.parse(jsonNode.get("date").asText()))
+                        .reservationLength(jsonNode.get("length").asInt())
+                        .reservedPlaces(jsonNode.get("places").asInt())
+                        .comment(jsonNode.get("comment").asText())
+                        .build();
+
+                reservationService.createReservation(reservation);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+                return AcceptResponses.RESERVATION_CREATED;
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
+            }
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;
