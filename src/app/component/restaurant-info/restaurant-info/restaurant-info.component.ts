@@ -11,14 +11,9 @@ import {Router} from "@angular/router";
 export class RestaurantInfoComponent implements OnInit {
 
   restaurant: Restaurant;
-  editRestaurant: IRestaurant;
   @Input() edit: boolean;
   @Input() action: Action;
-  public tags: string[] = [];
-  public autocompleteItems: string[] = [
-    'PIZZA',
-    'KEBAB',
-  ];
+  public autocompleteItems: string[] = [];
 
   constructor(private restaurantInfoService: RestaurantInfoService,
               private router: Router) {
@@ -26,6 +21,7 @@ export class RestaurantInfoComponent implements OnInit {
 
   ngOnInit() {
     this.getRestaurant();
+    this.getTags();
   }
 
   getRestaurant() {
@@ -51,19 +47,10 @@ export class RestaurantInfoComponent implements OnInit {
     });
   }
 
-  isCreate() {
-    if (this.action === Action.Create) {
-      return true;
-    }
-    return false;
-  }
-
-
-  isUpdate() {
-    if (this.action === Action.Update) {
-      return true;
-    }
-    return false;
+  getTags(){
+    this.restaurantInfoService.getTags().subscribe(tags =>{
+      this.autocompleteItems = <string[]> tags;
+    })
   }
 }
 

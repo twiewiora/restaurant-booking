@@ -36,4 +36,9 @@ export class RestaurantInfoPageComponent implements OnInit {
   toggleEdit(){
     this.edit = !this.edit;
   }
+
+
+  save(){
+
+  }
 }

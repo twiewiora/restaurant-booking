@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, SimpleChange} from '@angular/core';
 import {OpenHours, Weekday} from "../../../model/open-hours";
 import {OpenHoursService} from "../../../service/open-hours.service";
+import {Time} from "@angular/common";
 
 @Component({
   selector: 'app-open-hours',
@@ -9,6 +10,7 @@ import {OpenHoursService} from "../../../service/open-hours.service";
 })
 export class OpenHoursComponent implements OnInit {
   @Input() edit: boolean;
+  @Input() save: boolean;
   OpenHoursWeek: Map<Weekday, OpenHours>;
 
   constructor(private openHoursService: OpenHoursService) {
@@ -32,4 +34,7 @@ export class OpenHoursComponent implements OnInit {
         this.OpenHoursWeek = OpenHours.createNewOpenHoursWeek();
       });
   }
+
+
+
 }

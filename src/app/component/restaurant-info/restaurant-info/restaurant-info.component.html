@@ -7,7 +7,7 @@
       <dd class="col-sm-9">{{restaurant.name}}</dd>
 
       <dt class="col-sm-3">City</dt>
-      <dd class="col-sm-9">{{restaurant.name}}</dd>
+      <dd class="col-sm-9">{{restaurant.city}}</dd>
 
       <dt class="col-sm-3">Street</dt>
       <dd class="col-sm-9">{{restaurant.street}}</dd>
@@ -47,12 +47,12 @@
       </tag-input-dropdown>
     </tag-input>
 
-    <!--<div *ngIf="isCreate()">-->
-    <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
-    <!--</div>-->
-    <!--<div *ngIf="isUpdate()">-->
-    <button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>
-    <!--</div>-->
+    <div *ngIf="this.action === 1">
+      <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
+    </div>
+    <div *ngIf="this.action === 0">
+      <button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>
+    </div>
 
   </div>
 </div>

@@ -32,6 +32,7 @@ import {InitialGuard} from "./guard/initial-guard";
 import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-info/restaurant-info.component';
 import {RlTagInputModule} from "angular2-tags/dist";
 import {TagInputModule} from "ngx-chips";
+import {NoopAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -60,7 +61,8 @@ import {TagInputModule} from "ngx-chips";
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NoopAnimationsModule
   ],
   providers: [
     AuthGuard,
