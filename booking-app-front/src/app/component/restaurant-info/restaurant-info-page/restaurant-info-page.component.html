@@ -1,5 +1,14 @@
 <div class="container">
-  <button (click)="toggleEdit()">edit</button>
-  <app-restaurant-info [edit]="edit" [action]="action"></app-restaurant-info>
-  <app-open-hours [edit]="edit"></app-open-hours>
+  <div class="row">
+    <div class="col-md-10">
+      <app-restaurant-info [edit]="edit" [action]="action"></app-restaurant-info>
+      <app-open-hours [edit]="edit"></app-open-hours>
+    </div>
+    <div class="col-md-2">
+      <button class="btn edit-button" (click)="toggleEdit()">edit</button>
+      <div *ngIf="edit">
+      <button class="btn save-button" (click)="toggleEdit()">save</button>
+      </div>
+    </div>
+  </div>
 </div>

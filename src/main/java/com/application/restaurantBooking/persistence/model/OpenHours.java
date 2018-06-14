@@ -55,3 +55,5 @@ public class OpenHours {
         this.closeHour = closeHour;
     }
 }
+
+

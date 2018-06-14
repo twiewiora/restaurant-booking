@@ -37,7 +37,7 @@ export class TableService {
   updateTable(table: ITable): Observable<ITable> {
     return this.http.post<ITable>(`/api/table/update`, table.toJson(), options)
       .pipe(
-        catchError(this.handleError('addTable', new Table()))
+        catchError(this.handleError('updateTable', new Table()))
       );
   }
 
