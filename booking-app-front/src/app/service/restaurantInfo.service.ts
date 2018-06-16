@@ -43,6 +43,12 @@ export class RestaurantInfoService {
       );
   }
 
+  getTags(): Observable<string[]> {
+    return this.http.get<string[]>(`/api/tags`)
+      .pipe(
+        catchError(this.handleError('getTags', []))
+      );
+  }
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

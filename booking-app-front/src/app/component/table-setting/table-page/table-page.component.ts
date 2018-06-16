@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {TableService} from "../../../service/table.service";
-import {ITable, Table} from "../../../model/table";
 
 @Component({
   selector: 'app-table-page',
@@ -8,10 +6,15 @@ import {ITable, Table} from "../../../model/table";
   styleUrls: ['./table-page.component.scss']
 })
 export class TablePageComponent implements OnInit {
+  newTable: boolean = false;
 
   constructor() {
   }
 
   ngOnInit() {
+  }
+
+  toggleNew(){
+    this.newTable = !this.newTable;
   }
 }

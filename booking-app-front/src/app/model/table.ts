@@ -3,6 +3,7 @@ export interface ITable{
   id: number;
   maxPlaces: number;
   comment: string;
+  identifier: string;
   toJson(): string;
 }
 
@@ -11,14 +12,17 @@ export class Table implements ITable {
   restaurantId: number;
   id: number;
   maxPlaces: number;
+  identifier: string = '';
   comment: string = '';
 
   constructor() { }
 
   public toJson(): string {
     return JSON.stringify({
-      restaurantId: this.restaurantId,
-      maxPlaces: this.maxPlaces
+      tableId: this.id,
+      maxPlaces: this.maxPlaces,
+      comment: this.comment,
+      identifier: this.identifier
     });
   }
 

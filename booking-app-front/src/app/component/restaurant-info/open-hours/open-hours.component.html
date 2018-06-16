@@ -1,24 +1,44 @@
 <div class="container">
 
-  {{edit}}
   <h4>Open:</h4>
-  <div *ngFor="let openHours of OpenHoursWeek | mapValues">
-    <h5>{{openHours.key}}</h5>
-    <div *ngIf="!edit">
-      <div *ngIf="openHours.value.isSet()">
-        open: {{openHours.value.openHour}} - {{openHours.value.closeHour}}
+  <div *ngIf="!edit">
+    <dl class="row" *ngFor="let openHours of OpenHoursWeek | mapValues">
+      <dt class="col-sm-3">{{openHours.key}}</dt>
+
+      <div class="col-sm-9" *ngIf="!openHours.value.isClosed">
+        <div class="row">
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.openHour" [spinners]="false" [disabled]="true"
+                          [size]="'small'"></ngb-timepicker>
+          <dd class="col-sm-2">-</dd>
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [spinners]="false" [disabled]="true"
+                          [size]="'small'"></ngb-timepicker>
+        </div>
       </div>
-      <div *ngIf="!openHours.value.isSet()">
-        closed
+      <div class="col-sm-9" *ngIf="openHours.value.isClosed">
+        <dd>Closed</dd>
       </div>
-    </div>
-    <div *ngIf="edit">
-      <input type="time" [(ngModel)]="openHours.value.openHour"/>
-      -
-      <input type="time" [(ngModel)]="openHours.value.closeHour"/>
-    </div>
+    </dl>
   </div>
+
   <div *ngIf="edit">
+    <dl class="row day-setter" *ngFor="let openHours of OpenHoursWeek | mapValues">
+      <dt class="col-sm-3">{{openHours.key}}</dt>
+
+      <div class="col-sm-7" *ngIf="!openHours.value.isClosed">
+        <div class="row">
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.openHour" [size]="'small'"></ngb-timepicker>
+          <dd class="col-sm-2 time-divider">-</dd>
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [size]="'small'"></ngb-timepicker>
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="row">
+        <dd class="col-sm-6">Closed</dd>
+        <input class="col-sm-6" type="checkbox" [(ngModel)]="openHours.value.isClosed">
+        </div>
+      </div>
+    </dl>
     <button (click)="updateOpenHours()">Update</button>
   </div>
 </div>
+

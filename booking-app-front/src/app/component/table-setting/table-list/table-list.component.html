@@ -1,10 +1,19 @@
 <div class="container">
-  <div *ngFor="let table of tables">
-    <div>
-      {{table.id}}
-      {{table.maxPlaces}}
-      {{table.comment}}
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th scope="col">identifier</th>
+      <th scope="col">max Places</th>
+      <th scope="col">comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let table of tables">
+      <td>{{table.identifier}}</td>
+      <td> {{table.maxPlaces}}</td>
+      <td> {{table.comment}}</td>
       <button (click)="deleteTable(table)">delete</button>
-    </div>
-  </div>
+    </tr>
+    </tbody>
+  </table>
 </div>
