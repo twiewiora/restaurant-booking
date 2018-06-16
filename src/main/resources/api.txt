@@ -2,8 +2,8 @@
 
 GET     /api/tables
 GET     /api/tables/search {"date": "2018-06-06_16:16", "length": "2", "places": "5"}
-POST	/api/table/add {"maxPlaces": "10"}
-POST	/api/table/update {"tableId": "5", "maxPlaces": "10"}
+POST	/api/table/add {"maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
+POST	/api/table/update {"tableId": "5", "maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
 DELETE	/api/table/delete/tableId=5
 
 GET	    /api/restaurant

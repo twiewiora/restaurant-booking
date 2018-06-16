@@ -21,6 +21,16 @@ public class RestaurantTableBuilder {
         return this;
     }
 
+    public RestaurantTableBuilder comment(String comment) {
+        restaurantTable.setComment(comment);
+        return this;
+    }
+
+    public RestaurantTableBuilder identifier(String identifier) {
+        restaurantTable.setIdentifier(identifier);
+        return this;
+    }
+
     public RestaurantTable build() {
         return restaurantTable;
     }

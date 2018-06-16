@@ -27,6 +27,10 @@ public class RestaurantTable {
 
     private Boolean isReserved = false;
 
+    private String comment;
+
+    private String identifier;
+
     public RestaurantTable() {
     }
 
@@ -68,5 +72,21 @@ public class RestaurantTable {
 
     public void setReserved(Boolean reserved) {
         this.isReserved = reserved;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

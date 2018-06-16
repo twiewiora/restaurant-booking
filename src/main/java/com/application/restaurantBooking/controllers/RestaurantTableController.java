@@ -132,6 +132,8 @@ public class RestaurantTableController {
                 RestaurantTable restaurantTable = new RestaurantTableBuilder()
                         .restaurant(restaurant)
                         .maxPlaces(mainNode.get("maxPlaces").asInt())
+                        .comment(mainNode.get("comment").asText())
+                        .identifier(mainNode.get("identifier").asText())
                         .build();
                 restaurantTableService.createRestaurantTable(restaurantTable);
                 response.setStatus(HttpServletResponse.SC_CREATED);
@@ -169,6 +171,8 @@ public class RestaurantTableController {
                         .filter(table -> table.getId().equals(jsonNode.get("tableId").asLong())).findFirst().orElse(null);
                 if (restaurantTable != null) {
                     restaurantTable.setMaxPlaces(jsonNode.get("maxPlaces").asInt());
+                    restaurantTable.setComment(jsonNode.get("comment").asText());
+                    restaurantTable.setIdentifier(jsonNode.get("identifier").asText());
                     restaurantTableService.updateRestaurantTable(restaurantTable);
                     response.setStatus(HttpServletResponse.SC_OK);
                     return AcceptResponses.RESTAURANT_TABLE_UPDATED;
