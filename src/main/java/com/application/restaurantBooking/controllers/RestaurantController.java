@@ -306,20 +306,19 @@ public class RestaurantController {
 
     @RequestMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
             method = RequestMethod.GET,
-            consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String getTablesBySearch(HttpServletResponse response,
-                                    @RequestBody String json,
-                                    @PathVariable String id) {
+    public String getProposalHours(HttpServletResponse response,
+                                   @PathVariable String id,
+                                   @RequestParam String date,
+                                   @RequestParam int length,
+                                   @RequestParam int places) {
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
 
         try {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(json);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
-                        jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
+                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, places);
                 List<String> proposalHours = tableSearcher.getProposalStartHourReservation(restaurant, tableRequest);
                 response.setStatus(HttpServletResponse.SC_OK);
                 ArrayNode proposalArray = objectMapper.createArrayNode();
@@ -329,7 +328,7 @@ public class RestaurantController {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
             }
-        } catch (IOException | ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;

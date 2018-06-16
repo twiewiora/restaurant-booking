@@ -12,6 +12,9 @@ public class ErrorResponses {
     public static final String RESTAURANT_TABLE_NOT_FOUND = mapper
             .createObjectNode().put("desc", "Restaurant table was not found").toString();
 
+    public static final String RESTAURANT_TABLE_RESERVED = mapper
+            .createObjectNode().put("desc", "Restaurant table reserved").toString();
+
     public static final String RESERVATION_NOT_FOUND = mapper
             .createObjectNode().put("desc", "Reservation was not found").toString();
 

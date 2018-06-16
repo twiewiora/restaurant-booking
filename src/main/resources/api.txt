@@ -25,5 +25,5 @@ GET	    /api/reservation/all/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
 
 GET     /api/restaurant/list
 
-GET     /api/restaurant{id}/freeDates {"date": "2018-06-06", "length": "2", "places": "5"}
-POST	/api/restaurant{id}/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
+GET     /api/restaurant{id}/freeDates (params: "date":"2018-06-06", "length":int, "places":int)
+POST	/api/restaurant{id}/reservation/add/ {"date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}

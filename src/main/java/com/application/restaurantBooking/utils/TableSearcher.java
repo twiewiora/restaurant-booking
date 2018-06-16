@@ -75,18 +75,25 @@ public class TableSearcher {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Calendar day = Calendar.getInstance();
         day.setTime(request.getDate());
-        OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.of(day.get(Calendar.DAY_OF_WEEK) - 1));
+        OpenHours openHours;
+        if (day.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            openHours = restaurant.getOpenHoursMap().get(DayOfWeek.SUNDAY);
+        } else {
+            openHours = restaurant.getOpenHoursMap().get(DayOfWeek.of(day.get(Calendar.DAY_OF_WEEK) - 1));
+        }
 
-        Date currentHour = convertOpenCloseHourToCurrentDate(day, openHours.getOpenHour());
-        Date closeHour = convertOpenCloseHourToCurrentDate(day, openHours.getCloseHour());
+        if (openHours != null) {
+            Date currentHour = convertOpenCloseHourToCurrentDate(day, openHours.getOpenHour());
+            Date closeHour = convertOpenCloseHourToCurrentDate(day, openHours.getCloseHour());
 
-        while (currentHour.before(DateUtils.addHours(closeHour, -request.getLength()))
-                || currentHour.equals(DateUtils.addHours(closeHour, -request.getLength()))) {
-            TableSearcherRequest tableRequest = new TableSearcherRequest(currentHour, request.getLength(), request.getPlaces());
-            if (!searchTableByRequest(restaurant, tableRequest).isEmpty()) {
-                proposalStartHours.add(sdf.format(currentHour));
+            while (currentHour.before(DateUtils.addHours(closeHour, -request.getLength()))
+                    || currentHour.equals(DateUtils.addHours(closeHour, -request.getLength()))) {
+                TableSearcherRequest tableRequest = new TableSearcherRequest(currentHour, request.getLength(), request.getPlaces());
+                if (!searchTableByRequest(restaurant, tableRequest).isEmpty()) {
+                    proposalStartHours.add(sdf.format(currentHour));
+                }
+                currentHour = DateUtils.addMinutes(currentHour, 30);
             }
-            currentHour = DateUtils.addMinutes(currentHour, 30);
         }
 
         return proposalStartHours;

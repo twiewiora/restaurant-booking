@@ -9,6 +9,8 @@ import com.application.restaurantBooking.persistence.model.Restorer;
 import com.application.restaurantBooking.persistence.service.ReservationService;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
+import com.application.restaurantBooking.utils.TableSearcher;
+import com.application.restaurantBooking.utils.TableSearcherRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,15 +43,19 @@ public class ReservationController {
 
     private RestaurantService restaurantService;
 
+    private TableSearcher tableSearcher;
+
     @Autowired
     public ReservationController(JwtTokenUtil jwtTokenUtil,
                                  RestorerService restorerService,
                                  ReservationService reservationService,
-                                 RestaurantService restaurantService) {
+                                 RestaurantService restaurantService,
+                                 TableSearcher tableSearcher) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
         this.reservationService = reservationService;
         this.restaurantService = restaurantService;
+        this.tableSearcher = tableSearcher;
     }
 
     @RequestMapping(value = UrlRequests.POST_RESERVATION_ADD,
@@ -243,30 +250,29 @@ public class ReservationController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ErrorResponses.RESTAURANT_NOT_FOUND;
         }
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(json);
-            RestaurantTable restaurantTable = restaurant.getRestaurantTables().stream()
-                    .filter(table -> table.getId().equals(jsonNode.get("tableId").asLong()))
-                    .findFirst()
-                    .orElse(null);
-            if (restaurantTable != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
-                Reservation reservation = new ReservationBuilder()
-                        .restaurantTable(restaurantTable)
-                        .reservationDate(sdf.parse(jsonNode.get("date").asText()))
-                        .reservationLength(jsonNode.get("length").asInt())
-                        .reservedPlaces(jsonNode.get("places").asInt())
-                        .comment(jsonNode.get("comment").asText())
-                        .build();
-
-                reservationService.createReservation(reservation);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+            TableSearcherRequest request = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
+                    jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
+            List<RestaurantTable> restaurantTables = tableSearcher.searchTableByRequest(restaurant, request);
+            if (!restaurantTables.isEmpty()) {
+                for (RestaurantTable restaurantTable : restaurantTables) {
+                    Reservation reservation = new ReservationBuilder()
+                            .restaurantTable(restaurantTable)
+                            .reservationDate(sdf.parse(jsonNode.get("date").asText()))
+                            .reservationLength(jsonNode.get("length").asInt())
+                            .reservedPlaces(jsonNode.get("places").asInt())
+                            .comment(jsonNode.get("comment").asText())
+                            .build();
+                    reservationService.createReservation(reservation);
+                }
                 response.setStatus(HttpServletResponse.SC_CREATED);
                 return AcceptResponses.RESERVATION_CREATED;
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
+                return ErrorResponses.RESTAURANT_TABLE_RESERVED;
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
