@@ -9,7 +9,6 @@ import {TableCommunicationService} from "../table-communication.service";
   styleUrls: ['./table-list.component.scss']
 })
 export class TableListComponent implements OnInit {
-
   tables: ITable[];
 
   constructor(private tableService: TableService,
@@ -32,10 +31,17 @@ export class TableListComponent implements OnInit {
     );
   }
 
+  updateTable(table: ITable) {
+    this.tableService.updateTable(table).subscribe((any) => {
+        this.getAllTables();
+      }
+    );
+  }
+
   getAllTables() {
     this.tableService.getTables().subscribe(
       (tables: Table[]) => {
-        this.tables = <Table[]> tables;
+        this.tables = Table.fromJsonToArray(tables);
       });
   }
 }

@@ -11,39 +11,22 @@ import {now} from "moment";
   styleUrls: ['./reservation-page.component.scss']
 })
 export class ReservationPageComponent implements OnInit {
-  reservations: IReservation[];
-  dateFrom;
-  dateTo;
-  time = {hour: 13, minute: 30};
-  model: NgbDateStruct;
-  date: {year: number, month: number};
-  x = moment().get('year');
-  y = moment().get('month') + 1;
-  z = moment().date();
+  addNow: boolean = false;
+  add: boolean = false;
 
-  selectToday() {
-    this.model = {year: moment().get('year'), month: moment().get('month') + 1, day: moment().date()};
-  }
-
-  constructor(private reservationService: ReservationService) {
+  constructor() {
   }
 
   ngOnInit() {
-    this.getReservationForAllTables("2018-06-04_22:30", "2018-06-15_23:30");
   }
 
-  getReservationForAllTables(dateFrom: string, dateTo: string) {
-    this.reservationService.getReservationsForAllTables(dateFrom, dateTo).subscribe(
-      (reservations: Reservation[]) => {
-        this.reservations = <Reservation[]>reservations;
-      })
 
+  toggleAddNow(){
+    this.addNow = !this.addNow;
   }
 
-  deleteReservation(reservation: IReservation){
-    this.reservationService.deleteReservation(reservation).subscribe(any => {
-
-    });
+  toggleAdd(){
+    this.add = !this.add;
   }
 
 }

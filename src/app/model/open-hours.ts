@@ -46,7 +46,7 @@ export class OpenHours implements IOpenHours {
         openHours.openHour.minute = +json[weekday].openHour.substr(3, 2);
         openHours.closeHour.hour = +json[weekday].closeHour.substr(0, 2);
         openHours.closeHour.minute = +json[weekday].closeHour.substr(3, 2);
-        openHours.isClosed = false;
+        openHours.isClosed = json[weekday].isClose;
       }
       openHoursWeek.set(<Weekday>weekday, openHours);
     }
@@ -61,20 +61,20 @@ export class OpenHours implements IOpenHours {
       openHours.openHour.minute = +json[weekday].openHour.substr(3, 2);
       openHours.closeHour.hour = +json[weekday].closeHour.substr(0, 2);
       openHours.closeHour.minute = +json[weekday].closeHour.substr(3, 2);
-      openHours.isClosed = false;
+      openHours.isClosed = json[weekday].isClose;
     }
     return openHours;
   }
 
   public static toJson(openHoursWeek: Map<Weekday, OpenHours>): string {
     return JSON.stringify({
-      sunday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).closeHour)],// openHoursWeek.get(Weekday.Sunday).isClosed()
-      monday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).closeHour)],
-      tuesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).closeHour)],
-      wednesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).closeHour)],
-      thursday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).closeHour)],
-      friday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).closeHour)],
-      saturday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).closeHour)]
+      sunday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).closeHour), openHoursWeek.get(Weekday.Sunday).isClosed],
+      monday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).closeHour), openHoursWeek.get(Weekday.Monday).isClosed],
+      tuesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).closeHour), openHoursWeek.get(Weekday.Tuesday).isClosed],
+      wednesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).closeHour), openHoursWeek.get(Weekday.Wednesday).isClosed],
+      thursday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).closeHour), openHoursWeek.get(Weekday.Thursday).isClosed],
+      friday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).closeHour), openHoursWeek.get(Weekday.Friday).isClosed],
+      saturday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).closeHour), openHoursWeek.get(Weekday.Saturday).isClosed]
     });
   }
 

@@ -1,0 +1,15 @@
+<div class="container">
+  <div *ngFor="let reservation of reservations">
+    {{reservation.id}}
+    {{reservation.cancelled}}
+    {{reservation.comment}}
+    {{reservation.dateReservation}}
+    {{reservation.reservationLength}}
+    {{reservation.reservedPlaces}}
+    {{reservation.clientId}}
+    {{reservation.restaurantTableId}}
+
+
+    <button (click)="deleteReservation(reservation)" class="btn btn-success">Delete</button>
+  </div>
+</div>
