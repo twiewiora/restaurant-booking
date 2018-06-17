@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class TableSearcher {
@@ -19,16 +18,14 @@ public class TableSearcher {
     }
 
     public List<RestaurantTable> searchTableByRequest(Restaurant restaurant, TableSearcherRequest request) {
-        List<Reservation> reservations = new ArrayList<>();
-        restaurant.getRestaurantTables().forEach(table -> reservations.addAll(table.getReservation()));
         Date dateFrom = request.getDate();
         Date dateTo = DateUtils.addHours(request.getDate(), request.getLength());
-
-        Set<RestaurantTable> freeRestaurantTables = reservations.stream()
-                .filter(res -> !isReservationBlocker(res, dateFrom, dateTo))
-                .map(Reservation::getRestaurantTable)
-                .collect(Collectors.toSet());
-
+        Set<RestaurantTable> freeRestaurantTables = new HashSet<>();
+        for (RestaurantTable table : restaurant.getRestaurantTables()) {
+            if (table.getReservation().stream().noneMatch(res -> isReservationBlocker(res, dateFrom, dateTo))) {
+                freeRestaurantTables.add(table);
+            }
+        }
         return searchTheBestTableConfiguration(freeRestaurantTables, request.getPlaces());
     }
 
@@ -44,6 +41,9 @@ public class TableSearcher {
     }
 
     private List<RestaurantTable> searchTheBestTableConfiguration(Set<RestaurantTable> restaurantTables, Integer places){
+        if (restaurantTables.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<RestaurantTable> result = new ArrayList<>();
         List<RestaurantTable> freeTables = new LinkedList<>(restaurantTables);
         freeTables.sort(Comparator.comparing(RestaurantTable::getMaxPlaces));
