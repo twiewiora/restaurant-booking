@@ -85,6 +85,22 @@ public class DatabaseInitializer {
                 .restorer(restorer)
                 .tags(tags)
                 .build();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            OpenHours day = null;
+            try {
+                day = new OpenHoursBuilder()
+                        .openHour(sdf.parse("00:00"))
+                        .closeHour(sdf.parse("00:00"))
+                        .isClose(true)
+                        .build();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            openHoursMap.put(dayOfWeek, day);
+        }
+        restaurantService.addOpenHours(restaurant, openHoursMap);
         return restaurantService.createRestaurant(restaurant);
     }
 
@@ -116,19 +132,18 @@ public class DatabaseInitializer {
     private void createOpenHours(Restaurant restaurant) {
         try {
             SimpleDateFormat f = new SimpleDateFormat("HH:mm");
-            Map<DayOfWeek, OpenHours> map = new HashMap<>();
-            OpenHours day1 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("23:30")).build();
-            OpenHours day2 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
-            OpenHours day3 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("22:30")).build();
-            OpenHours day4 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("20:30")).build();
-            OpenHours day5 = new OpenHoursBuilder().openHour(f.parse("12:30")).closeHour(f.parse("19:30")).build();
-
-            map.put(DayOfWeek.FRIDAY, day1);
-            map.put(DayOfWeek.THURSDAY, day2);
-            map.put(DayOfWeek.WEDNESDAY, day3);
-            map.put(DayOfWeek.SATURDAY, day4);
-            map.put(DayOfWeek.SUNDAY, day5);
-            restaurantService.addOpenHours(restaurant, map);
+            Map<DayOfWeek, OpenHours> map = restaurant.getOpenHoursMap();
+            map.get(DayOfWeek.FRIDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.FRIDAY).setCloseHour(f.parse("23:30"));
+            map.get(DayOfWeek.THURSDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.THURSDAY).setCloseHour(f.parse("22:30"));
+            map.get(DayOfWeek.WEDNESDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.WEDNESDAY).setCloseHour(f.parse("22:30"));
+            map.get(DayOfWeek.SATURDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.SATURDAY).setCloseHour(f.parse("20:30"));
+            map.get(DayOfWeek.SUNDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.SUNDAY).setCloseHour(f.parse("19:30"));
+            restaurantService.updateOpenHours(restaurant);
         } catch (ParseException e) {
             e.printStackTrace();
         }

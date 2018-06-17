@@ -22,6 +22,11 @@ public class OpenHoursBuilder {
         return this;
     }
 
+    public OpenHoursBuilder isClose(boolean isClose) {
+        openHours.setClose(isClose);
+        return this;
+    }
+
     public OpenHours build() {
         return openHours;
     }
