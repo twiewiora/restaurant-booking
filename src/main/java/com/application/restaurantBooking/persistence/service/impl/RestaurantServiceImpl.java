@@ -64,6 +64,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public void updateOpenHours(Restaurant restaurant) {
+        restaurant.getOpenHoursMap().values().forEach(openHours -> openHoursRepository.save(openHours));
+        restaurantRepository.save(restaurant);
+    }
+
+    @Override
     public void deleteOpenHours(Restaurant restaurant) {
         List<OpenHours> oldOpenHours = new ArrayList<>(restaurant.getOpenHoursMap().values());
         restaurant.getOpenHoursMap().clear();

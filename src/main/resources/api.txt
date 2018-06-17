@@ -13,7 +13,7 @@ GET     /api/tags
 
 GET	    /api/openHours/all
 GET	    /api/openHours/day=monday
-POST	/api/openHours/update {"friday": ["12:30", "19:30"], "monday": ["12:30", "22:30"]}
+POST	/api/openHours/update {"friday": ["12:30", "19:30", true], "monday": ["12:30", "22:30", false], ...}
 
 POST	/api/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
 DELETE	/api/reservation/delete/reservationId=10

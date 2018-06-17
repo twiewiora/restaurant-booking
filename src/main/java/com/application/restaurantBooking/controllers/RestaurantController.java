@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class RestaurantController {
@@ -108,10 +109,21 @@ public class RestaurantController {
                     .restorer(restorer)
                     .tags(tags)
                     .build();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
+            for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+                OpenHours day = new OpenHoursBuilder()
+                        .openHour(sdf.parse("00:00"))
+                        .closeHour(sdf.parse("00:00"))
+                        .isClose(true)
+                        .build();
+                openHoursMap.put(dayOfWeek, day);
+            }
+            restaurantService.addOpenHours(restaurant, openHoursMap);
             restaurantService.createRestaurant(restaurant);
             response.setStatus(HttpServletResponse.SC_CREATED);
             return AcceptResponses.RESTAURANT_CREATED;
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;
@@ -179,7 +191,8 @@ public class RestaurantController {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap());
+                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap().entrySet().stream()
+                        .filter(entry -> !entry.getValue().getIsClose()).collect(Collectors.toSet()));
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
@@ -209,11 +222,7 @@ public class RestaurantController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 response.setStatus(HttpServletResponse.SC_OK);
                 OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.valueOf(day.toUpperCase()));
-                if (openHours != null) {
-                    return objectMapper.writeValueAsString(openHours);
-                } else {
-                    return objectMapper.createObjectNode().put("isClose", true).toString();
-                }
+                return objectMapper.writeValueAsString(openHours);
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
@@ -244,19 +253,15 @@ public class RestaurantController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(json);
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Map<DayOfWeek, OpenHours> openHoursMap = new HashMap<>();
+                Map<DayOfWeek, OpenHours> openHoursMap = restaurant.getOpenHoursMap();
                 for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
                     JsonNode dayNode = jsonNode.get(dayOfWeek.toString().toLowerCase());
-                    if (dayNode != null && dayNode.isArray()) {
-                        OpenHours day = new OpenHoursBuilder()
-                                .openHour(sdf.parse(dayNode.get(0).asText()))
-                                .closeHour(sdf.parse(dayNode.get(1).asText()))
-                                .build();
-                        openHoursMap.put(dayOfWeek, day);
-                    }
+                    OpenHours openHour = openHoursMap.get(dayOfWeek);
+                    openHour.setOpenHour(sdf.parse(dayNode.get(0).asText()));
+                    openHour.setCloseHour(sdf.parse(dayNode.get(1).asText()));
+                    openHour.setClose(dayNode.get(2).asBoolean());
                 }
-                restaurantService.deleteOpenHours(restaurant);
-                restaurantService.addOpenHours(restaurant, openHoursMap);
+                restaurantService.updateOpenHours(restaurant);
                 response.setStatus(HttpServletResponse.SC_OK);
                 return AcceptResponses.OPEN_HOURS_UPDATED;
             } else {

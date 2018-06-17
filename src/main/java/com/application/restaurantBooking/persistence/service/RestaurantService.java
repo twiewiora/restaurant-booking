@@ -23,6 +23,8 @@ public interface RestaurantService {
 
     void addOpenHours(Restaurant restaurant, Map<DayOfWeek, OpenHours> openHoursMap);
 
+    void updateOpenHours(Restaurant restaurant);
+
     void deleteOpenHours(Restaurant restaurant);
 
 }
