@@ -30,6 +30,20 @@ export class ReservationService {
       );
   }
 
+  // addReservationByClient(reservation: IReservation): Observable<IReservation> {
+  //   return this.http.post<any>(`/api/reservation/add`, reservation.toJson(), options)
+  //     .pipe(
+  //       catchError(this.handleError('getReservation', new Reservation()))
+  //     );
+  // }
+
+  cancelReservation(reservation: IReservation): Observable<IReservation> {
+    return this.http.post<IReservation>(`/api/reservation/cancel/reservationId=${reservation.id}`, [], options)
+      .pipe(
+        catchError(this.handleError('deleteReservation', new Reservation()))
+      );
+  }
+
   deleteReservation(reservation: IReservation): Observable<IReservation> {
     return this.http.delete<IReservation>(`/api/reservation/delete/reservationId=${reservation.id}`)
       .pipe(

@@ -1,3 +1,7 @@
+import {Time} from "./time";
+import {NgbDate} from "@ng-bootstrap/ng-bootstrap/datepicker/ngb-date";
+import {NgbTime} from "@ng-bootstrap/ng-bootstrap/timepicker/ngb-time";
+
 export interface IReservation {
 
   id: number;
@@ -13,7 +17,7 @@ export interface IReservation {
 }
 
 
-export class Reservation implements  IReservation{
+export class Reservation implements IReservation {
   id: number;
   dateReservation: string;
   reservationLength: number;
@@ -23,11 +27,8 @@ export class Reservation implements  IReservation{
   reservedPlaces: number;
   cancelled: boolean;
 
-  getDate(): string{
-    return '';
+  constructor() {
   }
-
-  constructor() { }
 
   toJson(): string {
     return JSON.stringify({
@@ -39,5 +40,9 @@ export class Reservation implements  IReservation{
     });
   }
 
+
+  setDateReservation(date: NgbDate, time: NgbTime) {
+    this.dateReservation = date.year + '-' + date.month + '-' + date.day + '_' + time.hour + ':' + time.minute;
+  }
 
 }

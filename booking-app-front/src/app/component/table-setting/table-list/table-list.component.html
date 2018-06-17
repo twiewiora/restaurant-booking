@@ -9,10 +9,43 @@
     </thead>
     <tbody>
     <tr *ngFor="let table of tables">
-      <td>{{table.identifier}}</td>
-      <td> {{table.maxPlaces}}</td>
-      <td> {{table.comment}}</td>
-      <button (click)="deleteTable(table)">delete</button>
+      <td>
+        <div *ngIf="!table.edit">
+          {{table.identifier}}
+        </div>
+        <div *ngIf="table.edit">
+          <input type="text" [(ngModel)]="table.identifier" class="form-control" id="identifier" name="identifier"
+                 required>
+        </div>
+      </td>
+
+
+      <td>
+        <div *ngIf="!table.edit">
+          {{table.maxPlaces}}
+        </div>
+        <div *ngIf="table.edit">
+          <input type="number" [(ngModel)]="table.maxPlaces" class="form-control" id="maxPlaces" name="maxPlaces"
+                 required>
+        </div>
+      </td>
+      <td>
+        <div *ngIf="!table.edit">
+          {{table.comment}}
+        </div>
+        <div *ngIf="table.edit">
+            <textarea type="text" [(ngModel)]="table.comment" class="form-control" id="comment"
+                      name="comment"></textarea>
+        </div>
+      </td>
+
+      <div *ngIf="table.edit">
+        <button class="btn btn-success" (click)="updateTable(table)">save</button>
+      </div>
+      <div *ngIf="!table.edit">
+        <button class="btn btn-danger" (click)="deleteTable(table)">delete</button>
+      </div>
+      <button class="btn btn-warning" (click)="table.edit = !table.edit">edit</button>
     </tr>
     </tbody>
   </table>

@@ -33,6 +33,7 @@ import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-
 import {RlTagInputModule} from "angular2-tags/dist";
 import {TagInputModule} from "ngx-chips";
 import {NoopAnimationsModule} from "@angular/platform-browser/animations";
+import { ReservationsDisplayComponent } from './component/reservation/reservations-display/reservations-display.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import {NoopAnimationsModule} from "@angular/platform-browser/animations";
     MapValuesPipe,
     AddReservationComponent,
     InitialComponent,
-    RestaurantInfoComponent
+    RestaurantInfoComponent,
+    ReservationsDisplayComponent
   ],
   imports: [
     NgbModule.forRoot(),

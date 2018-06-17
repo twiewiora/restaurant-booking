@@ -4,6 +4,7 @@ export interface ITable{
   maxPlaces: number;
   comment: string;
   identifier: string;
+  edit: boolean
   toJson(): string;
 }
 
@@ -14,6 +15,7 @@ export class Table implements ITable {
   maxPlaces: number;
   identifier: string = '';
   comment: string = '';
+  edit: boolean = false;
 
   constructor() { }
 
@@ -24,6 +26,22 @@ export class Table implements ITable {
       comment: this.comment,
       identifier: this.identifier
     });
+  }
+
+
+
+
+  static fromJsonToArray(json): Table[]{
+    let tables: Table[] = [];
+    json.forEach(jTable =>{
+      let table: Table = new Table();
+      table.identifier = jTable['identifier'] ?  jTable['identifier'] : '';
+      table.id = jTable['id'];
+      table.comment = jTable['comment'] ? jTable['comment'] : '';
+      table.maxPlaces = jTable['maxPlaces'];
+      tables.push(table);
+    });
+    return tables;
   }
 
 
