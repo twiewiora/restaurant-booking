@@ -1,14 +1,11 @@
 language: java
 jdk: oraclejdk8
 
-before_install:
-  - chmod +x runSonarQubeAnalysis.sh
-
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar \
-    		-Dsonar.host.url=https://sonarcloud.io \
-    		-Dsonar.organization=twiewiora-github \
-    		-Dsonar.login=dba89d9bda7bbf2e2499e6378d4414bfd2164004
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+    -Dsonar.host.url=https://sonarcloud.io
+    -Dsonar.organization=twiewiora-github
+    -Dsonar.login=dba89d9bda7bbf2e2499e6378d4414bfd2164004
 
 cache:
   directories:
