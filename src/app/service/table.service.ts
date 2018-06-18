@@ -30,8 +30,8 @@ export class TableService {
   }
 
   //TODO class
-  searchFreeTables(reservation: IReservation): Observable<ITable[]> {
-    return this.http.get<ITable[]>(`/api/tables/search`)
+  searchFreeTables(date: string, duration: number, places: number): Observable<ITable[]> {
+    return this.http.get<ITable[]>(`/api/tables/search?date=${date}&length=${duration}&places=${places}`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );

@@ -1,6 +1,9 @@
 <div class="container">
   <h1>Add Table Form</h1>
-  <form>
+
+  <button class="btn btn-warning" (click)="toggleNew()">New Table</button>
+
+  <form *ngIf="newTable">
     <div class="form-group">
       <label for="identifier">Identifier</label>
       <input type="text" [(ngModel)]="table.identifier" class="form-control" id="identifier" name="identifier" required>

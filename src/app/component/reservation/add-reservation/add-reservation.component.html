@@ -3,25 +3,50 @@
   <form>
     <div class="form-group">
       <label for="date">Date</label>
-      <ngb-datepicker #dp [(ngModel)]="model" (navigate)="date = $event.next" id="date"></ngb-datepicker>
+      <ngb-datepicker #dp [(ngModel)]="model" (navigate)="date = $event.next" id="date" name="date"></ngb-datepicker>
     </div>
 
     <div class="form-group">
       <label for="time">Time</label>
-      <ngb-timepicker [(ngModel)]="time" id="time"></ngb-timepicker>
+      <ngb-timepicker [(ngModel)]="time" id="time" name="time"></ngb-timepicker>
     </div>
 
     <div class="form-group">
       <label for="length">Duration</label>
-      <input type="number" [(ngModel)]="reservation.reservationLength" class="form-control" id="length" name="length" required>
+      <input type="number" [(ngModel)]="reservation.reservationLength" class="form-control" id="length" name="length"
+             required>
     </div>
 
     <div class="form-group">
       <label for="places">Reserved Places</label>
-      <input type="number" [(ngModel)]="reservation.reservedPlaces" class="form-control" id="places" name="places" required>
+      <input type="number" [(ngModel)]="reservation.reservedPlaces" class="form-control" id="places" name="places"
+             required>
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Comment</label>
+      <input type="text" [(ngModel)]="reservation.comment" class="form-control" id="comment" name="comment">
     </div>
 
     <button (click)="getFreeTableList(reservation)" class="btn btn-success">search</button>
   </form>
 
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th scope="col">identifier</th>
+      <th scope="col">max Places</th>
+      <th scope="col">comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let table of tableList">
+      <td>{{table.identifier}}</td>
+      <td>{{table.maxPlaces}}</td>
+      <td>{{table.comment}}</td>
+      <button class="btn btn-success" (click)="addReservation(table, reservation)">reserve</button>
+    </tr>
+    </tbody>
+  </table>
 </div>
+

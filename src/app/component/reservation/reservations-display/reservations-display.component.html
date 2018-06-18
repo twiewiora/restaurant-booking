@@ -1,4 +1,10 @@
 <div class="container">
+
+  <button class="btn" (click)="toggleChangeDate()">Change Date</button>
+  <div *ngIf="changeDate">
+  <ngb-datepicker #dp [(ngModel)]="model" (navigate)="$event.next" (select)="onDateSelection($event)" ></ngb-datepicker>
+  <button class="btn btn-sm btn-outline-primary mr-2" (click)="selectToday()">Select Today</button>
+  </div>
   <div *ngFor="let reservation of reservations">
     {{reservation.id}}
     {{reservation.cancelled}}
