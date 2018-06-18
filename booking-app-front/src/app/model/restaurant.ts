@@ -23,7 +23,6 @@ export class Restaurant implements IRestaurant {
   constructor() { }
 
   static toJson(restaurant: IRestaurant): string {
-    debugger;
     return JSON.stringify({
       name: restaurant.name,
       city: restaurant.city,

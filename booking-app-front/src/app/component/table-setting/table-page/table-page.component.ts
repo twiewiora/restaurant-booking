@@ -6,7 +6,6 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./table-page.component.scss']
 })
 export class TablePageComponent implements OnInit {
-  newTable: boolean = false;
 
   constructor() {
   }
@@ -14,7 +13,4 @@ export class TablePageComponent implements OnInit {
   ngOnInit() {
   }
 
-  toggleNew(){
-    this.newTable = !this.newTable;
-  }
 }

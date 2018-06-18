@@ -27,6 +27,20 @@ export class RestaurantInfoService {
       );
   }
 
+  getAllRestaurants(): Observable<IRestaurant[]> {
+    return this.http.get<IRestaurant[]>(`/api/restaurant/list`)
+      .pipe(
+        catchError(this.handleError('getAllRestaurants', []))
+      );
+  }
+
+  getRestaurantFreeDates(restaurant: IRestaurant, data: Date): Observable<IRestaurant[]> {
+    return this.http.get<IRestaurant[]>(`/api/restaurant${restaurant.id}/list`)
+      .pipe(
+        catchError(this.handleError('getAllRestaurants', []))
+      );
+  }
+
   createRestaurant(restaurant: IRestaurant): Observable<IRestaurant> {
     return this.http.post<IRestaurant>(`/api/restaurant/add`, Restaurant.toJson(restaurant), options)
       .pipe(
@@ -36,7 +50,6 @@ export class RestaurantInfoService {
 
 
   updateRestaurant(restaurant: IRestaurant): Observable<Restaurant> {
-    debugger;
     return this.http.post<Restaurant>(`/api/restaurant/update`, Restaurant.toJson(restaurant), options)
       .pipe(
         catchError(this.handleError('updateRestaurant', new Restaurant()))

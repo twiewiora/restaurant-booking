@@ -5,6 +5,8 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {ITable, Table} from "../model/table";
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
+import {Time} from "../model/time";
+import {IReservation} from "../model/reservation";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -22,6 +24,14 @@ export class TableService {
 
   getTables(): Observable<ITable[]> {
     return this.http.get<ITable[]>(`/api/tables`)
+      .pipe(
+        catchError(this.handleError('getTables', []))
+      );
+  }
+
+  //TODO class
+  searchFreeTables(date: string, duration: number, places: number): Observable<ITable[]> {
+    return this.http.get<ITable[]>(`/api/tables/search?date=${date}&length=${duration}&places=${places}`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );

@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModalModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './component/login/login.component';
@@ -32,7 +32,9 @@ import {InitialGuard} from "./guard/initial-guard";
 import { RestaurantInfoComponent } from './component/restaurant-info/restaurant-info/restaurant-info.component';
 import {RlTagInputModule} from "angular2-tags/dist";
 import {TagInputModule} from "ngx-chips";
-import {NoopAnimationsModule} from "@angular/platform-browser/animations";
+import {BrowserAnimationsModule, NoopAnimationsModule} from "@angular/platform-browser/animations";
+import { ReservationsDisplayComponent } from './component/reservation/reservations-display/reservations-display.component';
+import { CalendarModule } from 'angular-calendar';
 
 
 @NgModule({
@@ -52,7 +54,8 @@ import {NoopAnimationsModule} from "@angular/platform-browser/animations";
     MapValuesPipe,
     AddReservationComponent,
     InitialComponent,
-    RestaurantInfoComponent
+    RestaurantInfoComponent,
+    ReservationsDisplayComponent
   ],
   imports: [
     NgbModule.forRoot(),
@@ -62,7 +65,10 @@ import {NoopAnimationsModule} from "@angular/platform-browser/animations";
     HttpClientModule,
     FormsModule,
     AppRoutingModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    BrowserAnimationsModule,
+    CalendarModule.forRoot(),
+    NgbModalModule.forRoot()
   ],
   providers: [
     AuthGuard,
