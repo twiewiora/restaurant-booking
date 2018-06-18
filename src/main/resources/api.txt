@@ -1,29 +1,139 @@
 # Restorer
+#################################################
+# Tables
 
 GET     /api/tables
-GET     /api/tables/search {"date": "2018-06-06_16:16", "length": "2", "places": "5"}
-POST	/api/table/add {"maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
-POST	/api/table/update {"tableId": "5", "maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
-DELETE	/api/table/delete/tableId=5
+        input: -
+        output: list
+                [{"id":10,"maxPlaces":12,"comment":"comment...","identifier":"big table","reserved":false},
+                 {"id":15,"maxPlaces":3,"comment":"comment...","identifier":"small table","reserved":false}]
+
+GET     /api/tables/search?date=2018-06-06_16:16&length=2&places=14
+        input: -
+        output: list
+                [{"id":10,"maxPlaces":12,"comment":"comment...","identifier":"big table","reserved":false},
+                 {"id":15,"maxPlaces":3,"comment":"comment...","identifier":"small table","reserved":false}]
+
+POST	/api/table/add
+        input: json
+               {"maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
+        output: json
+                {"desc":"Restaurant table was created"}
+
+POST	/api/table/update
+        input: json
+               {"tableId": "5", "maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
+        output: json
+                {"desc":"Restaurant table was updated"}
+
+DELETE	/api/table/delete/tableId={5}
+        input: -
+        output: json
+                {"desc":"Restaurant table was deleted"}
+
+#################################################
+# Restaurant
 
 GET	    /api/restaurant
-POST	/api/restaurant/add {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
-POST	/api/restaurant/update {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+        input: -
+        output: json
+                {"id":9,"name":"name","city":"city","street":"street","phoneNumber":"123","tags":["PIZZA","KEBAB"]}
+
+POST	/api/restaurant/add
+        input: json
+               {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "123", "tags": ["pizza", "kebab"]}
+        output: json
+                {"desc":"Restaurant was created"}
+
+POST	/api/restaurant/update
+        input: json
+               {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+        output: json
+                {"desc":"Restaurant was updated"}
+
 GET     /api/tags
+        input: -
+        output: list
+                ["PIZZA","SUSHI","KEBAB","KUCHNIA_POLSKA","KUCHNIA_WLOSKA","KUCHNIA_GRECKA","KUHCNIA_CHINSKA"]
+
+#################################################
+# Open hours
 
 GET	    /api/openHours/all
-GET	    /api/openHours/day=monday
-POST	/api/openHours/update {"friday": ["12:30", "19:30", true], "monday": ["12:30", "22:30", false], ...}
+        input: -
+        output: map
+                {"THURSDAY":{"id":23,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "TUESDAY":{"id":24,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "FRIDAY":{"id":25,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "SATURDAY":{"id":27,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "WEDNESDAY":{"id":26,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "MONDAY":{"id":28,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"},
+                 "SUNDAY":{"id":29,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"}}
 
-POST	/api/reservation/add {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
-DELETE	/api/reservation/delete/reservationId=10
-POST    /api/reservation/cancel//reservationId=10
-GET	    /api/reservation/forTable/tableId=5/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
-GET	    /api/reservation/all/dateFrom=2018-06-06_18:00/dateTo=2018-06-06_22:00
+GET	    /api/openHours/day={monday}
+        input: -
+        output: json
+                {"id":28,"isClose":true,"openHour":"00:00:00","closeHour":"00:00:00"}
 
+POST	/api/openHours/update
+        input: map
+               {"friday": ["12:30", "19:30", true],
+                "monday": ["12:30", "22:30", false],
+                "tuesday": ["12:30", "19:30", true],
+                "wednesday": ["12:30", "19:30", true],
+                "thursday": ["12:30", "19:30", true],
+                "saturday": ["12:30", "19:30", true],
+                "sunday": ["12:30", "19:30", true]}
+        output: json
+                {"desc":"Open hours was updated"}
+
+#################################################
+# Reservations
+
+POST	/api/reservation/add
+        input: json
+               {"tableId": "5", "date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
+        output: json
+                {"desc":"Reservation was created"}
+
+DELETE	/api/reservation/delete/reservationId={10}
+        input: -
+        output: json
+                {"desc":"Reservation was deleted"}
+
+POST    /api/reservation/cancel/reservationId={10}
+        input: -
+        output: json
+                {"desc":"Reservation was cancelled"}
+
+GET	    /api/reservation/forTable/tableId={5}/dateFrom={2018-06-15_18:00}/dateTo={2018-06-15_22:00}
+        input: -
+        output: list
+                [{"id":17,"reservedPlaces":10,"reservationLength":3,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00"}]
+
+GET	    /api/reservation/all/dateFrom={2018-06-15_18:00}/dateTo={2018-06-15_22:00}
+        input: -
+        output: list
+                [{"id":17,"reservedPlaces":10,"reservationLength":3,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00"},
+                 {"id":18,"reservedPlaces":10,"reservationLength":2,"comment":"comments...","cancelled":false,"restaurantTableId":12,"dateReservation":"2018-06-15_19:00"}]
+
+#################################################
 # Client
+#################################################
 
 GET     /api/restaurant/list
+        input: -
+        output: list
+                {"restaurants":["{"id":9,"name":"name","city":"city","street":"street","phoneNumber":"","tags":["PIZZA","KEBAB"]}"]}
 
-GET     /api/restaurant{id}/freeDates (params: "date":"2018-06-06", "length":int, "places":int)
-POST	/api/restaurant{id}/reservation/add/ {"date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
+GET     /api/restaurant{9}/freeDates?date=2018-06-06&length=2&places=5
+        input: -
+        output: json
+                {"proposalHours":
+                ["12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]}
+
+POST	/api/restaurant{id}/reservation/add
+        input: json
+               {"date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
+        output: json
+                {"desc":"Reservation was created"}
