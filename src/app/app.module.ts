@@ -8,7 +8,6 @@ import { LoginComponent } from './component/login/login.component';
 import { RegistrationComponent } from './component/registration/registration.component';
 import {AuthenticationService} from "./service/authentication.service";
 import {TokenInterceptor} from "./service/token-interceptor";
-import { MainComponent } from './component/main/main.component';
 import {AppRoutingModule} from "./app-routing.module";
 import { StartComponent } from './component/start/start.component';
 import {AuthGuard} from "./guard/auth-guard";
@@ -42,7 +41,6 @@ import { CalendarModule } from 'angular-calendar';
     AppComponent,
     LoginComponent,
     RegistrationComponent,
-    MainComponent,
     StartComponent,
     AddTableComponent,
     TablePageComponent,
