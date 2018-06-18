@@ -1,7 +1,7 @@
 <div class="container">
 
-  <button (click)="toggleAdd()">add</button>
-  <button (click)="toggleAddNow()">Walk in</button>
+  <button class="btn btn-warning" (click)="toggleAdd()">add</button>
+  <button class="btn btn-warning" (click)="toggleAddNow()">Walk in</button>
 
   <div *ngIf="add">
     <app-add-reservation></app-add-reservation>
