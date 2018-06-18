@@ -78,11 +78,12 @@ public class RestaurantTableController {
 
     @RequestMapping(value = UrlRequests.GET_TABLES_BY_SEARCH,
             method = RequestMethod.GET,
-            consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String getTablesBySearch(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    @RequestBody String json) {
+                                    @RequestParam String date,
+                                    @RequestParam int length,
+                                    @RequestParam int places) {
         Restorer restorer = getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -93,10 +94,8 @@ public class RestaurantTableController {
         try {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(json);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
-                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
-                        jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
+                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, places);
                 List<RestaurantTable> tables = tableSearcher.searchTableByRequest(restaurant, tableRequest);
                 response.setStatus(HttpServletResponse.SC_OK);
                 return objectMapper.writeValueAsString(tables);

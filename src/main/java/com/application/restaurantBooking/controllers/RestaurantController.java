@@ -3,7 +3,10 @@ package com.application.restaurantBooking.controllers;
 import com.application.restaurantBooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantBooking.persistence.builder.OpenHoursBuilder;
 import com.application.restaurantBooking.persistence.builder.RestaurantBuilder;
-import com.application.restaurantBooking.persistence.model.*;
+import com.application.restaurantBooking.persistence.model.OpenHours;
+import com.application.restaurantBooking.persistence.model.Restaurant;
+import com.application.restaurantBooking.persistence.model.Restorer;
+import com.application.restaurantBooking.persistence.model.Tag;
 import com.application.restaurantBooking.persistence.service.RestaurantService;
 import com.application.restaurantBooking.persistence.service.RestorerService;
 import com.application.restaurantBooking.utils.TableSearcher;
@@ -23,7 +26,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class RestaurantController {
@@ -191,8 +193,7 @@ public class RestaurantController {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap().entrySet().stream()
-                        .filter(entry -> !entry.getValue().getIsClose()).collect(Collectors.toSet()));
+                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return ErrorResponses.RESTAURANT_NOT_FOUND;
