@@ -5,6 +5,7 @@ import {of} from "rxjs/observable/of";
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
 import {OpenHours} from "../model/open-hours";
+import {environment} from "../../environments/environment";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -22,13 +23,13 @@ export class OpenHoursService {
 
 
   getOpeningHoursForAllDays(): Observable<any> {
-    return this.http.get<any>(`/api/openHours//all`)
+    return this.http.get<any>(`${environment.baseUrl}/openHours//all`)
       .pipe(
         catchError(this.handleError('getOpeningHoursForAllDays', [])));
   }
 
   getOpeningHoursForDay(day: string): Observable<OpenHours> {
-    return this.http.get<OpenHours>(`/api/openHours/day=${day}`)
+    return this.http.get<OpenHours>(`${environment.baseUrl}/openHours/day=${day}`)
       .pipe(
         catchError(this.handleError('getOpeningHoursForDay', new OpenHours()))
       );
@@ -39,7 +40,7 @@ export class OpenHoursService {
 // }
 
   updateOpenHours(json: string): Observable<any> {
-    return this.http.post<any>(`/api/openHours/update`, json, options)
+    return this.http.post<any>(`${environment.baseUrl}//openHours/update`, json, options)
       .pipe(
         catchError(this.handleError('getOpeningHoursForAllDays', []))
       );

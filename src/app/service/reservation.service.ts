@@ -5,6 +5,7 @@ import {of} from "rxjs/observable/of";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError} from "rxjs/operators";
 import {IReservation, Reservation} from "../model/reservation";
+import {environment} from "../../environments/environment";
 
 
 const headers = new HttpHeaders({
@@ -24,42 +25,35 @@ export class ReservationService {
 
 
   addReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.post<any>(`/api/reservation/add`, reservation.toJson(), options)
+    return this.http.post<any>(`${environment.baseUrl}/reservation/add`, reservation.toJson(), options)
       .pipe(
         catchError(this.handleError('getReservation', new Reservation()))
       );
   }
 
-  // addReservationByClient(reservation: IReservation): Observable<IReservation> {
-  //   return this.http.post<any>(`/api/reservation/add`, reservation.toJson(), options)
-  //     .pipe(
-  //       catchError(this.handleError('getReservation', new Reservation()))
-  //     );
-  // }
-
   cancelReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.post<IReservation>(`/api/reservation/cancel/reservationId=${reservation.id}`, [], options)
+    return this.http.post<IReservation>(`${environment.baseUrl}/reservation/cancel/reservationId=${reservation.id}`, [], options)
       .pipe(
         catchError(this.handleError('deleteReservation', new Reservation()))
       );
   }
 
   deleteReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.delete<IReservation>(`/api/reservation/delete/reservationId=${reservation.id}`)
+    return this.http.delete<IReservation>(`${environment.baseUrl}/reservation/delete/reservationId=${reservation.id}`)
       .pipe(
         catchError(this.handleError('deleteReservation', new Reservation()))
       );
   }
 
   getReservationsForOneTable(tableId: number, dateFrom: string, dateTo: string): Observable<IReservation[]> {
-    return this.http.get<IReservation[]>(`/api/reservation/forTable/tableId=${tableId}/dateFrom=${dateFrom}/dateTo=${dateTo}`)
+    return this.http.get<IReservation[]>(`${environment.baseUrl}/reservation/forTable/tableId=${tableId}/dateFrom=${dateFrom}/dateTo=${dateTo}`)
       .pipe(
         catchError(this.handleError('getReservationsForOneTable', []))
       );
   }
 
   getReservationsForAllTables(dateFrom: string, dateTo: string): Observable<IReservation[]> {
-    return this.http.get<IReservation[]>(`/api/reservation/all/dateFrom=${dateFrom}/dateTo=${dateTo}`)
+    return this.http.get<IReservation[]>(`${environment.baseUrl}/reservation/all/dateFrom=${dateFrom}/dateTo=${dateTo}`)
       .pipe(
         catchError(this.handleError('getReservationsForOneTable', []))
       );

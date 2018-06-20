@@ -5,6 +5,7 @@ import {User} from "../model/user";
 import {Observable} from "rxjs/Rx";
 import 'rxjs/add/operator/map';
 import {RestaurantInfoService} from "./restaurantInfo.service";
+import {environment} from "../../environments/environment";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -32,7 +33,7 @@ export class AuthenticationService {
   login(username: string, password: string): Observable<Response> {
     const body = new User(username, password).toJSON();
 
-    return this.http.post<Response>(`api/auth/`, body, options)
+    return this.http.post<Response>(`${environment.baseUrl}/auth/`, body, options)
       .map((response: any) => {
         if (response.status === 403) {
           Observable.throw(response);
@@ -59,7 +60,7 @@ export class AuthenticationService {
     const body = user.toJSON();
 
 
-    return this.http.post<User>(`api/auth/register`, body, options)
+    return this.http.post<User>(`${environment.baseUrl}/auth/register`, body, options)
       .do(() => {
         this._router.navigate(['/start'])
       });

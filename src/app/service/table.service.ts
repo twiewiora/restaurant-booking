@@ -7,6 +7,7 @@ import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
 import {Time} from "../model/time";
 import {IReservation} from "../model/reservation";
+import {environment} from "../../environments/environment";
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json'
@@ -23,7 +24,7 @@ export class TableService {
   }
 
   getTables(): Observable<ITable[]> {
-    return this.http.get<ITable[]>(`/api/tables`)
+    return this.http.get<ITable[]>(`${environment.baseUrl}/tables`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );
@@ -31,21 +32,21 @@ export class TableService {
 
   //TODO class
   searchFreeTables(date: string, duration: number, places: number): Observable<ITable[]> {
-    return this.http.get<ITable[]>(`/api/tables/search?date=${date}&length=${duration}&places=${places}`)
+    return this.http.get<ITable[]>(`${environment.baseUrl}/tables/search?date=${date}&length=${duration}&places=${places}`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );
   }
 
   addTable(table: ITable): Observable<ITable> {
-    return this.http.post<ITable>(`/api/table/add`, table.toJson(), options)
+    return this.http.post<ITable>(`${environment.baseUrl}/table/add`, table.toJson(), options)
       .pipe(
         catchError(this.handleError('addTable', new Table()))
       );
   }
 
   updateTable(table: ITable): Observable<ITable> {
-    return this.http.post<ITable>(`/api/table/update`, table.toJson(), options)
+    return this.http.post<ITable>(`${environment.baseUrl}/table/update`, table.toJson(), options)
       .pipe(
         catchError(this.handleError('updateTable', new Table()))
       );
@@ -53,7 +54,7 @@ export class TableService {
 
   deleteTable(table: ITable | number): Observable<ITable> {
     const id = typeof table === 'number' ? table : table.id;
-    return this.http.delete<ITable>(`/api/table/delete/tableId=${id}`)
+    return this.http.delete<ITable>(`${environment.baseUrl}/table/delete/tableId=${id}`)
       .pipe(
         catchError(this.handleError('deleteTable', new Table()))
       );
