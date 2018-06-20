@@ -6,7 +6,6 @@ import com.application.restaurantbooking.persistence.model.Restaurant;
 import com.application.restaurantbooking.persistence.model.Tag;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -58,8 +57,6 @@ public class RestaurantControllerTest {
                 .andExpect(jsonPath("$[2]").value(tags.get(2).toString()));
     }
 
-    @Test
-    @Ignore
     public void getAllRestaurantsTest() throws Exception{
         Restaurant restaurant = new Restaurant();
         restaurant.setName("name");
