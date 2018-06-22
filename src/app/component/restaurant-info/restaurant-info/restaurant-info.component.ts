@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, SimpleChange} from '@angular/core';
 import {IRestaurant, Restaurant} from "../../../model/restaurant";
 import {RestaurantInfoService} from "../../../service/restaurantInfo.service";
 import {Router} from "@angular/router";
@@ -11,6 +11,7 @@ import {Router} from "@angular/router";
 export class RestaurantInfoComponent implements OnInit {
 
   restaurant: Restaurant;
+  editRestaurant: Restaurant;
   @Input() edit: boolean;
   @Input() action: Action;
   public autocompleteItems: string[] = [];
@@ -27,9 +28,11 @@ export class RestaurantInfoComponent implements OnInit {
   getRestaurant() {
     this.restaurantInfoService.getRestaurant().subscribe((response: IRestaurant) => {
         this.restaurant = <Restaurant> response;
+        this.editRestaurant = this.restaurant;
       },
       _ => {
         this.restaurant = new Restaurant();
+        this.editRestaurant = this.restaurant;
       });
   }
 
@@ -47,10 +50,18 @@ export class RestaurantInfoComponent implements OnInit {
     });
   }
 
-  getTags(){
-    this.restaurantInfoService.getTags().subscribe(tags =>{
+  getTags() {
+    this.restaurantInfoService.getTags().subscribe(tags => {
       this.autocompleteItems = <string[]> tags;
     })
+  }
+
+  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    let editChange = changes['edit'];
+    if (editChange) {
+      if(!editChange.isFirstChange() && editChange.previousValue)
+      this.updateRestaurant(this.editRestaurant);
+    }
   }
 }
 

@@ -24,7 +24,7 @@ export class ReservationService {
 
 
 
-  addReservation(reservation: IReservation): Observable<IReservation> {
+  addReservation(reservation: Reservation): Observable<IReservation> {
     return this.http.post<any>(`${environment.baseUrl}/reservation/add`, reservation.toJson(), options)
       .pipe(
         catchError(this.handleError('getReservation', new Reservation()))
@@ -32,17 +32,11 @@ export class ReservationService {
   }
 
   cancelReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.post<IReservation>(`${environment.baseUrl}/reservation/cancel/reservationId=${reservation.id}`, [], options)
-      .pipe(
-        catchError(this.handleError('deleteReservation', new Reservation()))
-      );
+    return this.http.post<IReservation>(`${environment.baseUrl}/reservation/cancel/reservationId=${reservation.id}`, [], options);
   }
 
   deleteReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.delete<IReservation>(`${environment.baseUrl}/reservation/delete/reservationId=${reservation.id}`)
-      .pipe(
-        catchError(this.handleError('deleteReservation', new Reservation()))
-      );
+    return this.http.delete<IReservation>(`${environment.baseUrl}/reservation/delete/reservationId=${reservation.id}`);
   }
 
   getReservationsForOneTable(tableId: number, dateFrom: string, dateTo: string): Observable<IReservation[]> {
