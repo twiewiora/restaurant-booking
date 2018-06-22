@@ -2,20 +2,41 @@
 
   <button class="btn" (click)="toggleChangeDate()">Change Date</button>
   <div *ngIf="changeDate">
-  <ngb-datepicker #dp [(ngModel)]="model" (navigate)="$event.next" (select)="onDateSelection($event)" ></ngb-datepicker>
-  <button class="btn btn-sm btn-outline-primary mr-2" (click)="selectToday()">Select Today</button>
+    <ngb-datepicker #dp [(ngModel)]="model" (navigate)="$event.next"
+                    (select)="onDateSelection($event)"></ngb-datepicker>
+    <button class="btn btn-sm btn-outline-primary mr-2" (click)="selectToday()">Select Today</button>
   </div>
-  <div *ngFor="let reservation of reservations">
-    {{reservation.id}}
-    {{reservation.cancelled}}
-    {{reservation.comment}}
-    {{reservation.dateReservation}}
-    {{reservation.reservationLength}}
-    {{reservation.reservedPlaces}}
-    {{reservation.clientId}}
-    {{reservation.restaurantTableId}}
 
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Table</th>
+      <th scope="col">Date</th>
+      <th scope="col">Duration</th>
+      <th scope="col">Places</th>
+      <th scope="col">comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let reservation of reservations">
+      <td>
+        {{reservation.restaurantTableId}}
+      </td>
+      <td>
+        {{reservation.dateReservation}}
+      </td>
+      <td>
+        {{reservation.reservationLength}}
+      </td>
+      <td>
+        {{reservation.reservedPlaces}}
+      </td>
+      <td>
+        {{reservation.comment}}
+      </td>
+      <button class="btn btn-danger" (click)="deleteReservation(reservation)">Delete</button>
+    </tr>
+    </tbody>
+  </table>
 
-    <button  class="btn btn-danger" (click)="deleteReservation(reservation)">Delete</button>
-  </div>
 </div>
