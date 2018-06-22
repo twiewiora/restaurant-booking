@@ -49,7 +49,7 @@ public class ReservationController {
 
     private TableSearcher tableSearcher;
 
-    private final String dateTimeFormat = "yyyy-MM-dd_HH:mm";
+    private static final String dateTimeFormat = "yyyy-MM-dd_HH:mm";
 
     @Autowired
     public ReservationController(JwtTokenUtil jwtTokenUtil,

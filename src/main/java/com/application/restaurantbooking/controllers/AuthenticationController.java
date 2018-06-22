@@ -89,7 +89,6 @@ public class AuthenticationController {
         try {
             jwtUserDetailsService.loadUserByUsername(registrationRequest.getUsername());
             return ResponseEntity.noContent().build();
-            //ResponseEntity.ok(new Message("A restorer of the given username already exists"));
         } catch (UsernameNotFoundException e) {
             try {
                 RegistrationValidation registrationValidation = new RegistrationValidation();
