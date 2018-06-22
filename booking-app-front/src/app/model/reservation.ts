@@ -21,6 +21,7 @@ export class Reservation implements IReservation {
   clientId: number;
   id: number;
   dateReservation: string;
+  date: Date;
   reservationLength: number;
   comment: string = '';
   tableId: number;
@@ -39,7 +40,6 @@ export class Reservation implements IReservation {
       comment: this.comment
     });
   }
-
 
   setDateReservation(date: NgbDate, time: NgbTime) {
     this.dateReservation = date.year + '-' + date.month + '-' + date.day + '_' + time.hour + ':' + time.minute;
