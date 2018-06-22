@@ -1,42 +1,82 @@
 <div class="container">
 
-  <button class="btn" (click)="toggleChangeDate()">Change Date</button>
-  <div *ngIf="changeDate">
-    <ngb-datepicker #dp [(ngModel)]="model" (navigate)="$event.next"
-                    (select)="onDateSelection($event)"></ngb-datepicker>
-    <button class="btn btn-sm btn-outline-primary mr-2" (click)="selectToday()">Select Today</button>
+  <ng-template #modalContent let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ modalData?.event.meta.comment}}</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div>
+        <pre>Table identifier: {{ modalData?.event.meta.table.identifier}}</pre>
+        <pre>start: {{ modalData?.event.start }}</pre>
+        <pre>end: {{ modalData?.event.end }}</pre>
+        <pre>Reserved places: {{ modalData?.event.meta.reservedPlaces }}</pre>
+      </div>
+      <button class="btn btn-warning" (click)="cancelReservation(modalData?.event); close()">cancel</button>
+      <button class="btn btn-danger" (click)="deleteReservation(modalData?.event); close()">delete</button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">OK</button>
+    </div>
+  </ng-template>
+
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          (viewDateChange)="onDateSelection($event)"
+          [view]="view"
+          [(viewDate)]="viewDate">
+          Previous
+        </div>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          (viewDateChange)="onDateSelection($event)"
+          [(viewDate)]="viewDate">
+          Today
+        </div>
+        <div
+          class="btn btn-primary"
+          mwlCalendarNextView
+          (viewDateChange)="onDateSelection($event)"
+          [view]="view"
+          [(viewDate)]="viewDate">
+          Next
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-primary" (click)="d.toggle()">Choose day</button>
+      <input type="hidden" [(ngModel)]="viewDate" ngbDatepicker #d="ngbDatepicker"
+             (ngModelChange)="onDateSelection(viewDate)"/>
+    </div>
   </div>
+  <br>
+  <div>
 
-  <table class="table">
-    <thead>
-    <tr>
-      <th scope="col">Table</th>
-      <th scope="col">Date</th>
-      <th scope="col">Duration</th>
-      <th scope="col">Places</th>
-      <th scope="col">comment</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let reservation of reservations">
-      <td>
-        {{reservation.restaurantTableId}}
-      </td>
-      <td>
-        {{reservation.dateReservation}}
-      </td>
-      <td>
-        {{reservation.reservationLength}}
-      </td>
-      <td>
-        {{reservation.reservedPlaces}}
-      </td>
-      <td>
-        {{reservation.comment}}
-      </td>
-      <button class="btn btn-danger" (click)="deleteReservation(reservation)">Delete</button>
-    </tr>
-    </tbody>
-  </table>
-
+    <div *ngIf="openHours && openHours.isClose">
+      CLOSED
+    </div>
+    <mwl-calendar-day-view *ngIf="openHours && !openHours.isClose"
+                           [locale]="locale"
+                           [hourSegments]="HOURS_SEGMENT"
+                           [dayStartHour]="openHours.openHour.hour"
+                           [dayEndHour]="openHours.closeHour.hour"
+                           [viewDate]="viewDate"
+                           [events]="events"
+                           [refresh]="refresh"
+                           [eventWidth]="50"
+                           (eventClicked)="handleEvent('Clicked', $event.event)"
+                           (eventTimesChanged)="eventTimesChanged($event)">
+    </mwl-calendar-day-view>
+  </div>
 </div>

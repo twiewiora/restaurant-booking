@@ -1,16 +1,21 @@
 <div class="container">
 
-  <button class="btn btn-warning" (click)="toggleAdd()">add</button>
-  <!--<button class="btn btn-warning" (click)="toggleAddNow()">Walk in</button>-->
+  <!--<app-for-tests></app-for-tests>-->
 
-  <div *ngIf="add">
-    <app-add-reservation></app-add-reservation>
+
+  <div class="row">
+    <div class="col-lg-11 col-md-11 col-sm-11">
+      <div *ngIf="add">
+        <app-add-reservation></app-add-reservation>
+      </div>
+      <app-reservations-display></app-reservations-display>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <div class="position-fixed">
+      <button class="btn btn-success" (click)="toggleAdd()">New Reservation</button>
+      </div>
+    </div>
   </div>
-  <div *ngIf="addNow">
-    <app-add-reservation></app-add-reservation>
-  </div>
 
-
-  <app-reservations-display></app-reservations-display>
 
 </div>

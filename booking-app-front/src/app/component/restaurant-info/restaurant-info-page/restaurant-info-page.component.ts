@@ -14,31 +14,20 @@ export class RestaurantInfoPageComponent implements OnInit {
   edit: boolean = false;
   action: Action = Action.Update;
 
-  //oneDay: OpenHours;
-
   constructor(private restaurantInfoService: RestaurantInfoService) {
   }
 
   ngOnInit() {
     this.getRestaurant();
-
-    // this.openHoursService.getOpeningHoursForDay(2, "WEDNESDAY").subscribe(request => {
-    //   this.oneDay = <OpenHours> request;
-    // });
   }
 
-  getRestaurant(){
-    this.restaurantInfoService.getRestaurant().subscribe( result => {
+  getRestaurant() {
+    this.restaurantInfoService.getRestaurant().subscribe(result => {
       this.restaurant = result;
     });
   }
 
-  toggleEdit(){
+  toggleEdit() {
     this.edit = !this.edit;
-  }
-
-
-  save(){
-
   }
 }
