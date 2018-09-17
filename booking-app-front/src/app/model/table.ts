@@ -29,6 +29,18 @@ export class Table implements ITable {
   }
 
 
+  static fromJsonToMap(json): Map<number, Table>{
+    let tables: Map<number, Table> = new Map<number, Table>();
+    json.forEach(jTable =>{
+      let table: Table = new Table();
+      table.identifier = jTable['identifier'] ?  jTable['identifier'] : '';
+      table.id = jTable['id'];
+      table.comment = jTable['comment'] ? jTable['comment'] : '';
+      table.maxPlaces = jTable['maxPlaces'];
+      tables[table.id] = table;
+    });
+    return tables;
+  }
 
 
   static fromJsonToArray(json): Table[]{

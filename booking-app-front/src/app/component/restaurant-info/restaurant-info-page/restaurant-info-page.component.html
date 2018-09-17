@@ -5,9 +5,10 @@
       <app-open-hours [edit]="edit"></app-open-hours>
     </div>
     <div class="col-md-2">
-      <button class="btn btn-warning" (click)="toggleEdit()">edit</button>
-      <div *ngIf="edit">
-      <button class="btn btn-success" (click)="toggleEdit()">save</button>
+      <button *ngIf="!edit" class="btn btn-warning position-fixed" (click)="toggleEdit()">edit</button>
+      <div class="position-fixed">
+      <button *ngIf="edit" class="btn btn-danger" (click)="toggleEdit()">cancel</button>
+      <button *ngIf="edit" class="btn btn-success" (click)="toggleEdit()">save</button>
       </div>
     </div>
   </div>

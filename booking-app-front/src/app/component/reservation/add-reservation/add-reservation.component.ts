@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ReservationService} from "../../../service/reservation.service";
 import {IReservation, Reservation} from "../../../model/reservation";
-import * as moment from "moment";
-import {NgbDateStruct, NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
-import {NgbTime} from "@ng-bootstrap/ng-bootstrap/timepicker/ngb-time";
-import {NgbDate} from "@ng-bootstrap/ng-bootstrap/datepicker/ngb-date";
 import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
+import {NgbDateTimeAdapter} from "../../../adapters/ngbDateTimeAdapter";
+import {NgbDateStruct, NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-add-reservation',
@@ -15,21 +13,27 @@ import {ITable, Table} from "../../../model/table";
 })
 export class AddReservationComponent implements OnInit {
 
+  DEFAULT_RESERVATION_LENGTH = 2;
+  DEFAULT_RESERVATION_PLACES = 4;
+
   tableList: ITable[];
   reservation: Reservation = new Reservation();
   showList: boolean = false;
 
-  model: NgbDate = new NgbDate(moment().get('year'), moment().get('month') + 1, moment().date());
-  time: NgbTime = new NgbTime();
-  date: { year: number, month: number, day: number };
+  date: Date = new Date();
+  time: NgbTimeStruct = NgbDateTimeAdapter.fromModel(new Date());
 
 
-  selectToday() {
-    this.time.minute = moment().get('minute');
-    this.time.hour = moment().get('hour');
-    this.model.year = moment().get('year');
-    this.model.month = moment().get('month') + 1;
-    this.model.day = moment().date();
+  selectNow() {
+    this.date = new Date();
+    this.time = NgbDateTimeAdapter.fromModel(new Date());
+  }
+
+  defaultValues(){
+    this.date = new Date();
+    this.time = NgbDateTimeAdapter.fromModel(new Date());
+    this.reservation.reservationLength = this.DEFAULT_RESERVATION_LENGTH;
+    this.reservation.reservedPlaces = this.DEFAULT_RESERVATION_PLACES;
   }
 
 
@@ -38,24 +42,23 @@ export class AddReservationComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.time.minute = moment().get('minute');
-    this.time.hour = moment().get('hour');
-    this.model.year = moment().get('year');
-    this.model.month = moment().get('month') + 1;
-    this.model.day = moment().date();
+    this.defaultValues();
   }
 
-  addReservation(table: ITable, reservation: IReservation) {
+  isDisabled(date: NgbDateStruct) {
+    const selectedDate: Date = new Date(date.year, date.month - 1, date.day);
+    return selectedDate < new Date();
+  }
+
+  addReservation(table: ITable, reservation: Reservation) {
     this.reservation.tableId = table.id;
     this.reservation.dateReservation = this.reservation.dateReservation.replace('T', '_');
     this.reservationService.addReservation(reservation).subscribe(any => {
-
     });
   }
 
   getFreeTableList(reservation: Reservation) {
-    this.reservation.setDateReservation(this.model, this.time);
+    this.reservation.setDateReservation(this.date, NgbDateTimeAdapter.toModel(this.time));
     this.tableService.searchFreeTables(reservation.dateReservation, reservation.reservationLength, reservation.reservedPlaces).subscribe(tableList => {
       this.tableList = Table.fromJsonToArray(tableList);
       this.showList = true;

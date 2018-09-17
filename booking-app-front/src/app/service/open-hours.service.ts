@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {of} from "rxjs/observable/of";
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
-import {OpenHours} from "../model/open-hours";
+import {IOpenHours, OpenHours} from "../model/open-hours";
 import {environment} from "../../environments/environment";
 
 const headers = new HttpHeaders({
@@ -28,18 +28,18 @@ export class OpenHoursService {
         catchError(this.handleError('getOpeningHoursForAllDays', [])));
   }
 
-  getOpeningHoursForDay(day: string): Observable<OpenHours> {
-    return this.http.get<OpenHours>(`${environment.baseUrl}/openHours/day=${day}`)
-      .pipe(
-        catchError(this.handleError('getOpeningHoursForDay', new OpenHours()))
-      );
+  getOpeningHoursForDay(day: string): Observable<IOpenHours> {
+    return this.http.get<IOpenHours>(`${environment.baseUrl}/openHours/day=${day}`)
+      // .pipe(
+      //   catchError(this.handleError('getOpeningHoursForDay', )))
+      // );
   }
 
 // {"restaurantId": 2, "wednesday":["12:30:00", "22:30:00"], "monday":["12:30:00", "22:30:00"],  "tuesday":["12:30:00", "22:30:00"],  "thursday":["12:30:00", "22:30:00"],
 //   "friday":["12:30:00", "22:30:00"],  "saturday":["12:30:00", "22:30:00"],  "sunday":["12:30:00", "22:30:00"]
 // }
 
-  updateOpenHours(json: string): Observable<any> {
+  updateOpenHours(json: string): Observable<OpenHours> {
     return this.http.post<any>(`${environment.baseUrl}//openHours/update`, json, options)
       .pipe(
         catchError(this.handleError('getOpeningHoursForAllDays', []))

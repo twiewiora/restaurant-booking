@@ -1,7 +1,11 @@
+import {NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
+import {NgbStringTimeAdapter} from "../adapters/ngbStringTimeAdapter";
+
 export interface IOpenHours {
   id: number;
-  openHour: {hour: number, minute: number};
-  closeHour: {hour: number, minute: number};
+  openHour: string;
+  closeHour: string;
+  isClose: boolean;
 }
 
 export enum Weekday {
@@ -14,15 +18,34 @@ export enum Weekday {
   Saturday = "SATURDAY"
 }
 
-export class OpenHours implements IOpenHours {
+export class OpenHours{
+
   id: number;
-  openHour: {hour: number, minute: number} =  {hour: 0, minute: 0};
-  closeHour: {hour: number, minute: number} = {hour: 0, minute: 0};
+  openHour: NgbTimeStruct;
+  closeHour: NgbTimeStruct;
   weekday: Weekday;
-  isClosed: boolean = true;
+  isClose: boolean = true;
 
   constructor() {
   }
+
+  getOpeningHourMinute(): number {
+    return this.openHour.minute;
+  }
+
+  getOpeningHourHour(): number {
+    return this.openHour.hour;
+  }
+
+  getClosingHourHour(): number {
+    return this.closeHour.hour;
+  }
+
+
+  getClosingHourMinute(): number {
+    return this.closeHour.minute;
+  }
+
 
   public static createNewOpenHoursWeek(): Map<Weekday, OpenHours> {
     let openHoursWeek: Map<Weekday, OpenHours> = new Map<Weekday, OpenHours>();
@@ -39,47 +62,30 @@ export class OpenHours implements IOpenHours {
     let openHoursWeek: Map<Weekday, OpenHours> = new Map<Weekday, OpenHours>();
     for (let dayValue in Weekday) {
       let weekday = dayValue.toUpperCase();
-      let openHours = new OpenHours();
-      openHours.weekday = <Weekday>weekday;
-      if (json[weekday]) {
-        openHours.openHour.hour = +json[weekday].openHour.substr(0, 2);
-        openHours.openHour.minute = +json[weekday].openHour.substr(3, 2);
-        openHours.closeHour.hour = +json[weekday].closeHour.substr(0, 2);
-        openHours.closeHour.minute = +json[weekday].closeHour.substr(3, 2);
-        openHours.isClosed = json[weekday].isClose;
-      }
-      openHoursWeek.set(<Weekday>weekday, openHours);
+      openHoursWeek.set(<Weekday>weekday, OpenHours.fromJson(weekday, json[weekday]));
     }
     return openHoursWeek;
   }
 
-  public static fromJson(weekday: string, json: string): OpenHours {
+  public static fromJson(weekday: string, json: IOpenHours): OpenHours {
     let openHours = new OpenHours();
     openHours.weekday = <Weekday>weekday;
-    if (json[weekday]) {
-      openHours.openHour.hour = +json[weekday].openHour.substr(0, 2);
-      openHours.openHour.minute = +json[weekday].openHour.substr(3, 2);
-      openHours.closeHour.hour = +json[weekday].closeHour.substr(0, 2);
-      openHours.closeHour.minute = +json[weekday].closeHour.substr(3, 2);
-      openHours.isClosed = json[weekday].isClose;
-    }
+    openHours.openHour = NgbStringTimeAdapter.fromModel(json.openHour);
+    openHours.closeHour = NgbStringTimeAdapter.fromModel(json.closeHour);
+    openHours.isClose = json.isClose;
+
     return openHours;
   }
 
   public static toJson(openHoursWeek: Map<Weekday, OpenHours>): string {
     return JSON.stringify({
-      sunday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Sunday).closeHour), openHoursWeek.get(Weekday.Sunday).isClosed],
-      monday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Monday).closeHour), openHoursWeek.get(Weekday.Monday).isClosed],
-      tuesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Tuesday).closeHour), openHoursWeek.get(Weekday.Tuesday).isClosed],
-      wednesday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Wednesday).closeHour), openHoursWeek.get(Weekday.Wednesday).isClosed],
-      thursday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Thursday).closeHour), openHoursWeek.get(Weekday.Thursday).isClosed],
-      friday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Friday).closeHour), openHoursWeek.get(Weekday.Friday).isClosed],
-      saturday: [OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).openHour), OpenHours.getTimeAsString(openHoursWeek.get(Weekday.Saturday).closeHour), openHoursWeek.get(Weekday.Saturday).isClosed]
+      sunday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Sunday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Sunday).closeHour), openHoursWeek.get(Weekday.Sunday).isClose],
+      monday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Monday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Monday).closeHour), openHoursWeek.get(Weekday.Monday).isClose],
+      tuesday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Tuesday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Tuesday).closeHour), openHoursWeek.get(Weekday.Tuesday).isClose],
+      wednesday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Wednesday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Wednesday).closeHour), openHoursWeek.get(Weekday.Wednesday).isClose],
+      thursday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Thursday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Thursday).closeHour), openHoursWeek.get(Weekday.Thursday).isClose],
+      friday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Friday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Friday).closeHour), openHoursWeek.get(Weekday.Friday).isClose],
+      saturday: [NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Saturday).openHour), NgbStringTimeAdapter.toModel(openHoursWeek.get(Weekday.Saturday).closeHour), openHoursWeek.get(Weekday.Saturday).isClose]
     });
   }
-
-  static getTimeAsString(time: any): string {
-    return time.hour + ':' + time.minute;
-  }
-
 }

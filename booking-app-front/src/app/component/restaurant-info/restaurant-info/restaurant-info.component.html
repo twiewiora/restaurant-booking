@@ -4,20 +4,20 @@
 
     <dl class="row">
       <dt class="col-sm-3">Name</dt>
-      <dd class="col-sm-9">{{restaurant.name}}</dd>
+      <dd class="col-sm-9">{{restaurant?.name}}</dd>
 
       <dt class="col-sm-3">City</dt>
-      <dd class="col-sm-9">{{restaurant.city}}</dd>
+      <dd class="col-sm-9">{{restaurant?.city}}</dd>
 
       <dt class="col-sm-3">Street</dt>
-      <dd class="col-sm-9">{{restaurant.street}}</dd>
+      <dd class="col-sm-9">{{restaurant?.street}}</dd>
 
       <dt class="col-sm-3">PhoneNumber</dt>
-      <dd class="col-sm-9">{{restaurant.phoneNumber}}</dd>
+      <dd class="col-sm-9">{{restaurant?.phoneNumber}}</dd>
 
       <dt class="col-sm-3">Tags</dt>
       <tag-input class="col-sm-9"
-                 [ngModel]="restaurant.tags"
+                 [ngModel]="restaurant?.tags"
                  [removable]="false"
                  [hideForm]="true"></tag-input>
     </dl>
@@ -25,20 +25,20 @@
   <div *ngIf="edit">
 
     <label for="name">Name</label>
-    <input type="text" [(ngModel)]="restaurant.name" class="form-control" id="name" name="name" required>
+    <input type="text" [(ngModel)]="editRestaurant.name" class="form-control" id="name" name="name" required>
 
     <label for="city">City</label>
-    <input type="text" [(ngModel)]="restaurant.city" class="form-control" id="city" name="city" required>
+    <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city" required>
 
     <label for="street">Street</label>
-    <input type="text" [(ngModel)]="restaurant.street" class="form-control" id="street" name="street" required>
+    <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street" required>
 
     <label for="phone">Tel</label>
-    <input type="number" [(ngModel)]="restaurant.phoneNumber" class="form-control" id="phone" name="phone">
+    <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone">
 
     <label>Tags</label>
 
-    <tag-input [(ngModel)]="restaurant.tags"
+    <tag-input [(ngModel)]="editRestaurant.tags"
                [onlyFromAutocomplete]="true"
                [modelAsStrings]="true">
       <tag-input-dropdown
@@ -50,9 +50,9 @@
     <div *ngIf="this.action === 1">
       <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
     </div>
-    <div *ngIf="this.action === 0">
-      <button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>
-    </div>
+    <!--<div *ngIf="this.action === 0">-->
+      <!--<button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>-->
+    <!--</div>-->
 
   </div>
 </div>
