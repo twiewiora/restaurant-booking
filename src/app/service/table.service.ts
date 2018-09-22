@@ -24,10 +24,7 @@ export class TableService {
   }
 
   getTables(): Observable<ITable[]> {
-    return this.http.get<ITable[]>(`${environment.baseUrl}/tables`)
-      .pipe(
-        catchError(this.handleError('getTables', []))
-      );
+    return this.http.get<ITable[]>(`${environment.baseUrl}/tables`);
   }
 
   //TODO class
@@ -63,7 +60,6 @@ export class TableService {
 
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
 

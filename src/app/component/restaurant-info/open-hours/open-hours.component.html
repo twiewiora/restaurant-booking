@@ -30,6 +30,9 @@
           <dd class="col-sm-2 time-divider">-</dd>
           <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [size]="'small'"></ngb-timepicker>
         </div>
+        <div *ngIf="!openHours.value.validInterval()" class="alert alert-danger">
+          Incorrect Interval
+        </div>
       </div>
       <div class="col-sm-2">
         <div class="row">

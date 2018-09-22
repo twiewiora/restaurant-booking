@@ -1,14 +1,24 @@
 <div class="container">
   <div class="row">
     <div class="col-md-10">
-      <app-restaurant-info [edit]="edit" [action]="action"></app-restaurant-info>
-      <app-open-hours [edit]="edit"></app-open-hours>
+      <app-restaurant-info [edit]="edit" [restaurant]="restaurant" [editRestaurant]="editRestaurant"
+                           [autocompleteItems]="autocompleteItems" #restaurantInfoComp></app-restaurant-info>
+      <app-open-hours *ngIf="!create" [edit]="edit" [openHoursWeek]="openHoursWeek"
+                      [editOpenHoursWeek]="editOpenHoursWeek"
+                      #openHoursComp></app-open-hours>
     </div>
     <div class="col-md-2">
-      <button *ngIf="!edit" class="btn btn-warning position-fixed" (click)="toggleEdit()">edit</button>
       <div class="position-fixed">
-      <button *ngIf="edit" class="btn btn-danger" (click)="toggleEdit()">cancel</button>
-      <button *ngIf="edit" class="btn btn-success" (click)="toggleEdit()">save</button>
+        <button *ngIf="!edit && !create" class="btn btn-warning position-fixed" (click)="toggleEdit()">edit</button>
+        <div *ngIf="!create && edit">
+          <button class="btn btn-danger" (click)="toggleEdit()">cancel</button>
+          <button class="btn btn-success " (click)="save()"
+                  [disabled]="!(restaurantInfoComp.restaurantInfoForm.valid)">save
+          </button>
+        </div>
+        <button *ngIf="edit && create" class="btn btn-success " (click)="launchCreate()"
+                [disabled]="!(restaurantInfoComp.restaurantInfoForm.valid)">create
+        </button>
       </div>
     </div>
   </div>

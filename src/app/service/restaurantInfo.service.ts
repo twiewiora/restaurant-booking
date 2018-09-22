@@ -24,8 +24,11 @@ export class RestaurantInfoService {
   getRestaurant(): Observable<IRestaurant> {
     return this.http.get<IRestaurant>(`${environment.baseUrl}/restaurant`)
       .pipe(
-        catchError(this.handleError('getRestaurant', new Restaurant()))
-      );
+        catchError(
+          this.handleError<IRestaurant>('getRestaurant', new Restaurant()))
+
+  )
+    ;
   }
 
   getAllRestaurants(): Observable<IRestaurant[]> {
@@ -66,9 +69,11 @@ export class RestaurantInfoService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
+      if(operation === 'getRestaurant'){
+        console.error(error);
+      }
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+       // log to console instead
 
       // // TODO: better job of transforming error for user consumption
       // this.log(`${operation} failed: ${error.message}`);

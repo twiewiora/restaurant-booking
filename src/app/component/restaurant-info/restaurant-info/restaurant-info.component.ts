@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, SimpleChange} from '@angular/core';
-import {IRestaurant, Restaurant} from "../../../model/restaurant";
-import {RestaurantInfoService} from "../../../service/restaurantInfo.service";
-import {Router} from "@angular/router";
+import {Restaurant} from "../../../model/restaurant";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-restaurant-info',
@@ -10,62 +9,55 @@ import {Router} from "@angular/router";
 })
 export class RestaurantInfoComponent implements OnInit {
 
-  restaurant: Restaurant;
-  editRestaurant: Restaurant;
+  @Input() restaurant: Restaurant;
+  @Input() editRestaurant: Restaurant;
   @Input() edit: boolean;
-  @Input() action: Action;
-  public autocompleteItems: string[] = [];
+  @Input() autocompleteItems: string[];
 
-  constructor(private restaurantInfoService: RestaurantInfoService,
-              private router: Router) {
+
+  private restaurantInfoForm: FormGroup;
+  private validationCreated: boolean = false;
+
+
+  constructor() {
   }
 
   ngOnInit() {
-    this.getRestaurant();
-    this.getTags();
+
   }
 
-  getRestaurant() {
-    this.restaurantInfoService.getRestaurant().subscribe((response: IRestaurant) => {
-        this.restaurant = <Restaurant> response;
-        this.editRestaurant = this.restaurant;
-      },
-      _ => {
-        this.restaurant = new Restaurant();
-        this.editRestaurant = this.restaurant;
-      });
+  get name() {
+    return this.restaurantInfoForm.get('name');
   }
 
-  updateRestaurant(restaurant: IRestaurant) {
-    this.restaurantInfoService.updateRestaurant(restaurant).subscribe(response => {
-      this.getRestaurant();
+  get city() {
+    return this.restaurantInfoForm.get('city');
+  }
+
+  get street() {
+    return this.restaurantInfoForm.get('street');
+  }
+
+  get phoneNumber() {
+    return this.restaurantInfoForm.get('phoneNumber');
+  }
+
+  createFormValidation() {
+    this.restaurantInfoForm = new FormGroup({
+      'name': new FormControl(this.editRestaurant.name, [
+        Validators.required
+      ]),
+      'city': new FormControl(this.editRestaurant.city, [Validators.required]),
+      'street': new FormControl(this.editRestaurant.street, [Validators.required]),
+      'phoneNumber': new FormControl(this.editRestaurant.phoneNumber, [Validators.required, Validators.pattern('^[0-9]*$')])
     });
+    this.validationCreated = true;
   }
 
-
-  createRestaurant(restaurant: IRestaurant) {
-    this.restaurantInfoService.createRestaurant(restaurant).subscribe(response => {
-      localStorage.setItem('rest', 'ok');
-      this.router.navigate(["/info"])
-    });
-  }
-
-  getTags() {
-    this.restaurantInfoService.getTags().subscribe(tags => {
-      this.autocompleteItems = <string[]> tags;
-    })
-  }
-
-  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let editChange = changes['edit'];
-    if (editChange) {
-      if(!editChange.isFirstChange() && editChange.previousValue)
-      this.updateRestaurant(this.editRestaurant);
+  ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+    let editRestaurantChange = changes['editRestaurant'];
+    if (!this.validationCreated && editRestaurantChange && editRestaurantChange.currentValue) {
+      this.createFormValidation();
     }
   }
-}
-
-export enum Action {
-  Update = 0,
-  Create = 1
 }

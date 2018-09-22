@@ -1,26 +1,30 @@
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
-import {TableService} from "../../../service/table.service";
+import {Component, Input, OnInit} from '@angular/core';
 import {ITable, Table} from "../../../model/table";
-import {TableCommunicationService} from "../table-communication.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {TableCommunicationService} from "../table-communication.service";
+import {TableService} from "../../../service/table.service";
 import {NotificationsService} from "angular2-notifications";
 
 @Component({
-  selector: 'app-add-table',
-  templateUrl: './add-table.component.html',
-  styleUrls: ['./add-table.component.scss']
+  selector: '[app-table-element]',
+  templateUrl: './table-element.component.html',
+  styleUrls: ['./table-element.component.scss']
 })
-export class AddTableComponent implements OnInit {
+export class TableElementComponent implements OnInit {
 
   MIN = 1;
-  newTable: boolean = false;
-  table: Table = new Table();
-  private tableForm: FormGroup;
+
+  @Input() table: Table;
+
   private options = {
     position: 'middle',
     timeOut: 3000,
     animate: 'fade'
   };
+
+
+  private tableForm: FormGroup;
+
 
   constructor(private tableService: TableService,
               private tableCommunicationService: TableCommunicationService,
@@ -49,19 +53,21 @@ export class AddTableComponent implements OnInit {
     return this.tableForm.get('comment');
   }
 
-
-  toggleNew() {
-    this.newTable = !this.newTable;
+  deleteTable(table: ITable) {
+    this.tableService.deleteTable(table).subscribe((any) => {
+        this.notificationService.alert("Table Deleted", '', this.options);
+        this.tableCommunicationService.tableDeleted(true);
+      }
+    );
   }
 
-  addTable(table: ITable) {
-    table.restaurantId = 2;
-    this.tableService.addTable(table).subscribe(any => {
-      this.tableCommunicationService.tableAdded(true);
-      this.newTable = !this.newTable;
-      this.tableForm.reset({'comment': ''});
-      this.notificationService.success("Table added", '', this.options);
-    });
+  updateTable(table: ITable) {
+    this.tableService.updateTable(table).subscribe((any) => {
+        this.notificationService.success("Table Updated", '', this.options);
+        this.tableCommunicationService.tableUpdated(true);
+
+      }
+    );
   }
 
 }
