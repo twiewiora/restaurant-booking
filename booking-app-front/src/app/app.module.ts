@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, Injectable, LOCALE_ID} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbDateAdapter, NgbModalModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {AppComponent} from './app.component';
@@ -26,8 +26,6 @@ import {TableListComponent} from './component/table-setting/table-list/table-lis
 import {TableCommunicationService} from "./component/table-setting/table-communication.service";
 import {MapValuesPipe} from "./component/pipes/map-values-pipe";
 import {AddReservationComponent} from './component/reservation/add-reservation/add-reservation.component';
-import {InitialComponent} from './component/initial/initial.component';
-import {InitialGuard} from "./guard/initial-guard";
 import {RestaurantInfoComponent} from './component/restaurant-info/restaurant-info/restaurant-info.component';
 import {RlTagInputModule} from "angular2-tags/dist";
 import {TagInputModule} from "ngx-chips";
@@ -38,10 +36,14 @@ import {ForTestsComponent} from './component/reservation/for-tests/for-tests.com
 import {NgbDateNativeAdapter} from "./adapters/ngbDateNativeAdapter";
 import {NgbDateTimeAdapter} from "./adapters/ngbDateTimeAdapter";
 import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
+import {BasicExampleComponent} from "./basic-example/basic-example.component";
+import { TableElementComponent } from './component/table-setting/table-element/table-element.component';
+import {SimpleNotificationsModule} from "angular2-notifications";
 
 
 @NgModule({
   declarations: [
+    BasicExampleComponent,
     AppComponent,
     LoginComponent,
     RegistrationComponent,
@@ -55,10 +57,10 @@ import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
     TableListComponent,
     MapValuesPipe,
     AddReservationComponent,
-    InitialComponent,
     RestaurantInfoComponent,
     ReservationsDisplayComponent,
-    ForTestsComponent
+    ForTestsComponent,
+    TableElementComponent
   ],
   imports: [
     NgbModule.forRoot(),
@@ -67,16 +69,17 @@ import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     NoopAnimationsModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot(),
-    NgbModalModule.forRoot()
+    NgbModalModule.forRoot(),
+    SimpleNotificationsModule.forRoot()
   ],
   providers: [
     AuthGuard,
     HomeGuard,
-    InitialGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

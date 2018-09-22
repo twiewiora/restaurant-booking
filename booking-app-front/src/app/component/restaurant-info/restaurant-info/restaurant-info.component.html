@@ -22,37 +22,67 @@
                  [hideForm]="true"></tag-input>
     </dl>
   </div>
-  <div *ngIf="edit">
+  <form *ngIf="edit">
+    <div class="form-group" [formGroup]="restaurantInfoForm">
 
-    <label for="name">Name</label>
-    <input type="text" [(ngModel)]="editRestaurant.name" class="form-control" id="name" name="name" required>
+      <label for="name">Name</label>
+      <input type="text" [(ngModel)]="editRestaurant.name"
+             class="form-control {{name.invalid && (name.dirty || name.touched) ? '' : ''}}" id="name" name="name"
+             formControlName="name">
+      <div *ngIf="name.invalid && (name.dirty || name.touched)"
+           class="alert alert-danger">
+        <div *ngIf="name.errors.required">
+          Name is required.
+        </div>
+      </div>
 
-    <label for="city">City</label>
-    <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city" required>
 
-    <label for="street">Street</label>
-    <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street" required>
+      <label for="city">City</label>
+      <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city"
+             formControlName="city">
+      <div *ngIf="city.invalid && (city.dirty || city.touched)"
+           class="alert alert-danger">
+        <div *ngIf="city.errors.required">
+          City is required.
+        </div>
+      </div>
 
-    <label for="phone">Tel</label>
-    <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone">
 
-    <label>Tags</label>
+      <label for="street">Street</label>
+      <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street"
+             formControlName="street">
+      <div *ngIf="street.invalid && (street.dirty || street.touched)"
+           class="alert alert-danger">
+        <div *ngIf="street.errors.required">
+          Street is required.
+        </div>
+      </div>
 
+
+      <label for="phone">Tel</label>
+      <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone"
+             formControlName="phoneNumber">
+      <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)"
+           class="alert alert-danger">
+        <div *ngIf="phoneNumber.errors.required">
+          Phone Number is required.
+        </div>
+        <div *ngIf="phoneNumber.errors.pattern">
+          Must be only digits.
+        </div>
+      </div>
+    </div>
+
+    <label for="tags">Tags</label>
     <tag-input [(ngModel)]="editRestaurant.tags"
                [onlyFromAutocomplete]="true"
-               [modelAsStrings]="true">
+               [modelAsStrings]="true"
+               name="tags"
+               id="tags">
       <tag-input-dropdown
         [showDropdownIfEmpty]="false"
         [autocompleteItems]="autocompleteItems">
       </tag-input-dropdown>
     </tag-input>
-
-    <div *ngIf="this.action === 1">
-      <button (click)="createRestaurant(restaurant)" class="btn btn-success">create</button>
-    </div>
-    <!--<div *ngIf="this.action === 0">-->
-      <!--<button (click)="updateRestaurant(restaurant)" class="btn btn-success">update</button>-->
-    <!--</div>-->
-
-  </div>
+  </form>
 </div>

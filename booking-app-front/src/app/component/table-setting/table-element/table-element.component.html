@@ -1,0 +1,51 @@
+<td>
+  <div *ngIf="!table.edit">
+    {{table.identifier}}
+  </div>
+  <div *ngIf="table.edit" [formGroup]="tableForm">
+    <input type="text" formControlName="identifier" [(ngModel)]="table.identifier" class="form-control">
+    <div *ngIf="identifier.invalid && (identifier.dirty || identifier.touched)"
+         class="alert alert-danger">
+      <div *ngIf="identifier.errors.required">
+        Identifier is required.
+      </div>
+    </div>
+  </div>
+</td>
+
+<td>
+  <div *ngIf="!table.edit">
+    {{table.maxPlaces}}
+  </div>
+  <div *ngIf="table.edit" [formGroup]="tableForm">
+    <input type="number" [(ngModel)]="table.maxPlaces" class="form-control" formControlName="maxPlaces">
+    <div *ngIf="maxPlaces.invalid && (maxPlaces.dirty || maxPlaces.touched)"
+         class="alert alert-danger">
+      <div *ngIf="maxPlaces.errors.required">
+        Maximum number of places is required.
+      </div>
+      <div *ngIf="maxPlaces.errors.min">
+        Minimum number of places is {{MIN}}.
+      </div>
+    </div>
+  </div>
+</td>
+
+<td>
+  <div *ngIf="!table.edit">
+    {{table.comment}}
+  </div>
+  <div *ngIf="table.edit" [formGroup]="tableForm">
+    <textarea type="text" [(ngModel)]="table.comment" class="form-control" formControlName="comment"></textarea>
+
+  </div>
+</td>
+
+<div *ngIf="table.edit">
+  <button class="btn btn-success" (click)="updateTable(table)">save</button>
+</div>
+<div *ngIf="!table.edit">
+  <button class="btn btn-danger" (click)="deleteTable(table)">delete</button>
+</div>
+<button class="btn btn-warning" (click)="table.edit = !table.edit">edit</button>
+

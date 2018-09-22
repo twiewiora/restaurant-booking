@@ -18,32 +18,20 @@ export enum Weekday {
   Saturday = "SATURDAY"
 }
 
-export class OpenHours{
+export class OpenHours {
 
   id: number;
-  openHour: NgbTimeStruct;
-  closeHour: NgbTimeStruct;
+  openHour: NgbTimeStruct = {hour: 8, minute: 0, second: 0};
+  closeHour: NgbTimeStruct = {hour: 20, minute: 0, second: 0};
   weekday: Weekday;
   isClose: boolean = true;
 
   constructor() {
   }
 
-  getOpeningHourMinute(): number {
-    return this.openHour.minute;
-  }
-
-  getOpeningHourHour(): number {
-    return this.openHour.hour;
-  }
-
-  getClosingHourHour(): number {
-    return this.closeHour.hour;
-  }
-
-
-  getClosingHourMinute(): number {
-    return this.closeHour.minute;
+  validInterval(): boolean {
+    return this.openHour.hour * 60 * 60 + this.openHour.minute * 60 + this.openHour.second
+      <= this.closeHour.hour * 60 * 60 + this.closeHour.minute * 60 + this.closeHour.second;
   }
 
 

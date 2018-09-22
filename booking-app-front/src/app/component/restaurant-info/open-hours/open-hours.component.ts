@@ -1,58 +1,29 @@
-import {Component, Input, OnInit, SimpleChange} from '@angular/core';
+import {Component, Input, OnInit,} from '@angular/core';
 import {OpenHours, Weekday} from "../../../model/open-hours";
-import {OpenHoursService} from "../../../service/open-hours.service";
-import {Time} from "@angular/common";
-import {NgbStringTimeAdapter} from "../../../adapters/ngbStringTimeAdapter";
-//import {NgbDateTimeAdapter} from "../../../adapters/ngbDateTimeAdapter";
-//import {NgbTimeAdapter} from "@ng-bootstrap/ng-bootstrap";
-//import {NgbStringTimeAdapter} from "../../../adapters/ngbStringTimeAdapter";
 
 @Component({
   selector: 'app-open-hours',
   templateUrl: './open-hours.component.html',
-  styleUrls: ['./open-hours.component.scss'],
- // providers: [{provide: NgbTimeAdapter, useClass: NgbStringTimeAdapter}]
+  styleUrls: ['./open-hours.component.scss']
 })
 export class OpenHoursComponent implements OnInit {
   @Input() edit: boolean;
-  openHoursWeek: Map<Weekday, OpenHours>;
-  editOpenHoursWeek: Map<Weekday, OpenHours>;
+  @Input() openHoursWeek: Map<Weekday, OpenHours>;
+  @Input() editOpenHoursWeek: Map<Weekday, OpenHours>;
 
-  ngbStringTimeAdapter: NgbStringTimeAdapter = new NgbStringTimeAdapter();
-
-  constructor(private openHoursService: OpenHoursService) {
+  constructor() {
   }
 
   ngOnInit() {
-    this.getOpeningHours()
   }
 
-  updateOpenHours() {
-    this.openHoursService.updateOpenHours(OpenHours.toJson(this.editOpenHoursWeek)).subscribe(any => {
-      this.getOpeningHours();
-    })
-  }
-
-  getOpeningHours() {
-    this.openHoursService.getOpeningHoursForAllDays().subscribe(request => {
-        this.openHoursWeek = OpenHours.fromJsonArray(request);
-        this.editOpenHoursWeek = this.openHoursWeek;
-      },
-      _ => {
-        this.openHoursWeek = OpenHours.createNewOpenHoursWeek();
-        this.editOpenHoursWeek = this.openHoursWeek;
-      });
-  }
-
-  ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-    let editChange = changes['edit'];
-    if (editChange) {
-      if (!editChange.previousValue) {
-        this.editOpenHoursWeek = this.openHoursWeek;
+  openHoursValid(): boolean {
+    let isValid = true;
+    this.editOpenHoursWeek.forEach((value: OpenHours) => {
+      if (!value.validInterval()) {
+        isValid = false;
       }
-      if (!editChange.isFirstChange() && editChange.previousValue)
-        this.updateOpenHours();
-    }
-
+    });
+    return isValid;
   }
 }

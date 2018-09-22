@@ -18,15 +18,11 @@ const options = {
 export class AuthenticationService {
 
   constructor(private _router: Router,
-              private http: HttpClient,
-              private restaurantService: RestaurantInfoService) {
+              private http: HttpClient) {
   }
 
   logout() {
     localStorage.removeItem("jwt");
-    if (localStorage.getItem("rest")) {
-      localStorage.removeItem("rest");
-    }
     this._router.navigate(['/start']);
   }
 
@@ -41,16 +37,7 @@ export class AuthenticationService {
         const token = response.token;
         localStorage.setItem("jwt", `${token}`);
 
-        this.restaurantService.getRestaurant()
-          .subscribe(
-            data => {
-              localStorage.setItem("rest", "ok");
-              this._router.navigate(['/reservation']);
-            },
-            err =>{
-              this._router.navigate(['/initialize']);
-            });
-
+        this._router.navigate(['/reservation']);
 
         return response;
       });

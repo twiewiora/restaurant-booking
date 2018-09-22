@@ -29,6 +29,8 @@ import {OpenHoursService} from "../../../service/open-hours.service";
 import {IOpenHours, OpenHours} from "../../../model/open-hours";
 import {Table} from "../../../model/table";
 import {TableService} from "../../../service/table.service";
+import {Router} from "@angular/router";
+import {NotificationsService} from "angular2-notifications";
 
 
 @Component({
@@ -84,12 +86,27 @@ export class ReservationsDisplayComponent implements OnInit {
     }
   ];
 
+  options = {
+    position: 'middle',
+    timeOut: 3000,
+    animate: 'fade'
+  };
+
   refresh: Subject<any> = new Subject();
 
   events: CalendarEvent[] = [];
 
   // activeDayIsOpen: boolean = true;
 
+  constructor(private reservationService: ReservationService,
+              private openHoursService: OpenHoursService,
+              private modal: NgbModal,
+              @Inject(LOCALE_ID) locale: string,
+              private tableService: TableService,
+              private _router: Router,
+              private notificationService: NotificationsService) {
+    this.locale = locale;
+  }
 
   eventTimesChanged({
                       event,
@@ -115,10 +132,6 @@ export class ReservationsDisplayComponent implements OnInit {
 
   reservations: Reservation[];
 
-  constructor(private reservationService: ReservationService, private openHoursService: OpenHoursService, private modal: NgbModal, @Inject(LOCALE_ID) locale: string, private tableService: TableService) {
-    this.locale = locale;
-  }
-
   ngOnInit() {
     this.onDateSelection(this.viewDate);
     this.getAllTables();
@@ -135,12 +148,16 @@ export class ReservationsDisplayComponent implements OnInit {
 
   getOpeningHoursForDay(weekday: string) {
     this.openHoursService.getOpeningHoursForDay(weekday).subscribe((openHours: IOpenHours) => {
-      this.openHours = OpenHours.fromJson(weekday, openHours);
-    });
+        this.openHours = OpenHours.fromJson(weekday, openHours);
+      },
+      error => {
+        this._router.navigate(['/info']);
+      });
   }
 
   deleteReservation(event: CalendarEvent<IReservation>) {
     this.reservationService.deleteReservation(event.meta).subscribe(any => {
+      this.notificationService.warn("Reservation Deleted", '', this.options);
       this.onDateSelection(this.viewDate);
     });
   }
@@ -148,6 +165,7 @@ export class ReservationsDisplayComponent implements OnInit {
   cancelReservation(event: CalendarEvent<IReservation>) {
     debugger;
     this.reservationService.cancelReservation(event.meta).subscribe(any => {
+      this.notificationService.alert("Reservation Canceled", '', this.options);
       this.onDateSelection(this.viewDate);
     });
   }

@@ -5,6 +5,8 @@ import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
 import {NgbDateTimeAdapter} from "../../../adapters/ngbDateTimeAdapter";
 import {NgbDateStruct, NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
+import {NotificationsService} from "angular2-notifications";
+import {startOfDay} from "date-fns";
 
 @Component({
   selector: 'app-add-reservation',
@@ -22,6 +24,11 @@ export class AddReservationComponent implements OnInit {
 
   date: Date = new Date();
   time: NgbTimeStruct = NgbDateTimeAdapter.fromModel(new Date());
+  private options= {
+    position: 'middle',
+    timeOut: 3000,
+    animate: 'fade'
+  };
 
 
   selectNow() {
@@ -38,7 +45,8 @@ export class AddReservationComponent implements OnInit {
 
 
   constructor(private reservationService: ReservationService,
-              private tableService: TableService) {
+              private tableService: TableService,
+              private notificationsService: NotificationsService) {
   }
 
   ngOnInit() {
@@ -47,13 +55,14 @@ export class AddReservationComponent implements OnInit {
 
   isDisabled(date: NgbDateStruct) {
     const selectedDate: Date = new Date(date.year, date.month - 1, date.day);
-    return selectedDate < new Date();
+    return selectedDate < startOfDay(new Date());
   }
 
   addReservation(table: ITable, reservation: Reservation) {
     this.reservation.tableId = table.id;
     this.reservation.dateReservation = this.reservation.dateReservation.replace('T', '_');
     this.reservationService.addReservation(reservation).subscribe(any => {
+      this.notificationsService.success("Reservation Added", '', this.options);
     });
   }
 

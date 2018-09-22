@@ -23,9 +23,7 @@ export class OpenHoursService {
 
 
   getOpeningHoursForAllDays(): Observable<any> {
-    return this.http.get<any>(`${environment.baseUrl}/openHours//all`)
-      .pipe(
-        catchError(this.handleError('getOpeningHoursForAllDays', [])));
+    return this.http.get<any>(`${environment.baseUrl}/openHours//all`);
   }
 
   getOpeningHoursForDay(day: string): Observable<IOpenHours> {
