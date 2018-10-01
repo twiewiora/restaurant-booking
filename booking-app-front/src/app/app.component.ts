@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {NotificationsService, NotificationType} from "angular2-notifications";
 
 @Component({
   selector: 'app-root',
@@ -7,12 +8,11 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
 
-  result = '';
-  result2 = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private _notifications: NotificationsService) {
+  }
 
 
 

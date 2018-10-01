@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ITable, Table} from "../../../model/table";
 import {TableService} from "../../../service/table.service";
 import {TableCommunicationService} from "../table-communication.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-table-list',
@@ -12,7 +13,8 @@ export class TableListComponent implements OnInit {
   tables: ITable[];
 
   constructor(private tableService: TableService,
-              private tableCommunicationService: TableCommunicationService) {
+              private tableCommunicationService: TableCommunicationService,
+              private _router: Router) {
   }
 
   ngOnInit() {
@@ -24,24 +26,13 @@ export class TableListComponent implements OnInit {
     this.getAllTables();
   }
 
-  deleteTable(table: ITable) {
-    this.tableService.deleteTable(table).subscribe((any) => {
-        this.getAllTables();
-      }
-    );
-  }
-
-  updateTable(table: ITable) {
-    this.tableService.updateTable(table).subscribe((any) => {
-        this.getAllTables();
-      }
-    );
-  }
-
   getAllTables() {
     this.tableService.getTables().subscribe(
       (tables: Table[]) => {
         this.tables = Table.fromJsonToArray(tables);
+      },
+      error => {
+        this._router.navigate(['/info']);
       });
   }
 }

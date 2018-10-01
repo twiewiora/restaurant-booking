@@ -64,7 +64,7 @@
   <div>
 
     <div *ngIf="openHours && openHours.isClose">
-      CLOSED
+      <div class="alert alert-danger" role="alert">Closed</div>
     </div>
     <mwl-calendar-day-view *ngIf="openHours && !openHours.isClose"
                            [locale]="locale"
