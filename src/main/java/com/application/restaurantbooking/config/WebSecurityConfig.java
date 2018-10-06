@@ -1,12 +1,19 @@
 package com.application.restaurantbooking.config;
 
+import com.application.restaurantbooking.jwt.JwtAuthenticationEntryPoint;
+import com.application.restaurantbooking.jwt.jwtService.JwtClientService;
+import com.application.restaurantbooking.jwt.jwtService.JwtRestorerService;
+import com.application.restaurantbooking.jwt.jwtToken.JwtAuthorizationTokenFilter;
+import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
+import com.application.restaurantbooking.persistence.model.AuthorityName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -16,10 +23,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.application.restaurantbooking.jwt.JwtAuthenticationEntryPoint;
-import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
-import com.application.restaurantbooking.jwt.jwtToken.JwtAuthorizationTokenFilter;
-import com.application.restaurantbooking.jwt.jwtService.JwtUserDetailsService;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtTokenUtil jwtTokenUtil;
 
-    private JwtUserDetailsService jwtUserDetailsService;
+    private JwtRestorerService jwtRestorerService;
+
+    private JwtClientService jwtClientService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -43,25 +50,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                              JwtTokenUtil jwtTokenUtil,
-                             JwtUserDetailsService jwtUserDetailsService,
+                             JwtRestorerService jwtRestorerService,
+                             JwtClientService jwtClientService,
                              BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.unauthorizedHandler = jwtAuthenticationEntryPoint;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.jwtRestorerService = jwtRestorerService;
+        this.jwtClientService = jwtClientService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(jwtUserDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder);
-    }
-
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager() {
+        List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
+        authenticationProviders.add(new UserAuthenticationProvider(AuthorityName.ROLE_RESTORER, jwtRestorerService, bCryptPasswordEncoder));
+        authenticationProviders.add(new UserAuthenticationProvider(AuthorityName.ROLE_CLIENT, jwtClientService, bCryptPasswordEncoder));
+        return new ProviderManager(authenticationProviders);
     }
 
     @Override

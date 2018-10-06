@@ -1,6 +1,9 @@
 package com.application.restaurantbooking.persistence.builder;
 
+import com.application.restaurantbooking.persistence.model.Authority;
 import com.application.restaurantbooking.persistence.model.Client;
+
+import java.util.List;
 
 public class ClientBuilder {
 
@@ -10,8 +13,8 @@ public class ClientBuilder {
         client = new Client();
     }
 
-    public ClientBuilder login(String login) {
-        client.setLogin(login);
+    public ClientBuilder username(String username) {
+        client.setUsername(username);
         return this;
     }
 
@@ -20,13 +23,8 @@ public class ClientBuilder {
         return this;
     }
 
-    public ClientBuilder phoneBumber(String phoneNumber) {
-        client.setPhoneNumber(phoneNumber);
-        return this;
-    }
-
-    public ClientBuilder email(String email) {
-        client.setEmail(email);
+    public ClientBuilder authorities(List<Authority> authorities) {
+        client.setAuthorities(authorities);
         return this;
     }
 
