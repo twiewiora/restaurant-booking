@@ -22,6 +22,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Client getByUsername(String username) {
+        return clientRepository.findByUsername(username);
+    }
+
+    @Override
     public Client createClient(Client client) {
         clientRepository.save(client);
         return client;

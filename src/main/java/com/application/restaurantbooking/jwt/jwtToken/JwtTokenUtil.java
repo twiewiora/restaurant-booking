@@ -1,6 +1,6 @@
 package com.application.restaurantbooking.jwt.jwtToken;
 
-import com.application.restaurantbooking.jwt.jwtModel.JwtRestorer;
+import com.application.restaurantbooking.jwt.jwtModel.JwtUser;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
@@ -33,7 +33,9 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String getUsernameFromToken(String token) { return getClaimFromToken(token, Claims::getSubject); }
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
 
     public Date getIssuedAtDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getIssuedAt);
@@ -84,10 +86,10 @@ public class JwtTokenUtil implements Serializable {
 
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        JwtRestorer restorer = (JwtRestorer) userDetails;
+        JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         return (
-            username.equals(restorer.getUsername())
+            username.equals(user.getUsername())
                 && !isTokenExpired(token)
         );
     }

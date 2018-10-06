@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class JwtRestorer implements UserDetails {
+public class JwtUser implements UserDetails {
 
     private final Long id;
 
@@ -18,7 +18,7 @@ public class JwtRestorer implements UserDetails {
 
     private final boolean enabled;
 
-    public JwtRestorer(
+    public JwtUser(
             Long id,
             String username,
             String password,

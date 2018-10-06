@@ -23,11 +23,6 @@ public class RestorerBuilder {
         return this;
     }
 
-    public RestorerBuilder enabled(Boolean enabled) {
-        restorer.setEnabled(enabled);
-        return this;
-    }
-
     public RestorerBuilder authorities(List<Authority> authorities) {
         restorer.setAuthorities(authorities);
         return this;

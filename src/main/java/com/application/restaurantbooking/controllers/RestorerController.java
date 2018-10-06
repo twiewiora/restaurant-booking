@@ -1,6 +1,6 @@
 package com.application.restaurantbooking.controllers;
 
-import com.application.restaurantbooking.jwt.jwtModel.JwtRestorer;
+import com.application.restaurantbooking.jwt.jwtModel.JwtUser;
 import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,16 +24,16 @@ public class RestorerController {
 
     @Autowired
     public RestorerController(JwtTokenUtil jwtTokenUtil,
-                              @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
+                              @Qualifier("jwtRestorerService") UserDetailsService userDetailsService) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
     }
 
     @RequestMapping(value = "restorer", method = RequestMethod.GET)
-    public JwtRestorer getAuthenticatedUser(HttpServletRequest request) {
+    public JwtUser getAuthenticatedUser(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader).substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        return (JwtRestorer) userDetailsService.loadUserByUsername(username);
+        return (JwtUser) userDetailsService.loadUserByUsername(username);
     }
 
 }

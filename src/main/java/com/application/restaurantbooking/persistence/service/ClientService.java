@@ -6,6 +6,8 @@ public interface ClientService {
 
     Client getById(Long id);
 
+    Client getByUsername(String username);
+
     Client createClient(Client client);
 
     void deleteClient(Long id);

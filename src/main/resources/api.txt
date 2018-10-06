@@ -1,4 +1,16 @@
+#################################################
 # Restorer
+#################################################
+# Login & Registration
+
+POST    /api/auth/register
+        input: {"username": "username", "password": "pass"}
+        output: -
+
+POST    /api/auth
+        input: {"username": "username", "password": "pass"}
+        output: {"token": "6syd7ahd"}
+
 #################################################
 # Tables
 
@@ -120,19 +132,31 @@ GET	    /api/reservation/all/dateFrom={2018-06-15_18:00}/dateTo={2018-06-15_22:0
 #################################################
 # Client
 #################################################
+# Login & Registration
 
-GET     /api/restaurant/list
+POST    /api/client/auth/register
+        input: {"username": "username", "password": "pass"}
+        output: -
+
+POST    /api/client/auth
+        input: {"username": "username", "password": "pass"}
+        output: {"token": "6syd7ahd"}
+
+#################################################
+# Restaurant
+
+GET     /api/client/restaurant/list
         input: -
         output: list
                 {"restaurants":["{"id":9,"name":"name","city":"city","street":"street","phoneNumber":"","tags":["PIZZA","KEBAB"]}"]}
 
-GET     /api/restaurant{9}/freeDates?date=2018-06-06&length=2&places=5
+GET     /api/client/restaurant{9}/freeDates?date=2018-06-06&length=2&places=5
         input: -
         output: json
                 {"proposalHours":
                 ["12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]}
 
-POST	/api/restaurant{id}/reservation/add
+POST	/api/client/restaurant{id}/reservation/add
         input: json
                {"date": "2018-06-06_16:16", "length": "2", "places": "5", "comment": "comment..."}
         output: json
