@@ -36,14 +36,12 @@ import {ForTestsComponent} from './component/reservation/for-tests/for-tests.com
 import {NgbDateNativeAdapter} from "./adapters/ngbDateNativeAdapter";
 import {NgbDateTimeAdapter} from "./adapters/ngbDateTimeAdapter";
 import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
-import {BasicExampleComponent} from "./basic-example/basic-example.component";
 import { TableElementComponent } from './component/table-setting/table-element/table-element.component';
 import {SimpleNotificationsModule} from "angular2-notifications";
 
 
 @NgModule({
   declarations: [
-    BasicExampleComponent,
     AppComponent,
     LoginComponent,
     RegistrationComponent,

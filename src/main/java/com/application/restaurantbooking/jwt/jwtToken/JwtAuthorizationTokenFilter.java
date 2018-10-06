@@ -1,12 +1,13 @@
 package com.application.restaurantbooking.jwt.jwtToken;
 
+import com.application.restaurantbooking.jwt.jwtService.JwtClientService;
+import com.application.restaurantbooking.jwt.jwtService.JwtRestorerService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,12 +21,14 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private UserDetailsService userDetailsService;
+    private JwtRestorerService jwtRestorerService;
+    private JwtClientService jwtClientService;
     private JwtTokenUtil jwtTokenUtil;
     private String tokenHeader;
 
-    public JwtAuthorizationTokenFilter(UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil, String tokenHeader) {
-        this.userDetailsService = userDetailsService;
+    public JwtAuthorizationTokenFilter(JwtRestorerService jwtRestorerService, JwtClientService jwtClientService, JwtTokenUtil jwtTokenUtil, String tokenHeader) {
+        this.jwtRestorerService = jwtRestorerService;
+        this.jwtClientService = jwtClientService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.tokenHeader = tokenHeader;
     }
@@ -57,7 +60,10 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
             // It is not compelling necessary to load the use details from the database. You could also store the information
             // in the token and read it from it. It's up to you ;)
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = jwtRestorerService.loadUserByUsername(username);
+            if (userDetails == null) {
+                userDetails = jwtClientService.loadUserByUsername(username);
+            }
 
             // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
             // the database compellingly. Again it's up to you ;)
