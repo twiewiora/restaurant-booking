@@ -6,6 +6,8 @@ import com.application.restaurantbooking.persistence.service.ReservationService;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import com.application.restaurantbooking.persistence.service.RestaurantTableService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
+import com.application.restaurantbooking.utils.geocoding.Localization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,10 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,22 +37,26 @@ public class DatabaseInitializer {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private GeocodeUtil geocodeUtil;
+
     @Autowired
     public DatabaseInitializer(RestorerService restorerService,
                                RestaurantService restaurantService,
                                RestaurantTableService restaurantTableService,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
-                               ReservationService reservationService) {
+                               ReservationService reservationService,
+                               GeocodeUtil geocodeUtil) {
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.restaurantTableService = restaurantTableService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.reservationService = reservationService;
+        this.geocodeUtil = geocodeUtil;
     }
 
     public void initializeDatabase() {
         Restorer restorer = createRestorer("test", "test1");
-        Restaurant restaurant = createRestaurant(restorer);
+        Restaurant restaurant = createRestaurant(restorer, "Nowy Sacz", "Piastowska", "3");
 
         RestaurantTable table1 = createRestaurantTable(restaurant, 12);
         RestaurantTable table2 = createRestaurantTable(restaurant, 5);
@@ -64,6 +73,12 @@ public class DatabaseInitializer {
         createReservation(table6, "2018-09-14_18:00", 2);
 
         createOpenHours(restaurant);
+
+        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24"));
+        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34"));
+        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33"));
+        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorążych", "2"));
+        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6"));
     }
 
     private Restorer createRestorer(String userName, String password) {
@@ -74,18 +89,22 @@ public class DatabaseInitializer {
         return restorerService.createRestorer(restorer);
     }
 
-    private Restaurant createRestaurant(Restorer restorer) {
+    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber) {
         Set<Tag> tags = new HashSet<>();
         tags.add(Tag.KEBAB);
         tags.add(Tag.PIZZA);
         Restaurant restaurant = new RestaurantBuilder()
                 .name("name")
-                .city("city")
-                .street("street")
-                .phoneNumber("")
+                .city(city)
+                .street(street)
+                .streetNumber(streetNumber)
+                .phoneNumber("123")
                 .restorer(restorer)
                 .tags(tags)
                 .build();
+        Localization localization = geocodeUtil.getLocalizationByAddress(city, street, streetNumber);
+        restaurant.setLongitude(localization.getLongitude());
+        restaurant.setLatitude(localization.getLatitude());
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Map<DayOfWeek, OpenHours> openHoursMap = new EnumMap<>(DayOfWeek.class);
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {

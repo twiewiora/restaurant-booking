@@ -15,6 +15,8 @@ public interface RestaurantService {
 
     List<Restaurant> getAll();
 
+    List<Restaurant> getRestaurantByCity(String city);
+
     Restaurant createRestaurant(Restaurant restaurant);
 
     void updateRestaurant(Restaurant restaurant);

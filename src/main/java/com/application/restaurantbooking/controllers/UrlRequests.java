@@ -24,7 +24,7 @@ public class UrlRequests {
     public static final String GET_TAGS = "/api/tags";
 
     // API for clients
-    public static final String GET_ALL_RESTAURANTS = "/api/client/restaurant/list";
+    public static final String GET_SURROUNDING_RESTAURANTS = "/api/client/surroundingRestaurants";
     public static final String GET_RESTAURANT_FREE_DATES = "/api/client/restaurant{id}/freeDates";
     public static final String POST_RESERVATION_ADD_BY_CLIENT = "/api/client/restaurant{id}/reservation/add";
 
