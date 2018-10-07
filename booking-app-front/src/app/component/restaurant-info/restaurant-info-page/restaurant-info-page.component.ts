@@ -16,6 +16,8 @@ export class RestaurantInfoPageComponent implements OnInit {
   edit: boolean;
   create: boolean;
 
+  validOpenHours;
+
   restaurant: Restaurant;
   editRestaurant: Restaurant;
   autocompleteItems: string[];
@@ -47,10 +49,13 @@ export class RestaurantInfoPageComponent implements OnInit {
     this.updateRestaurant(restaurant)
   }
 
-  updateOpenHours(openHoursWeek: Map<Weekday, OpenHours>) {
-    this.openHoursService.updateOpenHours(OpenHours.toJson(openHoursWeek)).subscribe(any => {
-      this.notificationService.success("Open hours updated", '', this.options);
-    })
+  updateOpenHours(updateOpenHoursWeek: Map<Weekday, OpenHours>) {
+    if(OpenHours.toJson(updateOpenHoursWeek) != OpenHours.toJson(this.openHoursWeek)) {
+      this.openHoursService.updateOpenHours(OpenHours.toJson(updateOpenHoursWeek)).subscribe(any => {
+        this.notificationService.success("Open hours updated", '', this.options);
+        this.getOpeningHours();
+      })
+    }
   }
 
   getOpeningHours() {
@@ -79,11 +84,14 @@ export class RestaurantInfoPageComponent implements OnInit {
       });
   }
 
-  updateRestaurant(restaurant: Restaurant) {
-    this.restaurantInfoService.updateRestaurant(restaurant).subscribe(response => {
-      this.notificationService.success("Restaurant information updated", '', this.options);
-      this.getRestaurant();
-    });
+  updateRestaurant(updateRestaurant: Restaurant) {
+    debugger;
+    if(Restaurant.toJson(this.restaurant) !== Restaurant.toJson(updateRestaurant)) {
+      this.restaurantInfoService.updateRestaurant(updateRestaurant).subscribe(response => {
+        this.notificationService.success("Restaurant information updated", '', this.options);
+        this.getRestaurant();
+      });
+    }
   }
 
   createRestaurant(restaurant: IRestaurant) {
@@ -112,5 +120,9 @@ export class RestaurantInfoPageComponent implements OnInit {
     this.edit = false;
     this.create = false;
     this.createRestaurant(this.editRestaurant);
+  }
+
+  openHoursValid(isValid: boolean){
+    this.validOpenHours = isValid;
   }
 }

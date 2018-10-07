@@ -1,4 +1,4 @@
-<td>
+<td class='alert-container'>
   <div *ngIf="!table.edit">
     {{table.identifier}}
   </div>
@@ -13,7 +13,7 @@
   </div>
 </td>
 
-<td>
+<td class='alert-container'>
   <div *ngIf="!table.edit">
     {{table.maxPlaces}}
   </div>
@@ -31,21 +31,24 @@
   </div>
 </td>
 
-<td>
+<td class='alert-container'>
   <div *ngIf="!table.edit">
-    {{table.comment}}
+    {{table.comment || '-'}}
   </div>
   <div *ngIf="table.edit" [formGroup]="tableForm">
     <textarea type="text" [(ngModel)]="table.comment" class="form-control" formControlName="comment"></textarea>
 
   </div>
 </td>
+<td class='alert-container'>
+  <div *ngIf="table.edit">
+    <button class="btn btn-success" (click)="updateTable(table)">save</button>
+    <button class="btn btn-warning" (click)="table.edit = !table.edit">cancel</button>
 
-<div *ngIf="table.edit">
-  <button class="btn btn-success" (click)="updateTable(table)">save</button>
-</div>
-<div *ngIf="!table.edit">
-  <button class="btn btn-danger" (click)="deleteTable(table)">delete</button>
-</div>
-<button class="btn btn-warning" (click)="table.edit = !table.edit">edit</button>
+  </div>
+  <div *ngIf="!table.edit">
+    <button class="btn btn-danger" (click)="deleteTable(table)">delete</button>
+    <button class="btn btn-warning" (click)="table.edit = !table.edit">edit</button>
+  </div>
+</td>
 

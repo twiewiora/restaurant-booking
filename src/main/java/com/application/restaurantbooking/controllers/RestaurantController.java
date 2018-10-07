@@ -124,9 +124,9 @@ public class RestaurantController {
                     .name(jsonNode.get("name").asText())
                     .city(jsonNode.get("city").asText())
                     .street(jsonNode.get("street").asText())
-//                    .streetNumber(jsonNode.get("streetNumber").asText())
+                    .streetNumber(jsonNode.get("streetNumber").asText())
                     .phoneNumber(jsonNode.get("phoneNumber").asText())
-//                    .website(jsonNode.get("website").asText())
+                    .website(jsonNode.get("website").asText())
                     .restorer(restorer)
                     .tags(tags)
                     .build();
@@ -177,9 +177,9 @@ public class RestaurantController {
                 restaurant.setName(StringUtils.stripAccents(jsonNode.get("name").asText()));
                 restaurant.setCity(StringUtils.stripAccents(jsonNode.get("city").asText()));
                 restaurant.setStreet(StringUtils.stripAccents(jsonNode.get("street").asText()));
-//                restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
+                restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
                 restaurant.setPhoneNumber(jsonNode.get("phoneNumber").asText());
-//                restaurant.setWebsite(jsonNode.get("website").asText());
+                restaurant.setWebsite(jsonNode.get("website").asText());
                 JsonNode tagsNode = jsonNode.get("tags");
                 Set<Tag> tags = new HashSet<>();
                 if (tagsNode.isArray()) {

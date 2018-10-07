@@ -1,10 +1,11 @@
-export interface ITable{
+export interface ITable {
   restaurantId: number;
   id: number;
   maxPlaces: number;
   comment: string;
   identifier: string;
   edit: boolean
+
   toJson(): string;
 }
 
@@ -17,7 +18,8 @@ export class Table implements ITable {
   comment: string = '';
   edit: boolean = false;
 
-  constructor() { }
+  constructor() {
+  }
 
   public toJson(): string {
     return JSON.stringify({
@@ -29,11 +31,11 @@ export class Table implements ITable {
   }
 
 
-  static fromJsonToMap(json): Map<number, Table>{
+  static fromJsonToMap(json): Map<number, Table> {
     let tables: Map<number, Table> = new Map<number, Table>();
-    json.forEach(jTable =>{
+    json.forEach(jTable => {
       let table: Table = new Table();
-      table.identifier = jTable['identifier'] ?  jTable['identifier'] : '';
+      table.identifier = jTable['identifier'] ? jTable['identifier'] : '';
       table.id = jTable['id'];
       table.comment = jTable['comment'] ? jTable['comment'] : '';
       table.maxPlaces = jTable['maxPlaces'];
@@ -43,16 +45,17 @@ export class Table implements ITable {
   }
 
 
-  static fromJsonToArray(json): Table[]{
+  static fromJsonToArray(json): Table[] {
     let tables: Table[] = [];
-    json.forEach(jTable =>{
+    json.forEach(jTable => {
       let table: Table = new Table();
-      table.identifier = jTable['identifier'] ?  jTable['identifier'] : '';
+      table.identifier = jTable['identifier'] ? jTable['identifier'] : '';
       table.id = jTable['id'];
       table.comment = jTable['comment'] ? jTable['comment'] : '';
       table.maxPlaces = jTable['maxPlaces'];
       tables.push(table);
     });
+    tables.sort((a: Table, b: Table) => {return a.identifier.localeCompare(b.identifier)});
     return tables;
   }
 

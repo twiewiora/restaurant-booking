@@ -11,6 +11,7 @@ import {Router} from "@angular/router";
 })
 export class TableListComponent implements OnInit {
   tables: ITable[];
+  isNewTable = false;
 
   constructor(private tableService: TableService,
               private tableCommunicationService: TableCommunicationService,
@@ -24,6 +25,11 @@ export class TableListComponent implements OnInit {
       }
     });
     this.getAllTables();
+  }
+
+
+  removeTable() {
+
   }
 
   getAllTables() {

@@ -42,6 +42,14 @@ export class RestaurantInfoComponent implements OnInit {
     return this.restaurantInfoForm.get('phoneNumber');
   }
 
+  get website() {
+    return this.restaurantInfoForm.get('website');
+  }
+
+  get streetNumber() {
+    return this.restaurantInfoForm.get('streetNumber');
+  }
+
   createFormValidation() {
     this.restaurantInfoForm = new FormGroup({
       'name': new FormControl(this.editRestaurant.name, [
@@ -49,7 +57,9 @@ export class RestaurantInfoComponent implements OnInit {
       ]),
       'city': new FormControl(this.editRestaurant.city, [Validators.required]),
       'street': new FormControl(this.editRestaurant.street, [Validators.required]),
-      'phoneNumber': new FormControl(this.editRestaurant.phoneNumber, [Validators.required, Validators.pattern('^[0-9]*$')])
+      'streetNumber': new FormControl(this.editRestaurant.streetNumber, [Validators.required]),
+      'phoneNumber': new FormControl(this.editRestaurant.phoneNumber, [Validators.required, Validators.pattern('^[0-9]*$')]),
+      'website': new FormControl(this.editRestaurant.website)
     });
     this.validationCreated = true;
   }

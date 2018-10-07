@@ -1,9 +1,13 @@
+@import "../../../../styles";
 
-.day-setter{
+.day-setter {
   align-items: center;
 
-
-  .time-divider{
+  .time-divider {
     align-self: center;
   }
+}
+
+.open-hours-container {
+  margin: $main-margin-length;
 }

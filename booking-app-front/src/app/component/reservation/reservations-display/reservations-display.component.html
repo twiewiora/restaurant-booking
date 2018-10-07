@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container main-containers">
 
   <ng-template #modalContent let-close="close">
     <div class="modal-header">
@@ -60,23 +60,24 @@
              (ngModelChange)="onDateSelection(viewDate)"/>
     </div>
   </div>
-  <br>
-  <div>
 
-    <div *ngIf="openHours && openHours.isClose">
-      <div class="alert alert-danger" role="alert">Closed</div>
+  <div class="row">
+    <div class="col-md-12" *ngIf="openHours && openHours.isClose">
+      <div class="alert alert-danger alert-container" role="alert">Closed</div>
     </div>
-    <mwl-calendar-day-view *ngIf="openHours && !openHours.isClose"
-                           [locale]="locale"
-                           [hourSegments]="HOURS_SEGMENT"
-                           [dayStartHour]="openHours.openHour.hour"
-                           [dayEndHour]="openHours.closeHour.hour"
-                           [viewDate]="viewDate"
-                           [events]="events"
-                           [refresh]="refresh"
-                           [eventWidth]="50"
-                           (eventClicked)="handleEvent('Clicked', $event.event)"
-                           (eventTimesChanged)="eventTimesChanged($event)">
+    <mwl-calendar-day-view
+      class="col-md-12"
+      *ngIf="openHours && !openHours.isClose"
+      [locale]="locale"
+      [hourSegments]="HOURS_SEGMENT"
+      [dayStartHour]="openHours.openHour.hour"
+      [dayEndHour]="openHours.closeHour.hour"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [eventWidth]="50"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)">
     </mwl-calendar-day-view>
   </div>
 </div>

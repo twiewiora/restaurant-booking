@@ -1,54 +1,88 @@
-<div class="container">
+<div class="container border border-primary main-containers rounded">
 
   <h1>Search For Availability</h1>
   <form>
-    <div class="form-group">
-      <label for="date">Date</label>
-      <ngb-datepicker #dp [(ngModel)]="date" id="date" name="date" [markDisabled]="isDisabled"
-                      [outsideDays]="'collapsed'">
-      </ngb-datepicker>
+    <div class="form-group container">
+      <div class="row">
+        <div class="col-md-6 date-time-containers">
+          <ngb-datepicker #dp [(ngModel)]="date" name="date" [markDisabled]="isDisabled"
+                          [outsideDays]="'collapsed'">
+          </ngb-datepicker>
+        </div>
+        <div class="col-md-6 form-group date-time-containers">
+          <ngb-timepicker [(ngModel)]="time" name="time"></ngb-timepicker>
+        </div>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="time">Time</label>
-      <ngb-timepicker [(ngModel)]="time" id="time" name="time"></ngb-timepicker>
-    </div>
-    <div class="form-group">
+    <div class="form-group" [formGroup]="reservationForm">
       <label for="length">Duration</label>
       <input type="number" [(ngModel)]="reservation.reservationLength" class="form-control" id="length" name="length"
-             required>
-    </div>
+             formControlName="length" required>
+      <div *ngIf="length.invalid && (length.dirty || length.touched)"
+           class="alert alert-danger">
+        <div *ngIf="length.errors.required">
+          Length of stay is required.
+        </div>
+        <div *ngIf="length.errors.min">
+          Minimum length of stay is {{MINIMUM_RESERVATION_LENGTH}}.
+        </div>
+      </div>
 
-    <div class="form-group">
+
       <label for="places">Reserved Places</label>
       <input type="number" [(ngModel)]="reservation.reservedPlaces" class="form-control" id="places" name="places"
-             required>
-    </div>
+             formControlName="places" required>
+      <div *ngIf="places.invalid && (places.dirty || places.touched)"
+           class="alert alert-danger">
+        <div *ngIf="places.errors.required">
+          Maximum number of places is required.
+        </div>
+        <div *ngIf="places.errors.min">
+          Minimum number of places is {{MIN}}.
+        </div>
+      </div>
 
-    <div class="form-group">
       <label for="comment">Comment</label>
-      <input type="text" [(ngModel)]="reservation.comment" class="form-control" id="comment" name="comment">
+      <input type="text" [(ngModel)]="reservation.comment" class="form-control" id="comment" name="comment"
+             formControlName="comment">
+      <div *ngIf="comment.invalid && (comment.dirty || comment.touched)"
+           class="alert alert-danger">
+        <div *ngIf="comment.errors.required">
+          Comment is required (client data).
+        </div>
+      </div>
     </div>
 
-    <button (click)="getFreeTableList(reservation)" class="btn btn-success">search</button>
+    <button (click)="getFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">search
+    </button>
+    <button class="btn btn-warning" (click)="canceled.emit(true)">Cancel</button>
   </form>
 
-  <table class="table table-hover">
-    <thead>
-    <tr>
-      <th scope="col">identifier</th>
-      <th scope="col">max Places</th>
-      <th scope="col">comment</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let table of tableList">
-      <td>{{table.identifier}}</td>
-      <td>{{table.maxPlaces}}</td>
-      <td>{{table.comment}}</td>
-      <button class="btn btn-success" (click)="addReservation(table, reservation)">reserve</button>
-    </tr>
-    </tbody>
-  </table>
+
+
+  <div *ngIf="showList">
+    <table *ngIf="tableList && tableList.length" class="table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">identifier</th>
+        <th scope="col">max Places</th>
+        <th scope="col">comment</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let table of tableList">
+        <td>{{table.identifier}}</td>
+        <td>{{table.maxPlaces}}</td>
+        <td>{{table.comment}}</td>
+        <button class="btn btn-success" (click)="addReservation(table, reservation)">reserve</button>
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!tableList || !tableList.length" class="alert alert-danger alert-container" role="alert"> No tables
+      meeting the
+      requirements
+    </div>
+  </div>
 </div>
 

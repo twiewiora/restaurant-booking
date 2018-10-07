@@ -1,4 +1,4 @@
-import {Component, Input, OnInit,} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, SimpleChange} from '@angular/core';
 import {OpenHours, Weekday} from "../../../model/open-hours";
 
 @Component({
@@ -10,20 +10,26 @@ export class OpenHoursComponent implements OnInit {
   @Input() edit: boolean;
   @Input() openHoursWeek: Map<Weekday, OpenHours>;
   @Input() editOpenHoursWeek: Map<Weekday, OpenHours>;
+  @Output() openHoursValidated = new EventEmitter<boolean>();
 
-  constructor() {
-  }
 
   ngOnInit() {
   }
 
-  openHoursValid(): boolean {
+  openHoursValid() {
     let isValid = true;
     this.editOpenHoursWeek.forEach((value: OpenHours) => {
       if (!value.validInterval()) {
         isValid = false;
       }
     });
-    return isValid;
+    this.openHoursValidated.emit(isValid);
+  }
+
+  ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+    let editOpenHoursWeekChange = changes['editOpenHoursWeek'];
+    if ( editOpenHoursWeekChange && editOpenHoursWeekChange.currentValue) {
+      this.openHoursValid();
+    }
   }
 }
