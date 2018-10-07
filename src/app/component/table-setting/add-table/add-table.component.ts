@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TableService} from "../../../service/table.service";
 import {ITable, Table} from "../../../model/table";
 import {TableCommunicationService} from "../table-communication.service";
@@ -6,14 +6,14 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {NotificationsService} from "angular2-notifications";
 
 @Component({
-  selector: 'app-add-table',
+  selector: '[app-add-table]',
   templateUrl: './add-table.component.html',
   styleUrls: ['./add-table.component.scss']
 })
 export class AddTableComponent implements OnInit {
 
+  @Output() canceledAddTable = new EventEmitter<boolean>();
   MIN = 1;
-  newTable: boolean = false;
   table: Table = new Table();
   private tableForm: FormGroup;
   private options = {
@@ -49,19 +49,16 @@ export class AddTableComponent implements OnInit {
     return this.tableForm.get('comment');
   }
 
-
-  toggleNew() {
-    this.newTable = !this.newTable;
+  cancelAddTable() {
+    this.canceledAddTable.emit(true);
   }
 
   addTable(table: ITable) {
-    table.restaurantId = 2;
     this.tableService.addTable(table).subscribe(any => {
       this.tableCommunicationService.tableAdded(true);
-      this.newTable = !this.newTable;
-      this.tableForm.reset({'comment': ''});
+      this.table = new Table();
+      this.tableForm.reset({indentifier: '', maxPlaces: null, comment: ''});
       this.notificationService.success("Table added", '', this.options);
     });
   }
-
 }

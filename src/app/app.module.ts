@@ -38,6 +38,7 @@ import {NgbDateTimeAdapter} from "./adapters/ngbDateTimeAdapter";
 import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
 import { TableElementComponent } from './component/table-setting/table-element/table-element.component';
 import {SimpleNotificationsModule} from "angular2-notifications";
+import {ReservationCommunicationService} from "./component/reservation/reservation-communication.service";
 
 
 @NgModule({
@@ -89,6 +90,7 @@ import {SimpleNotificationsModule} from "angular2-notifications";
     RestaurantInfoService,
     ReservationService,
     TableCommunicationService,
+    ReservationCommunicationService,
     {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
    // {provide: NgbTimeAdapter, useClass: NgbDateTimeAdapter},
     {provide: LOCALE_ID, useValue: 'en-gb' },

@@ -1,21 +1,15 @@
 <div class="container">
-
-  <!--<app-for-tests></app-for-tests>-->
-
-
   <div class="row">
     <div class="col-lg-11 col-md-11 col-sm-11">
       <div *ngIf="add">
-        <app-add-reservation></app-add-reservation>
+        <app-add-reservation (canceled)="add=false"></app-add-reservation>
       </div>
       <app-reservations-display></app-reservations-display>
     </div>
     <div class="col-lg-1 col-md-1 col-sm-1">
-      <div class="position-fixed">
-      <button class="btn btn-success" (click)="toggleAdd()">New Reservation</button>
+      <div class="position-fixed button-container">
+        <button *ngIf="!add" class="btn btn-success" (click)="add=true">New Reservation</button>
       </div>
     </div>
   </div>
-
-
 </div>

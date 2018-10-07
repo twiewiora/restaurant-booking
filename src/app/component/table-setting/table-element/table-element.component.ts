@@ -55,7 +55,7 @@ export class TableElementComponent implements OnInit {
 
   deleteTable(table: ITable) {
     this.tableService.deleteTable(table).subscribe((any) => {
-        this.notificationService.alert("Table Deleted", '', this.options);
+        this.notificationService.error("Table Deleted", '', this.options);
         this.tableCommunicationService.tableDeleted(true);
       }
     );
@@ -69,5 +69,4 @@ export class TableElementComponent implements OnInit {
       }
     );
   }
-
 }
