@@ -4,6 +4,7 @@ import com.application.restaurantbooking.persistence.model.OpenHours;
 import com.application.restaurantbooking.persistence.model.Restaurant;
 import com.application.restaurantbooking.persistence.model.Restorer;
 import com.application.restaurantbooking.persistence.model.Tag;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.util.Map;
@@ -18,22 +19,32 @@ public class RestaurantBuilder {
     }
 
     public RestaurantBuilder name(String name) {
-        restaurant.setName(name);
+        restaurant.setName(StringUtils.stripAccents(name));
         return this;
     }
 
     public RestaurantBuilder city(String city) {
-        restaurant.setCity(city);
+        restaurant.setCity(StringUtils.stripAccents(city));
         return this;
     }
 
     public RestaurantBuilder street(String street) {
-        restaurant.setStreet(street);
+        restaurant.setStreet(StringUtils.stripAccents(street));
+        return this;
+    }
+
+    public RestaurantBuilder streetNumber(String streetNumber) {
+        restaurant.setStreetNumber(streetNumber);
         return this;
     }
 
     public RestaurantBuilder phoneNumber(String phoneNumber) {
         restaurant.setPhoneNumber(phoneNumber);
+        return this;
+    }
+
+    public RestaurantBuilder website(String website) {
+        restaurant.setWebsite(website);
         return this;
     }
 

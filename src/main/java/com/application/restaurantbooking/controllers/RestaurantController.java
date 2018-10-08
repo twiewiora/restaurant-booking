@@ -9,12 +9,17 @@ import com.application.restaurantbooking.persistence.model.Restorer;
 import com.application.restaurantbooking.persistence.model.Tag;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.utils.RestaurantSearcher;
+import com.application.restaurantbooking.utils.RestaurantSearcherRequest;
 import com.application.restaurantbooking.utils.TableSearcher;
 import com.application.restaurantbooking.utils.TableSearcherRequest;
+import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
+import com.application.restaurantbooking.utils.geocoding.Localization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -45,15 +50,23 @@ public class RestaurantController {
 
     private TableSearcher tableSearcher;
 
+    private RestaurantSearcher restaurantSearcher;
+
+    private GeocodeUtil geocodeUtil;
+
     @Autowired
     public RestaurantController(JwtTokenUtil jwtTokenUtil,
                                 RestorerService restorerService,
                                 RestaurantService restaurantService,
-                                TableSearcher tableSearcher) {
+                                TableSearcher tableSearcher,
+                                RestaurantSearcher restaurantSearcher,
+                                GeocodeUtil geocodeUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.tableSearcher = tableSearcher;
+        this.restaurantSearcher = restaurantSearcher;
+        this.geocodeUtil = geocodeUtil;
     }
 
     @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
@@ -111,10 +124,17 @@ public class RestaurantController {
                     .name(jsonNode.get("name").asText())
                     .city(jsonNode.get("city").asText())
                     .street(jsonNode.get("street").asText())
+//                    .streetNumber(jsonNode.get("streetNumber").asText())
                     .phoneNumber(jsonNode.get("phoneNumber").asText())
+//                    .website(jsonNode.get("website").asText())
                     .restorer(restorer)
                     .tags(tags)
                     .build();
+
+            Localization localization = geocodeUtil.getLocalizationByAddress(restaurant.getCity(),
+                    restaurant.getStreet(), restaurant.getStreetNumber());
+            restaurant.setLongitude(localization.getLongitude());
+            restaurant.setLatitude(localization.getLatitude());
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             Map<DayOfWeek, OpenHours> openHoursMap = new EnumMap<>(DayOfWeek.class);
             for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
@@ -154,10 +174,12 @@ public class RestaurantController {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(json);
-                restaurant.setName(jsonNode.get("name").asText());
-                restaurant.setCity(jsonNode.get("city").asText());
-                restaurant.setStreet(jsonNode.get("street").asText());
+                restaurant.setName(StringUtils.stripAccents(jsonNode.get("name").asText()));
+                restaurant.setCity(StringUtils.stripAccents(jsonNode.get("city").asText()));
+                restaurant.setStreet(StringUtils.stripAccents(jsonNode.get("street").asText()));
+//                restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
                 restaurant.setPhoneNumber(jsonNode.get("phoneNumber").asText());
+//                restaurant.setWebsite(jsonNode.get("website").asText());
                 JsonNode tagsNode = jsonNode.get("tags");
                 Set<Tag> tags = new HashSet<>();
                 if (tagsNode.isArray()) {
@@ -166,6 +188,11 @@ public class RestaurantController {
                     }
                 }
                 restaurant.setTags(tags);
+
+                Localization localization = geocodeUtil.getLocalizationByAddress(restaurant.getCity(),
+                        restaurant.getStreet(), restaurant.getStreetNumber());
+                restaurant.setLongitude(localization.getLongitude());
+                restaurant.setLatitude(localization.getLatitude());
                 restaurantService.updateRestaurant(restaurant);
                 restaurantService.updateRestaurantTags(restaurant, tags);
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -295,19 +322,39 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_ALL_RESTAURANTS,
+    @RequestMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
             method = RequestMethod.GET,
+            consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String getAllRestaurants(HttpServletResponse response) {
+    public String getSurroundingRestaurants(HttpServletResponse response,
+                                            @RequestBody String json) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(HttpServletResponse.SC_OK);
+
+            JsonNode jsonNode = objectMapper.readTree(json);
+            JsonNode tagsNode = jsonNode.get("tags");
+            Set<Tag> tags = new HashSet<>();
+            if (tagsNode.isArray()) {
+                for (JsonNode tag : tagsNode) {
+                    tags.add(Tag.valueOf(tag.asText().toUpperCase()));
+                }
+            }
+            Localization clientLocalization = new Localization(jsonNode.get("lat").asDouble(),
+                    jsonNode.get("long").asDouble());
+            RestaurantSearcherRequest request = new RestaurantSearcherRequest(clientLocalization,
+                    jsonNode.get("radius").asInt(), tags);
+            String clientCityName = geocodeUtil.getCityByLocalization(clientLocalization);
+            List<Restaurant> restaurantsInCity = restaurantService.getRestaurantByCity(clientCityName);
+            List<Restaurant> result = restaurantSearcher.getSurroundingRestaurant(restaurantsInCity, request);
+
             ArrayNode restaurantArray = objectMapper.createArrayNode();
-            for (Restaurant restaurant : restaurantService.getAll()) {
+            for (Restaurant restaurant : result) {
                 restaurantArray.add(objectMapper.writeValueAsString(restaurant));
             }
+
             return objectMapper.createObjectNode().putPOJO("restaurants", restaurantArray).toString();
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;

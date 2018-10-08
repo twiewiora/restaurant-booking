@@ -20,7 +20,15 @@ public class Restaurant {
 
     private String street;
 
+    private String streetNumber;
+
     private String phoneNumber;
+
+    private String website;
+
+    private Double longitude;
+
+    private Double latitude;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
@@ -77,6 +85,14 @@ public class Restaurant {
         this.street = street;
     }
 
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -85,8 +101,32 @@ public class Restaurant {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
     public Restorer getRestorer() {
         return restorer;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
     public void setRestorer(Restorer restorer) {

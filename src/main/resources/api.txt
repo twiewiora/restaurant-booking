@@ -9,7 +9,8 @@ POST    /api/auth/register
 
 POST    /api/auth
         input: {"username": "username", "password": "pass"}
-        output: {"token": "6syd7ahd"}
+        output: json
+                {"token": "6syd7ahd"}
 
 #################################################
 # Tables
@@ -49,17 +50,17 @@ DELETE	/api/table/delete/tableId={5}
 GET	    /api/restaurant
         input: -
         output: json
-                {"id":9,"name":"name","city":"city","street":"street","phoneNumber":"123","tags":["PIZZA","KEBAB"]}
+                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
 
 POST	/api/restaurant/add
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "123", "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was created"}
 
 POST	/api/restaurant/update
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "phoneNumber": "NUMBER", "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was updated"}
 
@@ -140,19 +141,21 @@ POST    /api/client/auth/register
 
 POST    /api/client/auth
         input: {"username": "username", "password": "pass"}
-        output: {"token": "6syd7ahd"}
+        output: json
+                {"token": "6syd7ahd"}
 
 #################################################
 # Restaurant
 
-GET     /api/client/restaurant/list
-        input: -
+GET     /api/client/surroundingRestaurants
+        input: {"lat":"49.4124", "long":"20.3232", "radius":"100", "tags":["PIZZA","KEBAB"]}
         output: list
-                {"restaurants":["{"id":9,"name":"name","city":"city","street":"street","phoneNumber":"","tags":["PIZZA","KEBAB"]}"]}
+                {"restaurants":
+                ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}"]}
 
 GET     /api/client/restaurant{9}/freeDates?date=2018-06-06&length=2&places=5
         input: -
-        output: json
+        output: list
                 {"proposalHours":
                 ["12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30"]}
 

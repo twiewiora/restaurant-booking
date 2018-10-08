@@ -40,6 +40,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> getRestaurantByCity(String city) {
+        return restaurantRepository.findByCity(city);
+    }
+
+    @Override
     public Restaurant createRestaurant(Restaurant restaurant) {
         restaurantRepository.save(restaurant);
         return restaurant;
@@ -48,7 +53,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void updateRestaurant(Restaurant restaurant) {
         restaurantRepository.updateRestaurant(restaurant.getId(), restaurant.getName(), restaurant.getCity(),
-                restaurant.getStreet(), restaurant.getPhoneNumber());
+                restaurant.getStreet(), restaurant.getStreetNumber(), restaurant.getPhoneNumber(), restaurant.getWebsite());
     }
 
     @Override
