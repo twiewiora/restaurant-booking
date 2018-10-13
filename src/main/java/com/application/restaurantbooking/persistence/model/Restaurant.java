@@ -31,6 +31,12 @@ public class Restaurant {
 
     private Double latitude;
 
+    @Enumerated(EnumType.STRING)
+    private Price price;
+
+    @Transient
+    private Double priority;
+
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restorer_id", nullable = false)
@@ -128,6 +134,22 @@ public class Restaurant {
 
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
+    }
+
+    public Double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Double priority) {
+        this.priority = priority;
     }
 
     public void setRestorer(Restorer restorer) {

@@ -1,9 +1,6 @@
 package com.application.restaurantbooking.persistence.builder;
 
-import com.application.restaurantbooking.persistence.model.OpenHours;
-import com.application.restaurantbooking.persistence.model.Restaurant;
-import com.application.restaurantbooking.persistence.model.Restorer;
-import com.application.restaurantbooking.persistence.model.Tag;
+import com.application.restaurantbooking.persistence.model.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
@@ -45,6 +42,11 @@ public class RestaurantBuilder {
 
     public RestaurantBuilder website(String website) {
         restaurant.setWebsite(website);
+        return this;
+    }
+
+    public RestaurantBuilder price(Price price) {
+        restaurant.setPrice(price);
         return this;
     }
 

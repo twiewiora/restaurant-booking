@@ -50,17 +50,17 @@ DELETE	/api/table/delete/tableId={5}
 GET	    /api/restaurant
         input: -
         output: json
-                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
+                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","price":"HIGH","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
 
 POST	/api/restaurant/add
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "price":"HIGH", "tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was created"}
 
 POST	/api/restaurant/update
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com","price":"HIGH","tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was updated"}
 
@@ -68,6 +68,11 @@ GET     /api/tags
         input: -
         output: list
                 ["PIZZA","SUSHI","KEBAB","KUCHNIA_POLSKA","KUCHNIA_WLOSKA","KUCHNIA_GRECKA","KUHCNIA_CHINSKA"]
+
+GET     /api/prices
+        input: -
+        output: list
+                ["HIGH","MEDIUM","LOW"]
 
 #################################################
 # Open hours
@@ -147,11 +152,11 @@ POST    /api/client/auth
 #################################################
 # Restaurant
 
-GET     /api/client/surroundingRestaurants?lat=49.4124&lon=20.3232&radius=100&tags=PIZZA&tags=KEBAB
+GET     /api/client/surroundingRestaurants?lat=50.0643816&lon=19.9423012&radius=1000&tags=PIZZA&tags=DUMPLINGS
         input: -
         output: list
                 {"restaurants":
-                ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}"]}
+                ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","price":"HIGH","phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}"]}
 
 GET     /api/client/restaurant{9}/freeDates?date=2018-06-06&length=2&places=5
         input: -

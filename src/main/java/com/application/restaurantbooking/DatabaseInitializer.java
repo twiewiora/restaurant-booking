@@ -2,10 +2,7 @@ package com.application.restaurantbooking;
 
 import com.application.restaurantbooking.persistence.builder.*;
 import com.application.restaurantbooking.persistence.model.*;
-import com.application.restaurantbooking.persistence.service.ReservationService;
-import com.application.restaurantbooking.persistence.service.RestaurantService;
-import com.application.restaurantbooking.persistence.service.RestaurantTableService;
-import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.persistence.service.*;
 import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
 import com.application.restaurantbooking.utils.geocoding.Localization;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +12,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +29,8 @@ public class DatabaseInitializer {
 
     private ReservationService reservationService;
 
+    private ClientService clientService;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private GeocodeUtil geocodeUtil;
@@ -45,18 +41,25 @@ public class DatabaseInitializer {
                                RestaurantTableService restaurantTableService,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
                                ReservationService reservationService,
+                               ClientService clientService,
                                GeocodeUtil geocodeUtil) {
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.restaurantTableService = restaurantTableService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.reservationService = reservationService;
+        this.clientService = clientService;
         this.geocodeUtil = geocodeUtil;
     }
 
     public void initializeDatabase() {
         Restorer restorer = createRestorer("test", "test1");
-        Restaurant restaurant = createRestaurant(restorer, "Nowy Sacz", "Piastowska", "3");
+        Client client = createClient("client", "client");
+        Set<Tag> tags = new HashSet<>();
+        tags.add(Tag.PIZZA);
+        tags.add(Tag.KEBAB);
+        tags.add(Tag.DUMPLINGS);
+        Restaurant restaurant = createRestaurant(restorer, "Krakow", "sw. Marka", "22", tags, Price.LOW);
 
         RestaurantTable table1 = createRestaurantTable(restaurant, 12);
         RestaurantTable table2 = createRestaurantTable(restaurant, 5);
@@ -65,20 +68,38 @@ public class DatabaseInitializer {
         RestaurantTable table5 = createRestaurantTable(restaurant, 4);
         RestaurantTable table6 = createRestaurantTable(restaurant, 3);
 
-        createReservation(table1, "2018-09-14_22:30", 1);
-        createReservation(table2, "2018-09-14_20:00", 3);
-        createReservation(table3, "2018-09-14_19:00", 2);
-        createReservation(table4, "2018-09-14_18:00", 1);
-        createReservation(table5, "2018-09-14_17:00", 3);
-        createReservation(table6, "2018-09-14_18:00", 2);
+        createReservation(table1, "2018-09-14_22:30", 1, client);
+        createReservation(table2, "2018-09-14_20:00", 3, client);
+        createReservation(table3, "2018-09-14_19:00", 2, client);
+        createReservation(table4, "2018-09-14_18:00", 1, client);
+        createReservation(table5, "2018-09-14_17:00", 3, client);
+        createReservation(table6, "2018-09-14_18:00", 2, client);
+
+        createOpenHours(restaurant);
+        tags.clear();
+        tags.add(Tag.POLISH_CUISINE);
+        tags.add(Tag.DUMPLINGS);
+        restaurant = createRestaurant(restorer, "Krakow", "Mikolajska", "3", tags, Price.HIGH);
+
+        table1 = createRestaurantTable(restaurant, 12);
+        table2 = createRestaurantTable(restaurant, 5);
+        table3 = createRestaurantTable(restaurant, 2);
+        table4 = createRestaurantTable(restaurant, 7);
+        table5 = createRestaurantTable(restaurant, 4);
+        table6 = createRestaurantTable(restaurant, 3);
+
+        createReservation(table1, "2018-09-14_22:30", 1, client);
+        createReservation(table2, "2018-09-14_20:00", 3, client);
+        createReservation(table3, "2018-09-14_19:00", 2, client);
+        createReservation(table4, "2018-09-14_18:00", 1, client);
 
         createOpenHours(restaurant);
 
-        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24"));
-        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34"));
-        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33"));
-        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorążych", "2"));
-        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6"));
+        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24", Collections.EMPTY_SET, Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34", Collections.EMPTY_SET, Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33", Collections.EMPTY_SET, Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorążych", "2", Collections.EMPTY_SET, Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6", Collections.EMPTY_SET, Price.HIGH));
     }
 
     private Restorer createRestorer(String userName, String password) {
@@ -89,16 +110,14 @@ public class DatabaseInitializer {
         return restorerService.createRestorer(restorer);
     }
 
-    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber) {
-        Set<Tag> tags = new HashSet<>();
-        tags.add(Tag.KEBAB);
-        tags.add(Tag.PIZZA);
+    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber, Set<Tag> tags, Price price) {
         Restaurant restaurant = new RestaurantBuilder()
                 .name("name")
                 .city(city)
                 .street(street)
                 .streetNumber(streetNumber)
                 .phoneNumber("123")
+                .price(price)
                 .restorer(restorer)
                 .tags(tags)
                 .build();
@@ -132,10 +151,11 @@ public class DatabaseInitializer {
         return restaurantTableService.createRestaurantTable(restaurantTable);
     }
 
-    private Reservation createReservation(RestaurantTable restaurantTable, String date, Integer length) {
+    private Reservation createReservation(RestaurantTable restaurantTable, String date, Integer length, Client client) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
             Reservation reservation = new ReservationBuilder()
+                    .client(client)
                     .restaurantTable(restaurantTable)
                     .reservationDate(sdf.parse(date))
                     .reservationLength(length)
@@ -172,5 +192,13 @@ public class DatabaseInitializer {
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
         }
+    }
+
+    private Client createClient(String username, String password) {
+        Client client = new ClientBuilder()
+                .username(username)
+                .password(bCryptPasswordEncoder.encode(password))
+                .build();
+        return clientService.createClient(client);
     }
 }

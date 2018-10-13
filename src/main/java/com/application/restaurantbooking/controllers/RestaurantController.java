@@ -3,10 +3,8 @@ package com.application.restaurantbooking.controllers;
 import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantbooking.persistence.builder.OpenHoursBuilder;
 import com.application.restaurantbooking.persistence.builder.RestaurantBuilder;
-import com.application.restaurantbooking.persistence.model.OpenHours;
-import com.application.restaurantbooking.persistence.model.Restaurant;
-import com.application.restaurantbooking.persistence.model.Restorer;
-import com.application.restaurantbooking.persistence.model.Tag;
+import com.application.restaurantbooking.persistence.model.*;
+import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
 import com.application.restaurantbooking.utils.RestaurantSearcher;
@@ -46,6 +44,8 @@ public class RestaurantController {
 
     private RestorerService restorerService;
 
+    private ClientService clientService;
+
     private RestaurantService restaurantService;
 
     private TableSearcher tableSearcher;
@@ -57,12 +57,14 @@ public class RestaurantController {
     @Autowired
     public RestaurantController(JwtTokenUtil jwtTokenUtil,
                                 RestorerService restorerService,
+                                ClientService clientService,
                                 RestaurantService restaurantService,
                                 TableSearcher tableSearcher,
                                 RestaurantSearcher restaurantSearcher,
                                 GeocodeUtil geocodeUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
+        this.clientService = clientService;
         this.restaurantService = restaurantService;
         this.tableSearcher = tableSearcher;
         this.restaurantSearcher = restaurantSearcher;
@@ -127,6 +129,7 @@ public class RestaurantController {
                     .streetNumber(jsonNode.get("streetNumber").asText())
                     .phoneNumber(jsonNode.get("phoneNumber").asText())
                     .website(jsonNode.get("website").asText())
+//                    .price(Price.valueOf(jsonNode.get("price").asText().toUpperCase()))
                     .restorer(restorer)
                     .tags(tags)
                     .build();
@@ -180,6 +183,7 @@ public class RestaurantController {
                 restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
                 restaurant.setPhoneNumber(jsonNode.get("phoneNumber").asText());
                 restaurant.setWebsite(jsonNode.get("website").asText());
+//                restaurant.setPrice(Price.valueOf(jsonNode.get("price").asText()));
                 JsonNode tagsNode = jsonNode.get("tags");
                 Set<Tag> tags = new HashSet<>();
                 if (tagsNode.isArray()) {
@@ -322,27 +326,53 @@ public class RestaurantController {
         }
     }
 
+    @RequestMapping(value = UrlRequests.GET_PRICES,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getPrices(HttpServletResponse response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.setStatus(HttpServletResponse.SC_OK);
+            return objectMapper.writeValueAsString(Price.values());
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.WARNING, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
     @RequestMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
-    public String getSurroundingRestaurants(HttpServletResponse response,
+    public String getSurroundingRestaurants(HttpServletRequest request,
+                                            HttpServletResponse response,
                                             @RequestParam double lat,
                                             @RequestParam double lon,
                                             @RequestParam int radius,
-                                            @RequestParam String[] tags) {
+                                            @RequestParam(required = false) String[] tags) {
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(HttpServletResponse.SC_OK);
 
+            if (tags == null) {
+                tags = new String[0];
+            }
             Set<Tag> tagsSet = new HashSet<>();
             for (String tag : tags) {
                 tagsSet.add(Tag.valueOf(tag.toUpperCase()));
             }
             Localization clientLocalization = new Localization(lat, lon);
-            RestaurantSearcherRequest request = new RestaurantSearcherRequest(clientLocalization, radius, tagsSet);
+            RestaurantSearcherRequest restaurantSearcherRequest = new RestaurantSearcherRequest(clientLocalization,
+                    radius, tagsSet);
             String clientCityName = geocodeUtil.getCityByLocalization(clientLocalization);
             List<Restaurant> restaurantsInCity = restaurantService.getRestaurantByCity(clientCityName);
-            List<Restaurant> result = restaurantSearcher.getSurroundingRestaurant(restaurantsInCity, request);
+            List<Restaurant> result = restaurantSearcher.getSurroundingRestaurant(restaurantsInCity,
+                    restaurantSearcherRequest, client);
 
             ArrayNode restaurantArray = objectMapper.createArrayNode();
             for (Restaurant restaurant : result) {
@@ -360,15 +390,21 @@ public class RestaurantController {
     @RequestMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
             method = RequestMethod.GET,
             produces = "application/json; charset=UTF-8")
-    public String getProposalHours(HttpServletResponse response,
+    public String getProposalHours(HttpServletRequest request,
+                                   HttpServletResponse response,
                                    @PathVariable String id,
                                    @RequestParam String date,
                                    @RequestParam int length,
                                    @RequestParam int places) {
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
-
         try {
             if (restaurant != null) {
+                saveClientPreferences(client, restaurant);
                 ObjectMapper objectMapper = new ObjectMapper();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, places);
@@ -392,6 +428,21 @@ public class RestaurantController {
         String token = request.getHeader(tokenHeader).substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
         return restorerService.getByUsername(username);
+    }
+
+    private Client getClientByJwt(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return clientService.getByUsername(username);
+    }
+
+    private void saveClientPreferences(Client client, Restaurant restaurant) {
+        for (Tag tag : restaurant.getTags()) {
+            client.getClientPreferencesTags().replace(tag, client.getClientPreferencesTags().get(tag) + 1);
+        }
+        client.getClientPreferencesPrices().replace(restaurant.getPrice(),
+                client.getClientPreferencesPrices().get(restaurant.getPrice()) + 1);
+        clientService.updateClient(client);
     }
 
 }
