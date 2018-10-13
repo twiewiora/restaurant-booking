@@ -49,19 +49,19 @@ public class GeocodeUtilTest {
         try {
             Localization localization = new Localization(49.6237992, 20.6923289);
             assertEquals(geocodeUtil.getCityByLocalization(localization), "Nowy Sacz");
-            Thread.sleep(200);
+            Thread.sleep(500);
             localization = new Localization(49.6249586, 20.6894017);
             assertEquals(geocodeUtil.getCityByLocalization(localization), "Nowy Sacz");
-            Thread.sleep(200);
+            Thread.sleep(500);
             localization = new Localization(50.0622651, 19.9388086);
             assertEquals(geocodeUtil.getCityByLocalization(localization), "Krakow");
-            Thread.sleep(200);
+            Thread.sleep(500);
             localization = new Localization(50.0636734, 19.9325239);
             assertEquals(geocodeUtil.getCityByLocalization(localization), "Krakow");
-            Thread.sleep(200);
+            Thread.sleep(500);
             localization = new Localization(50.0636734, 19.9325239);
             assertEquals(geocodeUtil.getCityByLocalization(localization), "Krakow");
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
