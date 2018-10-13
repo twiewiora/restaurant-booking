@@ -11,7 +11,8 @@ import java.util.*;
 public class Restaurant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "restaurant_seq")
+    @SequenceGenerator(name = "restaurant_seq", sequenceName = "restaurant_seq", allocationSize = 1)
     private Long id;
 
     private String name;
