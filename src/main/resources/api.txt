@@ -147,8 +147,8 @@ POST    /api/client/auth
 #################################################
 # Restaurant
 
-GET     /api/client/surroundingRestaurants
-        input: {"lat":"49.4124", "long":"20.3232", "radius":"100", "tags":["PIZZA","KEBAB"]}
+GET     /api/client/surroundingRestaurants?lat=49.4124&lon=20.3232&radius=100&tags=PIZZA&tags=KEBAB
+        input: -
         output: list
                 {"restaurants":
                 ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}"]}

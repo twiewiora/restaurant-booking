@@ -324,26 +324,22 @@ public class RestaurantController {
 
     @RequestMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
             method = RequestMethod.GET,
-            consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String getSurroundingRestaurants(HttpServletResponse response,
-                                            @RequestBody String json) {
+                                            @RequestParam double lat,
+                                            @RequestParam double lon,
+                                            @RequestParam int radius,
+                                            @RequestParam String[] tags) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(HttpServletResponse.SC_OK);
 
-            JsonNode jsonNode = objectMapper.readTree(json);
-            JsonNode tagsNode = jsonNode.get("tags");
-            Set<Tag> tags = new HashSet<>();
-            if (tagsNode.isArray()) {
-                for (JsonNode tag : tagsNode) {
-                    tags.add(Tag.valueOf(tag.asText().toUpperCase()));
-                }
+            Set<Tag> tagsSet = new HashSet<>();
+            for (String tag : tags) {
+                tagsSet.add(Tag.valueOf(tag.toUpperCase()));
             }
-            Localization clientLocalization = new Localization(jsonNode.get("lat").asDouble(),
-                    jsonNode.get("long").asDouble());
-            RestaurantSearcherRequest request = new RestaurantSearcherRequest(clientLocalization,
-                    jsonNode.get("radius").asInt(), tags);
+            Localization clientLocalization = new Localization(lat, lon);
+            RestaurantSearcherRequest request = new RestaurantSearcherRequest(clientLocalization, radius, tagsSet);
             String clientCityName = geocodeUtil.getCityByLocalization(clientLocalization);
             List<Restaurant> restaurantsInCity = restaurantService.getRestaurantByCity(clientCityName);
             List<Restaurant> result = restaurantSearcher.getSurroundingRestaurant(restaurantsInCity, request);
