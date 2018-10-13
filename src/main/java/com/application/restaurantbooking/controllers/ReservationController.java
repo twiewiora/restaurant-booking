@@ -2,10 +2,8 @@ package com.application.restaurantbooking.controllers;
 
 import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantbooking.persistence.builder.ReservationBuilder;
-import com.application.restaurantbooking.persistence.model.Reservation;
-import com.application.restaurantbooking.persistence.model.Restaurant;
-import com.application.restaurantbooking.persistence.model.RestaurantTable;
-import com.application.restaurantbooking.persistence.model.Restorer;
+import com.application.restaurantbooking.persistence.model.*;
+import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.ReservationService;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
@@ -23,10 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -43,6 +38,8 @@ public class ReservationController {
 
     private RestorerService restorerService;
 
+    private ClientService clientService;
+
     private ReservationService reservationService;
 
     private RestaurantService restaurantService;
@@ -54,11 +51,13 @@ public class ReservationController {
     @Autowired
     public ReservationController(JwtTokenUtil jwtTokenUtil,
                                  RestorerService restorerService,
+                                 ClientService clientService,
                                  ReservationService reservationService,
                                  RestaurantService restaurantService,
                                  TableSearcher tableSearcher) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.restorerService = restorerService;
+        this.clientService = clientService;
         this.reservationService = reservationService;
         this.restaurantService = restaurantService;
         this.tableSearcher = tableSearcher;
@@ -248,9 +247,15 @@ public class ReservationController {
             method = RequestMethod.POST,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String createReservationByClient(HttpServletResponse response,
+    public String createReservationByClient(HttpServletRequest request,
+                                            HttpServletResponse response,
                                             @RequestBody String json,
                                             @PathVariable String id) {
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
         if (restaurant == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -260,12 +265,13 @@ public class ReservationController {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(json);
             SimpleDateFormat sdf = new SimpleDateFormat(dateTimeFormat);
-            TableSearcherRequest request = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
+            TableSearcherRequest tableSearcherRequest = new TableSearcherRequest(sdf.parse(jsonNode.get("date").asText()),
                     jsonNode.get("length").asInt(), jsonNode.get("places").asInt());
-            List<RestaurantTable> restaurantTables = tableSearcher.searchTableByRequest(restaurant, request);
+            List<RestaurantTable> restaurantTables = tableSearcher.searchTableByRequest(restaurant, tableSearcherRequest);
             if (!restaurantTables.isEmpty()) {
                 for (RestaurantTable restaurantTable : restaurantTables) {
                     Reservation reservation = new ReservationBuilder()
+                            .client(client)
                             .restaurantTable(restaurantTable)
                             .reservationDate(sdf.parse(jsonNode.get("date").asText()))
                             .reservationLength(jsonNode.get("length").asInt())
@@ -291,6 +297,12 @@ public class ReservationController {
         String token = request.getHeader(tokenHeader).substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
         return restorerService.getByUsername(username);
+    }
+
+    private Client getClientByJwt(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        return clientService.getByUsername(username);
     }
 
 }
