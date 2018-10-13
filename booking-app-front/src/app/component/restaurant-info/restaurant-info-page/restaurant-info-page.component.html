@@ -1,19 +1,21 @@
 <div class="container">
+
   <div class="row">
     <div class="col-md-10">
       <app-restaurant-info [edit]="edit" [restaurant]="restaurant" [editRestaurant]="editRestaurant"
                            [autocompleteItems]="autocompleteItems" #restaurantInfoComp></app-restaurant-info>
       <app-open-hours *ngIf="!create" [edit]="edit" [openHoursWeek]="openHoursWeek"
                       [editOpenHoursWeek]="editOpenHoursWeek"
+                      (openHoursValidated)="openHoursValid($event)"
                       #openHoursComp></app-open-hours>
     </div>
     <div class="col-md-2">
-      <div class="position-fixed">
+      <div class="position-fixed button-container">
         <button *ngIf="!edit && !create" class="btn btn-warning position-fixed" (click)="toggleEdit()">edit</button>
         <div *ngIf="!create && edit">
           <button class="btn btn-danger" (click)="toggleEdit()">cancel</button>
           <button class="btn btn-success " (click)="save()"
-                  [disabled]="!(restaurantInfoComp.restaurantInfoForm.valid)">save
+                  [disabled]="!(restaurantInfoComp.restaurantInfoForm.valid && validOpenHours)">save
           </button>
         </div>
         <button *ngIf="edit && create" class="btn btn-success " (click)="launchCreate()"

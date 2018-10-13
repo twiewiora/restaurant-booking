@@ -1,43 +1,30 @@
-<div class="container">
-
-
-  <h1>Add Table Form</h1>
-
-  <button class="btn btn-warning" (click)="toggleNew()">New Table</button>
-
-  <form *ngIf="this.newTable">
-    <div class="form-group" [formGroup]="tableForm">
-      <label for="identifier">Identifier</label>
-      <input type="text" [(ngModel)]="table.identifier" class="form-control" id="identifier"
-             formControlName="identifier" name="identifier" required>
-      <div *ngIf="identifier.invalid && (identifier.dirty || identifier.touched)"
-           class="alert alert-danger">
-        <div *ngIf="identifier.errors.required">
-          Identifier is required.
-        </div>
-      </div>
-
-
-      <label for="maxPlaces">Max Places</label>
-      <input type="number" [(ngModel)]="table.maxPlaces" class="form-control" id="maxPlaces" formControlName="maxPlaces"
-             name="maxPlaces" required>
-      <div *ngIf="maxPlaces.invalid && (maxPlaces.dirty || maxPlaces.touched)"
-           class="alert alert-danger">
-        <div *ngIf="maxPlaces.errors.required">
-          Maximum number of places is required.
-        </div>
-        <div *ngIf="maxPlaces.errors.min">
-          Minimum number of places is {{MIN}}.
-        </div>
-      </div>
-
-
-      <label for="comment">Comment</label>
-      <textarea type="text" [(ngModel)]="table.comment" class="form-control" id="comment" formControlName="comment"
-                name="comment"></textarea>
+<td class='alert-container' [formGroup]="tableForm">
+  <input type="text" [(ngModel)]="table.identifier" class="form-control"
+         formControlName="identifier" required>
+  <div *ngIf="identifier.invalid && (identifier.dirty || identifier.touched)"
+       class="alert alert-danger">
+    <div *ngIf="identifier.errors.required">
+      Identifier is required.
     </div>
-
-    <button type="submit" (click)="addTable(table)" class="btn" [disabled]="!tableForm.valid">Add</button>
-
-  </form>
-</div>
+  </div>
+</td>
+<td class='alert-container' [formGroup]="tableForm">
+  <input type="number" [(ngModel)]="table.maxPlaces" class="form-control" formControlName="maxPlaces"
+         name="maxPlaces" required>
+  <div *ngIf="maxPlaces.invalid && (maxPlaces.dirty || maxPlaces.touched)"
+       class="alert alert-danger">
+    <div *ngIf="maxPlaces.errors.required">
+      Maximum number of places is required.
+    </div>
+    <div *ngIf="maxPlaces.errors.min">
+      Minimum number of places is {{MIN}}.
+    </div>
+  </div>
+</td>
+<td class='alert-container' [formGroup]="tableForm">
+  <textarea type="text" [(ngModel)]="table.comment" class="form-control" formControlName="comment"></textarea>
+</td>
+<td class='alert-container'>
+  <button (click)="addTable(table)" class="btn btn-success" [disabled]="!tableForm.valid">Add</button>
+  <button class="btn btn-danger" (click)="cancelAddTable()">Cancel</button>
+</td>

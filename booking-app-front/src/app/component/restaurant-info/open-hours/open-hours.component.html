@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container open-hours-container">
 
-  <h4>Open:</h4>
+  <h4 class="alert-container">Open Hours</h4>
   <div *ngIf="!edit">
     <dl class="row" *ngFor="let openHours of openHoursWeek | mapValues">
-      <dt class="col-sm-3">{{openHours.key}}</dt>
+      <h5 class="col-sm-3">{{openHours.key}}</h5>
 
       <div class="col-sm-9" *ngIf="!openHours.value.isClose">
         <div class="row">
@@ -15,20 +15,22 @@
         </div>
       </div>
       <div class="col-sm-9" *ngIf="openHours.value.isClose">
-        <dd>Closed</dd>
+        <dd class="alert-danger alert-container">Closed</dd>
       </div>
     </dl>
   </div>
 
   <div *ngIf="edit">
     <dl class="row day-setter" *ngFor="let openHours of editOpenHoursWeek | mapValues">
-      <dt class="col-sm-3">{{openHours.key}}</dt>
+      <label class="col-sm-3">{{openHours.key}}</label>
 
       <div class="col-sm-7" *ngIf="!openHours.value.isClose">
         <div class="row">
-          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.openHour" [size]="'small'"></ngb-timepicker>
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.openHour" [size]="'small'"
+                          (ngModelChange)="openHoursValid()"></ngb-timepicker>
           <dd class="col-sm-2 time-divider">-</dd>
-          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [size]="'small'"></ngb-timepicker>
+          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [size]="'small'"
+                          (ngModelChange)="openHoursValid()"></ngb-timepicker>
         </div>
         <div *ngIf="!openHours.value.validInterval()" class="alert alert-danger">
           Incorrect Interval
@@ -36,7 +38,8 @@
       </div>
       <div class="col-sm-2">
         <div class="row">
-          <dd class="col-sm-6">Closed</dd>
+          <span *ngIf="openHours.value.isClose" class="col-sm-6 alert-danger alert-container">Closed</span>
+          <span *ngIf="!openHours.value.isClose" class="col-sm-6">Closed</span>
           <input class="col-sm-6" type="checkbox" [(ngModel)]="openHours.value.isClose">
         </div>
       </div>

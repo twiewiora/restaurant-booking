@@ -1,88 +1,137 @@
 <div class="container">
 
-  <div *ngIf="!edit">
+  <h3 class="alert-container">Restaurant information</h3>
+  <div *ngIf="!edit" class="container">
 
-    <dl class="row">
-      <dt class="col-sm-3">Name</dt>
-      <dd class="col-sm-9">{{restaurant?.name}}</dd>
+    <div class="row">
+      <h5 class="col-sm-3 ">Name</h5>
+      <span class="col-sm-9">{{restaurant?.name}}</span>
+    </div>
+    <div class="row">
+      <h5 class="col-sm-3 ">City</h5>
+      <span class="col-sm-9">{{restaurant?.city}}</span>
+    </div>
+    <div class="row">
+      <h5 class="col-sm-3 ">Street</h5>
+      <span class="col-sm-3">{{restaurant?.street}}</span>
+      <h5 class="col-sm-3 ">Street number</h5>
+      <span class="col-sm-3">{{restaurant?.streetNumber || '-'}}</span>
+    </div>
+    <div class="row">
+      <h5 class="col-sm-3 ">Phone Number</h5>
+      <span class="col-sm-9">{{restaurant?.phoneNumber}}</span>
+    </div>
 
-      <dt class="col-sm-3">City</dt>
-      <dd class="col-sm-9">{{restaurant?.city}}</dd>
-
-      <dt class="col-sm-3">Street</dt>
-      <dd class="col-sm-9">{{restaurant?.street}}</dd>
-
-      <dt class="col-sm-3">PhoneNumber</dt>
-      <dd class="col-sm-9">{{restaurant?.phoneNumber}}</dd>
-
-      <dt class="col-sm-3">Tags</dt>
+    <div class="row">
+      <h5 class="col-sm-3 ">Website</h5>
+      <a *ngIf="restaurant?.website" class="col-sm-9" href="{{restaurant?.website}}" target="_blank">{{restaurant?.website}}</a>
+      <span *ngIf="!restaurant?.website" class="col-sm-9">-</span>
+    </div>
+    <div class="row">
+      <h5 class="col-sm-3 ">Tags</h5>
       <tag-input class="col-sm-9"
                  [ngModel]="restaurant?.tags"
                  [removable]="false"
                  [hideForm]="true"></tag-input>
-    </dl>
+    </div>
   </div>
   <form *ngIf="edit">
-    <div class="form-group" [formGroup]="restaurantInfoForm">
-
-      <label for="name">Name</label>
-      <input type="text" [(ngModel)]="editRestaurant.name"
-             class="form-control {{name.invalid && (name.dirty || name.touched) ? '' : ''}}" id="name" name="name"
-             formControlName="name">
-      <div *ngIf="name.invalid && (name.dirty || name.touched)"
-           class="alert alert-danger">
-        <div *ngIf="name.errors.required">
-          Name is required.
+    <div class="form-group container" [formGroup]="restaurantInfoForm">
+      <div class="row">
+        <div class="col-md-12">
+          <label for="name">Name</label>
+          <input type="text" [(ngModel)]="editRestaurant.name"
+                 class="form-control {{name.invalid && (name.dirty || name.touched) ? '' : ''}}" id="name" name="name"
+                 formControlName="name">
+          <div *ngIf="name.invalid && (name.dirty || name.touched)"
+               class="alert alert-danger">
+            <div *ngIf="name.errors.required">
+              Name is required.
+            </div>
+          </div>
         </div>
       </div>
 
-
-      <label for="city">City</label>
-      <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city"
-             formControlName="city">
-      <div *ngIf="city.invalid && (city.dirty || city.touched)"
-           class="alert alert-danger">
-        <div *ngIf="city.errors.required">
-          City is required.
+      <div class="row">
+        <div class="col-md-12">
+          <label for="city">City</label>
+          <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city"
+                 formControlName="city">
+          <div *ngIf="city.invalid && (city.dirty || city.touched)"
+               class="alert alert-danger">
+            <div *ngIf="city.errors.required">
+              City is required.
+            </div>
+          </div>
         </div>
       </div>
 
-
-      <label for="street">Street</label>
-      <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street"
-             formControlName="street">
-      <div *ngIf="street.invalid && (street.dirty || street.touched)"
-           class="alert alert-danger">
-        <div *ngIf="street.errors.required">
-          Street is required.
+      <div class="row">
+        <div class="col-md-8">
+          <label for="street">Street</label>
+          <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street"
+                 formControlName="street">
+          <div *ngIf="street.invalid && (street.dirty || street.touched)"
+               class="alert alert-danger">
+            <div *ngIf="street.errors.required">
+              Street is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="streetNumber">Street number</label>
+          <input type="text" [(ngModel)]="editRestaurant.streetNumber" class="form-control" id="streetNumber"
+                 name="streetNumber"
+                 formControlName="streetNumber">
+          <div *ngIf="streetNumber.invalid && (streetNumber.dirty || streetNumber.touched)"
+               class="alert alert-danger">
+            <div *ngIf="streetNumber.errors.required">
+              Street number is required.
+            </div>
+          </div>
         </div>
       </div>
 
-
-      <label for="phone">Tel</label>
-      <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone"
-             formControlName="phoneNumber">
-      <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)"
-           class="alert alert-danger">
-        <div *ngIf="phoneNumber.errors.required">
-          Phone Number is required.
+      <div class="row">
+        <div class="col-md-12">
+          <label for="phone">Tel</label>
+          <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone"
+                 formControlName="phoneNumber">
+          <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)"
+               class="alert alert-danger">
+            <div *ngIf="phoneNumber.errors.required">
+              Phone number is required.
+            </div>
+            <div *ngIf="phoneNumber.errors.pattern">
+              Must be only digits.
+            </div>
+          </div>
         </div>
-        <div *ngIf="phoneNumber.errors.pattern">
-          Must be only digits.
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <label for="website">Website</label>
+          <input type="text" [(ngModel)]="editRestaurant.website" class="form-control" id="website" name="website"
+                 formControlName="website">
         </div>
       </div>
     </div>
 
-    <label for="tags">Tags</label>
-    <tag-input [(ngModel)]="editRestaurant.tags"
-               [onlyFromAutocomplete]="true"
-               [modelAsStrings]="true"
-               name="tags"
-               id="tags">
-      <tag-input-dropdown
-        [showDropdownIfEmpty]="false"
-        [autocompleteItems]="autocompleteItems">
-      </tag-input-dropdown>
-    </tag-input>
+    <div class="row">
+      <div class="col-md-12">
+        <label for="tags">Tags</label>
+        <tag-input [(ngModel)]="editRestaurant.tags"
+                   [onlyFromAutocomplete]="true"
+                   [modelAsStrings]="true"
+                   name="tags"
+                   id="tags">
+          <tag-input-dropdown
+            [showDropdownIfEmpty]="false"
+            [autocompleteItems]="autocompleteItems">
+          </tag-input-dropdown>
+        </tag-input>
+      </div>
+    </div>
   </form>
 </div>

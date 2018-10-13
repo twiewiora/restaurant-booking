@@ -1,13 +1,18 @@
-<div class="container">
+<div class="container main-containers">
   <table class="table table-hover">
     <tr>
-      <th scope="col">identifier</th>
-      <th scope="col">max Places</th>
-      <th scope="col">comment</th>
+      <th class='alert-container' scope="col">identifier</th>
+      <th class='alert-container' scope="col">max Places</th>
+      <th class='alert-container' scope="col">comment</th>
+      <th class='alert-container' scope="col">
+        <button *ngIf="!isNewTable" class="btn btn-success" (click)="isNewTable = true">New Table</button>
+      </th>
     </tr>
+    <tr *ngIf="isNewTable" (canceledAddTable)="isNewTable=false" app-add-table></tr>
     <tr *ngFor="let table of tables"
         app-table-element
         [table]="table">
     </tr>
   </table>
+  <div *ngIf="!tables?.length" class="alert alert-danger alert-container">No tables!</div>
 </div>

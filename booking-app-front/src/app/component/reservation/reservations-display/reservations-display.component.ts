@@ -31,6 +31,7 @@ import {Table} from "../../../model/table";
 import {TableService} from "../../../service/table.service";
 import {Router} from "@angular/router";
 import {NotificationsService} from "angular2-notifications";
+import {ReservationCommunicationService} from "../reservation-communication.service";
 
 
 @Component({
@@ -52,14 +53,6 @@ export class ReservationsDisplayComponent implements OnInit {
 
   openHours: OpenHours;
   tables: Map<number, Table>;
-
-  // dayStartHour(): number {
-  //   if (this.viewDate.getDay() === (new Date()).getDay()) {
-  //     return this.viewDate.getHours();
-  //   }
-  //   return this.openHours.getOpeningHourHour();
-  // }
-
   viewDate: Date = new Date();
 
   locale;
@@ -69,22 +62,6 @@ export class ReservationsDisplayComponent implements OnInit {
     reservation: Reservation;
     event: CalendarEvent;
   };
-
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fa fa-fw fa-pencil"></i>',
-      onClick: ({event}: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      }
-    },
-    {
-      label: '<i class="fa fa-fw fa-times"></i>',
-      onClick: ({event}: { event: CalendarEvent }): void => {
-        this.events = this.events.filter(iEvent => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      }
-    }
-  ];
 
   options = {
     position: 'middle',
@@ -96,15 +73,14 @@ export class ReservationsDisplayComponent implements OnInit {
 
   events: CalendarEvent[] = [];
 
-  // activeDayIsOpen: boolean = true;
-
   constructor(private reservationService: ReservationService,
               private openHoursService: OpenHoursService,
               private modal: NgbModal,
               @Inject(LOCALE_ID) locale: string,
               private tableService: TableService,
               private _router: Router,
-              private notificationService: NotificationsService) {
+              private notificationService: NotificationsService,
+              private reservationCommunicationService: ReservationCommunicationService) {
     this.locale = locale;
   }
 
@@ -133,6 +109,11 @@ export class ReservationsDisplayComponent implements OnInit {
   reservations: Reservation[];
 
   ngOnInit() {
+    this.reservationCommunicationService.updateList.subscribe(reservationAdded => {
+      if (reservationAdded) {
+        this.onDateSelection(this.viewDate);
+      }
+    });
     this.onDateSelection(this.viewDate);
     this.getAllTables();
   }
@@ -157,15 +138,14 @@ export class ReservationsDisplayComponent implements OnInit {
 
   deleteReservation(event: CalendarEvent<IReservation>) {
     this.reservationService.deleteReservation(event.meta).subscribe(any => {
-      this.notificationService.warn("Reservation Deleted", '', this.options);
+      this.notificationService.error("Reservation Deleted", '', this.options);
       this.onDateSelection(this.viewDate);
     });
   }
 
   cancelReservation(event: CalendarEvent<IReservation>) {
-    debugger;
     this.reservationService.cancelReservation(event.meta).subscribe(any => {
-      this.notificationService.alert("Reservation Canceled", '', this.options);
+      this.notificationService.warn("Reservation Canceled", '', this.options);
       this.onDateSelection(this.viewDate);
     });
   }

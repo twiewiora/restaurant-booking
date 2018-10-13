@@ -2,4 +2,14 @@
 
 /* You can add global styles to this file, and also import other style files */
 $main-padding-length: 16px;
+$main-margin-length: 16px;
 $main-background-label-color: #80aaff;
+
+.alert-container {
+  text-align: center;
+}
+
+.main-containers {
+  margin: $main-margin-length;
+  padding: $main-padding-length;
+}
