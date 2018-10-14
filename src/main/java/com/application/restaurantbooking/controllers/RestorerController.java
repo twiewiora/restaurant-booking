@@ -31,9 +31,12 @@ public class RestorerController {
 
     @RequestMapping(value = "restorer", method = RequestMethod.GET)
     public JwtUser getAuthenticatedUser(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader).substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        return (JwtUser) userDetailsService.loadUserByUsername(username);
+        if (request.getHeader(tokenHeader) != null) {
+            String token = request.getHeader(tokenHeader).substring(7);
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            return (JwtUser) userDetailsService.loadUserByUsername(username);
+        }
+        return null;
     }
 
 }

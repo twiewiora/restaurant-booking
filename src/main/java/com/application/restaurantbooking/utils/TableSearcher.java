@@ -107,4 +107,16 @@ public class TableSearcher {
         day.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
         return day.getTime();
     }
+
+    public List<String> getNearHoursReservation(Restaurant restaurant, TableSearcherRequest request) {
+        List<String> proposalHours = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        for (int i = -60; i <= 60; i+=30) {
+            TableSearcherRequest tableRequest = new TableSearcherRequest(DateUtils.addMinutes(request.getDate(), -i), request.getLength(), request.getPlaces());
+            if (!searchTableByRequest(restaurant, tableRequest).isEmpty()) {
+                proposalHours.add(sdf.format(DateUtils.addMinutes(request.getDate(), -i)));
+            }
+        }
+        return proposalHours;
+    }
 }
