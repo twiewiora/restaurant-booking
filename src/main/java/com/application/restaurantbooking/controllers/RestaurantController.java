@@ -406,9 +406,9 @@ public class RestaurantController {
             if (restaurant != null) {
                 saveClientPreferences(client, restaurant);
                 ObjectMapper objectMapper = new ObjectMapper();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
                 TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, places);
-                List<String> proposalHours = tableSearcher.getProposalStartHourReservation(restaurant, tableRequest);
+                List<String> proposalHours = tableSearcher.getNearHoursReservation(restaurant, tableRequest);
                 response.setStatus(HttpServletResponse.SC_OK);
                 ArrayNode proposalArray = objectMapper.createArrayNode();
                 proposalHours.forEach(proposalArray::add);
