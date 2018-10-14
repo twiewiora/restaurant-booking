@@ -32,7 +32,6 @@ import {TagInputModule} from "ngx-chips";
 import {BrowserAnimationsModule, NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {ReservationsDisplayComponent} from './component/reservation/reservations-display/reservations-display.component';
 import {CalendarModule} from 'angular-calendar';
-import {ForTestsComponent} from './component/reservation/for-tests/for-tests.component';
 import {NgbDateNativeAdapter} from "./adapters/ngbDateNativeAdapter";
 import {NgbDateTimeAdapter} from "./adapters/ngbDateTimeAdapter";
 import {NgbStringTimeAdapter} from "./adapters/ngbStringTimeAdapter";
@@ -58,7 +57,6 @@ import {ReservationCommunicationService} from "./component/reservation/reservati
     AddReservationComponent,
     RestaurantInfoComponent,
     ReservationsDisplayComponent,
-    ForTestsComponent,
     TableElementComponent
   ],
   imports: [

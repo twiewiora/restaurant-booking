@@ -13,6 +13,7 @@ export class RestaurantInfoComponent implements OnInit {
   @Input() editRestaurant: Restaurant;
   @Input() edit: boolean;
   @Input() autocompleteItems: string[];
+  @Input() autocompleteItemsPrices: string[];
 
 
   private restaurantInfoForm: FormGroup;

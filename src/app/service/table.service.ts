@@ -5,8 +5,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {ITable, Table} from "../model/table";
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
-import {Time} from "../model/time";
-import {IReservation} from "../model/reservation";
 import {environment} from "../../environments/environment";
 
 const headers = new HttpHeaders({
@@ -27,9 +25,15 @@ export class TableService {
     return this.http.get<ITable[]>(`${environment.baseUrl}/tables`);
   }
 
-  //TODO class
-  searchFreeTables(date: string, duration: number, places: number): Observable<ITable[]> {
+  searchBestFreeTables(date: string, duration: number, places: number): Observable<ITable[]> {
     return this.http.get<ITable[]>(`${environment.baseUrl}/tables/search?date=${date}&length=${duration}&places=${places}`)
+      .pipe(
+        catchError(this.handleError('getTables', []))
+      );
+  }
+
+  searchAllFreeTables(date: string, duration: number): Observable<ITable[]> {
+    return this.http.get<ITable[]>(`${environment.baseUrl}/freeTables?date=${date}&length=${duration}`)
       .pipe(
         catchError(this.handleError('getTables', []))
       );

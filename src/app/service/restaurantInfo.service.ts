@@ -67,6 +67,13 @@ export class RestaurantInfoService {
       );
   }
 
+  getPrices(): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.baseUrl}/prices`)
+      .pipe(
+        catchError(this.handleError('getPrices', []))
+      );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       if(operation === 'getRestaurant'){
