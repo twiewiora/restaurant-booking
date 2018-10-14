@@ -8,6 +8,7 @@ export interface IRestaurant {
   website: string;
   phoneNumber: number;
   tags: string[];
+  price: string[];
 
 }
 
@@ -23,6 +24,7 @@ export class Restaurant implements IRestaurant {
   website: string = '';
   phoneNumber: number;
   tags: string[] = [];
+  price: string[] = [];
 
   constructor() {
   }
@@ -35,7 +37,8 @@ export class Restaurant implements IRestaurant {
       streetNumber: restaurant.streetNumber,
       website: restaurant.website,
       phoneNumber: restaurant.phoneNumber,
-      tags: restaurant.tags
+      tags: restaurant.tags,
+      price: restaurant.price
     });
   }
 

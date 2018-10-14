@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-md-10">
       <app-restaurant-info [edit]="edit" [restaurant]="restaurant" [editRestaurant]="editRestaurant"
-                           [autocompleteItems]="autocompleteItems" #restaurantInfoComp></app-restaurant-info>
+                           [autocompleteItems]="autocompleteItems" [autocompleteItemsPrices]="autocompleteItemsPrices" #restaurantInfoComp></app-restaurant-info>
       <app-open-hours *ngIf="!create" [edit]="edit" [openHoursWeek]="openHoursWeek"
                       [editOpenHoursWeek]="editOpenHoursWeek"
                       (openHoursValidated)="openHoursValid($event)"

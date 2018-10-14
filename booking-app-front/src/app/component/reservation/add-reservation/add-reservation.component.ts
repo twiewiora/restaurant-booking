@@ -91,9 +91,17 @@ export class AddReservationComponent implements OnInit {
     });
   }
 
-  getFreeTableList(reservation: Reservation) {
+  getBestFreeTableList(reservation: Reservation) {
     this.reservation.setDateReservation(this.date, NgbDateTimeAdapter.toModel(this.time));
-    this.tableService.searchFreeTables(reservation.dateReservation, reservation.reservationLength, reservation.reservedPlaces).subscribe(tableList => {
+    this.tableService.searchBestFreeTables(reservation.dateReservation, reservation.reservationLength, reservation.reservedPlaces).subscribe(tableList => {
+      this.tableList = Table.fromJsonToArray(tableList);
+      this.showList = true;
+    })
+  }
+
+  getAllFreeTableList(reservation: Reservation) {
+    this.reservation.setDateReservation(this.date, NgbDateTimeAdapter.toModel(this.time));
+    this.tableService.searchAllFreeTables(reservation.dateReservation, reservation.reservationLength).subscribe(tableList => {
       this.tableList = Table.fromJsonToArray(tableList);
       this.showList = true;
     })

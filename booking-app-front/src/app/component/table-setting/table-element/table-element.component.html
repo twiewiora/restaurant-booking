@@ -42,7 +42,7 @@
 </td>
 <td class='alert-container'>
   <div *ngIf="table.edit">
-    <button class="btn btn-success" (click)="updateTable(table)">save</button>
+    <button class="btn btn-success" (click)="updateTable(table)" [disabled]="!tableForm.valid">save</button>
     <button class="btn btn-warning" (click)="table.edit = !table.edit">cancel</button>
 
   </div>

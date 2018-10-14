@@ -34,6 +34,13 @@
                  [removable]="false"
                  [hideForm]="true"></tag-input>
     </div>
+    <div class="row">
+      <h5 class="col-sm-3 ">Price</h5>
+      <tag-input class="col-sm-9"
+                 [ngModel]="restaurant?.price"
+                 [removable]="false"
+                 [hideForm]="true"></tag-input>
+    </div>
   </div>
   <form *ngIf="edit">
     <div class="form-group container" [formGroup]="restaurantInfoForm">
@@ -119,7 +126,8 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
+           title="Tags to choose from: {{autocompleteItems}}">
         <label for="tags">Tags</label>
         <tag-input [(ngModel)]="editRestaurant.tags"
                    [onlyFromAutocomplete]="true"
@@ -129,6 +137,23 @@
           <tag-input-dropdown
             [showDropdownIfEmpty]="false"
             [autocompleteItems]="autocompleteItems">
+          </tag-input-dropdown>
+        </tag-input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
+           title="Prices to choose from: {{autocompleteItemsPrices}}">
+        <label for="price">Price</label>
+        <tag-input [(ngModel)]="editRestaurant.price"
+                   [onlyFromAutocomplete]="true"
+                   [modelAsStrings]="true"
+                   [maxItems]="1"
+                   name="price"
+                   id="price">
+          <tag-input-dropdown
+            [showDropdownIfEmpty]="false"
+            [autocompleteItems]="autocompleteItemsPrices">
           </tag-input-dropdown>
         </tag-input>
       </div>
