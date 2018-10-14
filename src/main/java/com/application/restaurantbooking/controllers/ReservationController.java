@@ -12,6 +12,7 @@ import com.application.restaurantbooking.utils.TableSearcherRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -290,6 +294,52 @@ public class ReservationController {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.GET_RESERVATIONS_LIST,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getReservationsForClient(HttpServletRequest request,
+                                            HttpServletResponse response) {
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArrayNode restaurantArray = objectMapper.createArrayNode();
+            for (Reservation reservation : client.getReservations()) {
+                restaurantArray.add(objectMapper.writeValueAsString(reservation));
+            }
+            return objectMapper.createObjectNode().putPOJO("reservations", restaurantArray).toString();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
+    @RequestMapping(value = UrlRequests.DELETE_RESERVATION_BY_CLIENT,
+            method = RequestMethod.DELETE,
+            produces = "application/json; charset=UTF-8")
+    public String deleteReservationByClient(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @PathVariable String id){
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Reservation reservation = reservationService.getById(Long.decode(id));
+        if (reservation != null) {
+            reservationService.deleteReservation(Long.decode(id));
+            response.setStatus(HttpServletResponse.SC_OK);
+            return AcceptResponses.RESERVATION_DELETED;
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ErrorResponses.RESERVATION_NOT_FOUND;
         }
     }
 
