@@ -425,15 +425,21 @@ public class RestaurantController {
     }
 
     private Restorer getRestorerByJwt(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader).substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        return restorerService.getByUsername(username);
+        if (request.getHeader(tokenHeader) != null) {
+            String token = request.getHeader(tokenHeader).substring(7);
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            return restorerService.getByUsername(username);
+        }
+        return null;
     }
 
     private Client getClientByJwt(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader).substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        return clientService.getByUsername(username);
+        if (request.getHeader(tokenHeader) != null) {
+            String token = request.getHeader(tokenHeader).substring(7);
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            return clientService.getByUsername(username);
+        }
+        return null;
     }
 
     private void saveClientPreferences(Client client, Restaurant restaurant) {
