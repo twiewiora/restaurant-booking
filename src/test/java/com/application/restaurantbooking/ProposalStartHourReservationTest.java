@@ -227,4 +227,60 @@ public class ProposalStartHourReservationTest {
         result = tableSearcher.getProposalStartHourReservation(restaurant, request);
         assertEquals(0, result.size());
     }
+
+    @Test
+    public void nearHourReservationTest1() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 7));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 2));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_15:30"), 1, 11);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<String> result = tableSearcher.getNearHoursReservation(restaurant, request);
+        assertEquals(5, result.size());
+        assertTrue(result.contains("14:30"));
+        assertTrue(result.contains("15:00"));
+        assertTrue(result.contains("15:30"));
+        assertTrue(result.contains("16:00"));
+        assertTrue(result.contains("16:30"));
+    }
+
+    @Test
+    public void nearHourReservationTest2() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 7));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 2));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:00"), 1, 2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<String> result = tableSearcher.getNearHoursReservation(restaurant, request);
+        assertEquals(3, result.size());
+        assertTrue(result.contains("19:00"));
+        assertTrue(result.contains("17:00"));
+        assertTrue(result.contains("17:30"));
+    }
+
+    @Test
+    public void nearHourReservationTest3() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 7));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 2));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_19:00"), 1, 4);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<String> result = tableSearcher.getNearHoursReservation(restaurant, request);
+        assertEquals(3, result.size());
+        assertTrue(result.contains("20:00"));
+        assertTrue(result.contains("19:00"));
+        assertTrue(result.contains("19:30"));
+    }
 }
