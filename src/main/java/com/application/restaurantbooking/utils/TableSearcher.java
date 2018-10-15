@@ -19,6 +19,10 @@ public class TableSearcher {
     }
 
     public List<RestaurantTable> searchTableByRequest(Restaurant restaurant, TableSearcherRequest request) {
+        return searchTheBestTableConfiguration(getFreeTables(restaurant, request), request.getPlaces());
+    }
+
+    public List<RestaurantTable> getFreeTables(Restaurant restaurant, TableSearcherRequest request) {
         Date dateFrom = request.getDate();
         Date dateTo = DateUtils.addHours(request.getDate(), request.getLength());
         Set<RestaurantTable> freeRestaurantTables = new HashSet<>();
@@ -27,7 +31,7 @@ public class TableSearcher {
                 freeRestaurantTables.add(table);
             }
         }
-        return searchTheBestTableConfiguration(freeRestaurantTables, request.getPlaces());
+        return new ArrayList<>(freeRestaurantTables);
     }
 
     private boolean isReservationBlocker(Reservation reservation, Date dateFrom, Date dateTo) {
@@ -41,7 +45,7 @@ public class TableSearcher {
                 || startReservation.equals(dateFrom) || endReservation.equals(dateTo);
     }
 
-    private List<RestaurantTable> searchTheBestTableConfiguration(Set<RestaurantTable> restaurantTables, Integer places){
+    private List<RestaurantTable> searchTheBestTableConfiguration(List<RestaurantTable> restaurantTables, Integer places){
         if (restaurantTables.isEmpty()) {
             return Collections.emptyList();
         }

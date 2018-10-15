@@ -27,6 +27,12 @@ GET     /api/tables/search?date=2018-06-06_16:16&length=2&places=14
                 [{"id":10,"maxPlaces":12,"comment":"comment...","identifier":"big table","reserved":false},
                  {"id":15,"maxPlaces":3,"comment":"comment...","identifier":"small table","reserved":false}]
 
+GET     /api/freeTables?date=2018-06-06_16:16&length=2
+        input: -
+        output: list
+                [{"id":10,"maxPlaces":12,"comment":"comment...","identifier":"big table","reserved":false},
+                 {"id":15,"maxPlaces":3,"comment":"comment...","identifier":"small table","reserved":false}]
+
 POST	/api/table/add
         input: json
                {"maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}

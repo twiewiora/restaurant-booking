@@ -7,6 +7,7 @@ public class UrlRequests {
 
     public static final String GET_TABLES_FOR_RESTAURANT = "/api/tables";
     public static final String GET_TABLES_BY_SEARCH = "/api/tables/search";
+    public static final String GET_FREE_TABLES = "/api/freeTables";
     public static final String POST_TABLE_ADD = "/api/table/add";
     public static final String POST_TABLE_UPDATE = "/api/table/update";
     public static final String DELETE_TABLE = "/api/table/delete/tableId={id}";

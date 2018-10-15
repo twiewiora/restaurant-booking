@@ -114,6 +114,39 @@ public class RestaurantTableController {
         }
     }
 
+    @RequestMapping(value = UrlRequests.GET_FREE_TABLES,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getFreeTables(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @RequestParam String date,
+                                    @RequestParam int length) {
+        Restorer restorer = getRestorerByJwt(request);
+        if (restorer == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restorer.getRestaurant();
+
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+                TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, null);
+                List<RestaurantTable> tables = tableSearcher.getFreeTables(restaurant, tableRequest);
+                response.setStatus(HttpServletResponse.SC_OK);
+                return objectMapper.writeValueAsString(tables);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (IOException | ParseException e) {
+            LOGGER.log(Level.WARNING, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
     @RequestMapping(value = UrlRequests.POST_TABLE_ADD,
             method = RequestMethod.POST,
             consumes = "application/json; charset=UTF-8",
