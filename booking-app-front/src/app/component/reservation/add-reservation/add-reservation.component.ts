@@ -35,7 +35,7 @@ export class AddReservationComponent implements OnInit {
     timeOut: 3000,
     animate: 'fade'
   };
-  private reservationForm: FormGroup;
+  public reservationForm: FormGroup;
 
   defaultValues() {
     this.date = new Date();
