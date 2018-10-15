@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 
-declare const gapi: any;
-
 @Component({
   selector: 'app-start',
   templateUrl: './start.component.html',
