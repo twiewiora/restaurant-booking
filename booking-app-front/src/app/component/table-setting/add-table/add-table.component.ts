@@ -15,7 +15,7 @@ export class AddTableComponent implements OnInit {
   @Output() canceledAddTable = new EventEmitter<boolean>();
   MIN = 1;
   table: Table = new Table();
-  private tableForm: FormGroup;
+  public tableForm: FormGroup;
   private options = {
     position: 'middle',
     timeOut: 3000,
