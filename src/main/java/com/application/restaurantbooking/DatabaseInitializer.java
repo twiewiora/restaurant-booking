@@ -68,12 +68,12 @@ public class DatabaseInitializer {
         RestaurantTable table5 = createRestaurantTable(restaurant, 4);
         RestaurantTable table6 = createRestaurantTable(restaurant, 3);
 
-        createReservation(table1, "2018-09-14_22:30", 1, client);
-        createReservation(table2, "2018-09-14_20:00", 3, client);
-        createReservation(table3, "2018-09-14_19:00", 2, client);
-        createReservation(table4, "2018-09-14_18:00", 1, client);
-        createReservation(table5, "2018-09-14_17:00", 3, client);
-        createReservation(table6, "2018-09-14_18:00", 2, client);
+        createReservation(table1, "2018-09-14_22:30", 60, client);
+        createReservation(table2, "2018-09-14_20:00", 180, client);
+        createReservation(table3, "2018-09-14_19:00", 120, client);
+        createReservation(table4, "2018-09-14_18:00", 60, client);
+        createReservation(table5, "2018-09-14_17:00", 180, client);
+        createReservation(table6, "2018-09-14_18:00", 120, client);
 
         createOpenHours(restaurant);
         tags.clear();
@@ -88,10 +88,10 @@ public class DatabaseInitializer {
         table5 = createRestaurantTable(restaurant, 4);
         table6 = createRestaurantTable(restaurant, 3);
 
-        createReservation(table1, "2018-09-14_22:30", 1, client);
-        createReservation(table2, "2018-09-14_20:00", 3, client);
-        createReservation(table3, "2018-09-14_19:00", 2, client);
-        createReservation(table4, "2018-09-14_18:00", 1, client);
+        createReservation(table1, "2018-09-14_22:30", 60, client);
+        createReservation(table2, "2018-09-14_20:00", 180, client);
+        createReservation(table3, "2018-09-14_19:00", 120, client);
+        createReservation(table4, "2018-09-14_18:00", 60, client);
 
         createOpenHours(restaurant);
 
