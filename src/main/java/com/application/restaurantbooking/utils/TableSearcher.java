@@ -19,20 +19,24 @@ public class TableSearcher {
     }
 
     public List<RestaurantTable> searchTableByRequest(Restaurant restaurant, TableSearcherRequest request) {
+        return searchTheBestTableConfiguration(getFreeTables(restaurant, request), request.getPlaces());
+    }
+
+    public List<RestaurantTable> getFreeTables(Restaurant restaurant, TableSearcherRequest request) {
         Date dateFrom = request.getDate();
-        Date dateTo = DateUtils.addHours(request.getDate(), request.getLength());
+        Date dateTo = DateUtils.addMinutes(request.getDate(), request.getLength());
         Set<RestaurantTable> freeRestaurantTables = new HashSet<>();
         for (RestaurantTable table : restaurant.getRestaurantTables()) {
             if (table.getReservation().stream().noneMatch(res -> isReservationBlocker(res, dateFrom, dateTo))) {
                 freeRestaurantTables.add(table);
             }
         }
-        return searchTheBestTableConfiguration(freeRestaurantTables, request.getPlaces());
+        return new ArrayList<>(freeRestaurantTables);
     }
 
     private boolean isReservationBlocker(Reservation reservation, Date dateFrom, Date dateTo) {
         Date startReservation = reservation.getReservationDate();
-        Date endReservation = DateUtils.addHours(startReservation, reservation.getReservationLength());
+        Date endReservation = DateUtils.addMinutes(startReservation, reservation.getReservationLength());
 
         return startReservation.before(dateFrom) && endReservation.after(dateFrom)
                 || startReservation.before(dateTo) && endReservation.after(dateTo)
@@ -41,7 +45,7 @@ public class TableSearcher {
                 || startReservation.equals(dateFrom) || endReservation.equals(dateTo);
     }
 
-    private List<RestaurantTable> searchTheBestTableConfiguration(Set<RestaurantTable> restaurantTables, Integer places){
+    private List<RestaurantTable> searchTheBestTableConfiguration(List<RestaurantTable> restaurantTables, Integer places){
         if (restaurantTables.isEmpty()) {
             return Collections.emptyList();
         }
@@ -87,8 +91,8 @@ public class TableSearcher {
             Date currentHour = convertOpenCloseHourToCurrentDate(day, openHours.getOpenHour());
             Date closeHour = convertOpenCloseHourToCurrentDate(day, openHours.getCloseHour());
 
-            while (currentHour.before(DateUtils.addHours(closeHour, -request.getLength()))
-                    || currentHour.equals(DateUtils.addHours(closeHour, -request.getLength()))) {
+            while (currentHour.before(DateUtils.addMinutes(closeHour, -request.getLength()))
+                    || currentHour.equals(DateUtils.addMinutes(closeHour, -request.getLength()))) {
                 TableSearcherRequest tableRequest = new TableSearcherRequest(currentHour, request.getLength(), request.getPlaces());
                 if (!searchTableByRequest(restaurant, tableRequest).isEmpty()) {
                     proposalStartHours.add(sdf.format(currentHour));
@@ -112,7 +116,8 @@ public class TableSearcher {
         List<String> proposalHours = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         for (int i = -60; i <= 60; i+=30) {
-            TableSearcherRequest tableRequest = new TableSearcherRequest(DateUtils.addMinutes(request.getDate(), -i), request.getLength(), request.getPlaces());
+            TableSearcherRequest tableRequest = new TableSearcherRequest(DateUtils.addMinutes(request.getDate(), -i),
+                    request.getLength(), request.getPlaces());
             if (!searchTableByRequest(restaurant, tableRequest).isEmpty()) {
                 proposalHours.add(sdf.format(DateUtils.addMinutes(request.getDate(), -i)));
             }

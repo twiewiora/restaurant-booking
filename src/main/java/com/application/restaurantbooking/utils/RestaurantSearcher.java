@@ -26,6 +26,7 @@ public class RestaurantSearcher {
     public List<Restaurant> getSurroundingRestaurant(List<Restaurant> restaurantsInCity,
                                                      RestaurantSearcherRequest request,
                                                      Client client) {
+        int restaurantsLimit = 20;
         List<Restaurant> restaurantsInRange = restaurantsInCity.stream()
                 .filter(restaurant -> isRestaurantInRange(restaurant, request))
                 .filter(restaurant -> request.getTags().isEmpty() || !Collections.disjoint(restaurant.getTags(), request.getTags()))
@@ -33,7 +34,7 @@ public class RestaurantSearcher {
 
         restaurantsInRange.forEach(restaurant -> calculateRestaurantPriority(client, restaurant));
         restaurantsInRange.sort(Comparator.comparing(Restaurant::getPriority).reversed());
-        return restaurantsInRange;
+        return restaurantsInRange.stream().limit(restaurantsLimit).collect(Collectors.toList());
     }
 
     private boolean isRestaurantInRange(Restaurant restaurant, RestaurantSearcherRequest request) {

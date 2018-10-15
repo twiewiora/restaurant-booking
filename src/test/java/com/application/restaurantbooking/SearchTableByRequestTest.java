@@ -81,10 +81,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest1() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
-            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:00"), 1, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 60, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:00"), 60, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -97,10 +97,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest2() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
-            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:00"), 1, 11);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 60, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:00"), 60, 11);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -114,10 +114,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest3() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 1, 5));
-            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-14_18:00"), 2, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_18:00"), 60, 5));
+            table3.getReservation().add(createReservation(table3, sdf.parse("2018-06-15_18:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-14_18:00"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -130,8 +130,8 @@ public class SearchTableByRequestTest {
     public void availableTermTest4() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 2, 9));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:00"), 2, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_18:00"), 120, 9));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:00"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -145,10 +145,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest5() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 1, 5));
-            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_19:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 2, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 60, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_19:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -162,10 +162,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest6() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 1, 5));
-            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 2, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 60, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -179,10 +179,10 @@ public class SearchTableByRequestTest {
     public void availableTermTest7() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 1, 5));
-            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_19:00"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:30"), 2, 9);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 60, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_19:00"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:30"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -194,10 +194,62 @@ public class SearchTableByRequestTest {
     public void availableTermTest8() {
         TableSearcherRequest request = null;
         try {
-            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 2, 9));
-            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 2, 5));
-            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 1, 4));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 2, 8);
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 120, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 120, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_18:30"), 120, 8);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<RestaurantTable> result = tableSearcher.searchTableByRequest(restaurant, request);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(table3));
+        assertTrue(result.contains(table4));
+    }
+
+    @Test
+    public void availableTermTest9() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 40, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 120, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:40"), 120, 8);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<RestaurantTable> result = tableSearcher.searchTableByRequest(restaurant, request);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(table1));
+    }
+
+    @Test
+    public void availableTermTest10() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 40, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 120, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:30"), 120, 9);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<RestaurantTable> result = tableSearcher.searchTableByRequest(restaurant, request);
+        assertEquals(3, result.size());
+        assertTrue(result.contains(table3));
+        assertTrue(result.contains(table4));
+        assertTrue(result.contains(table5));
+
+    }
+
+    @Test
+    public void availableTermTest11() {
+        TableSearcherRequest request = null;
+        try {
+            table1.getReservation().add(createReservation(table1, sdf.parse("2018-06-15_17:00"), 40, 9));
+            table2.getReservation().add(createReservation(table2, sdf.parse("2018-06-15_17:30"), 120, 5));
+            table5.getReservation().add(createReservation(table5, sdf.parse("2018-06-15_20:30"), 60, 4));
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_17:30"), 120, 8);
         } catch (ParseException e) {
             e.printStackTrace();
         }
