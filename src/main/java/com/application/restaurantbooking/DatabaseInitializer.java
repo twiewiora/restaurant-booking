@@ -5,6 +5,7 @@ import com.application.restaurantbooking.persistence.model.*;
 import com.application.restaurantbooking.persistence.service.*;
 import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
 import com.application.restaurantbooking.utils.geocoding.Localization;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,13 +56,12 @@ public class DatabaseInitializer {
     }
 
     public void initializeDatabase() {
+        if (restorerService.getByUsername("test") != null) {
+            return;
+        }
         Restorer restorer = createRestorer("test", "test1");
         Client client = createClient("client", "client");
-        Set<Tag> tags = new HashSet<>();
-        tags.add(Tag.PIZZA);
-        tags.add(Tag.KEBAB);
-        tags.add(Tag.DUMPLINGS);
-        Restaurant restaurant = createRestaurant(restorer, "Krakow", "sw. Marka", "22", tags, Price.LOW);
+        Restaurant restaurant = createRestaurant(restorer, "Krakow", "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW);
 
         RestaurantTable table1 = createRestaurantTable(restaurant, 12);
         RestaurantTable table2 = createRestaurantTable(restaurant, 5);
@@ -76,17 +78,12 @@ public class DatabaseInitializer {
         createReservation(table6, "2018-09-14_18:00", 120, client);
 
         createOpenHours(restaurant);
-        tags.clear();
-        tags.add(Tag.POLISH_CUISINE);
-        tags.add(Tag.DUMPLINGS);
-        restaurant = createRestaurant(restorer, "Krakow", "Mikolajska", "3", tags, Price.HIGH);
+        restaurant = createRestaurant(restorer, "Krakow", "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH);
 
         table1 = createRestaurantTable(restaurant, 12);
         table2 = createRestaurantTable(restaurant, 5);
         table3 = createRestaurantTable(restaurant, 2);
         table4 = createRestaurantTable(restaurant, 7);
-        table5 = createRestaurantTable(restaurant, 4);
-        table6 = createRestaurantTable(restaurant, 3);
 
         createReservation(table1, "2018-09-14_22:30", 60, client);
         createReservation(table2, "2018-09-14_20:00", 180, client);
@@ -95,11 +92,24 @@ public class DatabaseInitializer {
 
         createOpenHours(restaurant);
 
-        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24", Collections.EMPTY_SET, Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34", Collections.EMPTY_SET, Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33", Collections.EMPTY_SET, Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorążych", "2", Collections.EMPTY_SET, Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6", Collections.EMPTY_SET, Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test7", "test7"), "Kraków", "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test8", "test8"), "Kraków", "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test9", "test9"), "Kraków", "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test10", "test10"), "Kraków", "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test11", "test11"), "Kraków", "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test12", "test12"), "Kraków", "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test13", "test13"), "Kraków", "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test14", "test14"), "Kraków", "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test15", "test15"), "Kraków", "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test16", "test16"), "Kraków", "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test17", "test17"), "Kraków", "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test18", "test18"), "Kraków", "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test19", "test19"), "Kraków", "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM));
     }
 
     private Restorer createRestorer(String userName, String password) {
