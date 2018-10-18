@@ -21,6 +21,7 @@ export class RestaurantInfoPageComponent implements OnInit {
   restaurant: Restaurant;
   editRestaurant: Restaurant;
   autocompleteItems: string[];
+  autocompleteItemsPrices: string[];
 
   options = {
     position: 'middle',
@@ -41,6 +42,7 @@ export class RestaurantInfoPageComponent implements OnInit {
     this.edit = false;
     this.create = false;
     this.getTags();
+    this.getPrices();
     this.getRestaurant();
   }
 
@@ -85,7 +87,6 @@ export class RestaurantInfoPageComponent implements OnInit {
   }
 
   updateRestaurant(updateRestaurant: Restaurant) {
-    debugger;
     if(Restaurant.toJson(this.restaurant) !== Restaurant.toJson(updateRestaurant)) {
       this.restaurantInfoService.updateRestaurant(updateRestaurant).subscribe(response => {
         this.notificationService.success("Restaurant information updated", '', this.options);
@@ -104,6 +105,12 @@ export class RestaurantInfoPageComponent implements OnInit {
   getTags() {
     this.restaurantInfoService.getTags().subscribe(tags => {
       this.autocompleteItems = <string[]> tags;
+    })
+  }
+
+  getPrices() {
+    this.restaurantInfoService.getPrices().subscribe(prices => {
+      this.autocompleteItemsPrices = <string[]> prices;
     })
   }
 

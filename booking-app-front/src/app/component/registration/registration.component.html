@@ -1,18 +1,64 @@
 <div class="container">
   <h1>Registration</h1>
   <form (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="username">username</label>
-      <input type="text" class="form-control" id="username"
-             [(ngModel)]="user.username" name="username" required>
-    </div>
+    <div class="form-group" [formGroup]="registrationForm">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="username">username</label>
+          <input type="text" class="form-control" id="username"
+                 [(ngModel)]="usernameInput" name="username"
+                 formControlName="username" required>
+          <div *ngIf="username.invalid && (username.dirty || username.touched)"
+               class="alert alert-danger">
+            <div *ngIf="username.errors.required">
+              Username is required.
+            </div>
+          </div>
+        </div>
 
-    <div class="form-group">
+        <div class="col-md-6">
+          <label for="username2">repeat username</label>
+          <input type="text" class="form-control" id="username2"
+                 [(ngModel)]="usernameRepeatInput" name="username2"
+                 formControlName="username2" required>
+          <div *ngIf="username2.invalid && (username2.dirty || username2.touched)"
+               class="alert alert-danger">
+            <div *ngIf="username2.errors.required">
+              Username is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <label for="password">password</label>
       <input type="password" class="form-control" id="password"
-             [(ngModel)]="user.password" name="password" required>
-    </div>
+             [(ngModel)]="passwordInput" name="password" formControlName="password" required>
+      <div *ngIf="password.invalid && (password.dirty || password.touched)"
+           class="alert alert-danger">
+        <div *ngIf="password.errors.required">
+          Password is required.
+        </div>
+        <div *ngIf="password.errors.minlength">
+          Minimum length: {{MIN}}
+        </div>
+      </div>
 
-    <button type="submit" class="btn btn-success">Register</button>
+
+      <label for="password2">repeat password</label>
+      <input type="password" class="form-control" id="password2"
+             [(ngModel)]="passwordRepeatInput" name="password2" formControlName="password2" required>
+      <div *ngIf="password2.invalid && (password2.dirty || password2.touched)"
+           class="alert alert-danger">
+        <div *ngIf="password2.errors.required">
+          Password is required.
+        </div>
+        <div *ngIf="password2.errors.minlength">
+          Minimum length: {{MIN}}
+        </div>
+      </div>
+    </div>
+    <span *ngIf="errorMsg" class="alert alert-danger">{{errorMsg}}</span>
+    <button type="submit" class="btn btn-success" [disabled]="!registrationForm.valid">Register</button>
+    <button class="btn btn-warning pull-right" routerLink="/start">cancel</button>
   </form>
 </div>

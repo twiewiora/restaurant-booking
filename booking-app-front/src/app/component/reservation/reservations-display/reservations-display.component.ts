@@ -124,7 +124,7 @@ export class ReservationsDisplayComponent implements OnInit {
         this.reservations = reservations.map((reservation: IReservation) => Reservation.fromJson(reservation));
         this.events = this.reservations.map((reservation: Reservation) => Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
         this.refresh.next();
-      })
+      });
   }
 
   getOpeningHoursForDay(weekday: string) {
