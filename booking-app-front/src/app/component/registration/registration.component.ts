@@ -15,7 +15,7 @@ export class RegistrationComponent implements OnInit {
   passwordInput: string = '';
   passwordRepeatInput: string = '';
   errorMsg: string = '';
-  private registrationForm: FormGroup;
+  public registrationForm: FormGroup;
   private MIN: number = 5;
 
   constructor(private authenticationService: AuthenticationService) {
