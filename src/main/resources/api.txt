@@ -79,7 +79,7 @@ POST	/api/restaurant/add
 
 POST	/api/restaurant/update
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com","price":"HIGH","tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com","restaurantPrice":["HIGH"],"tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was updated"}
 

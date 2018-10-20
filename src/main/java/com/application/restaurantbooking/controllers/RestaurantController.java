@@ -130,7 +130,7 @@ public class RestaurantController {
                     .streetNumber(jsonNode.get("streetNumber").asText())
                     .phoneNumber(jsonNode.get("phoneNumber").asText())
                     .website(jsonNode.get("website").asText())
-                    .price(Price.valueOf(jsonNode.get("price").get(0).asText().toUpperCase()))
+                    .price(Price.valueOf(jsonNode.get("restaurantPrice").get(0).asText().toUpperCase()))
                     .restorer(restorer)
                     .tags(tags)
                     .build();
@@ -184,7 +184,7 @@ public class RestaurantController {
                 restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
                 restaurant.setPhoneNumber(jsonNode.get("phoneNumber").asText());
                 restaurant.setWebsite(jsonNode.get("website").asText());
-                restaurant.setPrice(Price.valueOf(jsonNode.get("price").get(0).asText().toUpperCase()));
+                restaurant.setPrice(Price.valueOf(jsonNode.get("restaurantPrice").get(0).asText().toUpperCase()));
                 JsonNode tagsNode = jsonNode.get("tags");
                 Set<Tag> tags = new HashSet<>();
                 if (tagsNode.isArray()) {

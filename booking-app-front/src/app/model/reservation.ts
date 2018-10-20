@@ -1,6 +1,7 @@
 import * as moment from "moment";
 import {CalendarEvent} from "angular-calendar";
 import {Table} from "./table";
+import {IClient} from "./client";
 
 export const DATE_TIME_FORMAT = 'YYYY-MM-DD_HH:mm';
 
@@ -52,32 +53,22 @@ export class Reservation {
   }
 
   static getReservationEnd(reservationDate: string, length: number): Date {
-    return moment(reservationDate, DATE_TIME_FORMAT).add(length, 'h').toDate();
+    return moment(reservationDate, DATE_TIME_FORMAT).add(length, 'm').toDate();
   }
 
-  static reservationToEventMapper(reservation: Reservation, table: Table): CalendarEvent {
-
+  static reservationToEventMapper(reservation: Reservation, table: Table, client: IClient = undefined): CalendarEvent {
     reservation.table = table;
+    if (client) {
+      reservation.comment = client.username;
+    }
     const event: CalendarEvent<Reservation> = {
       title: reservation.comment,
       start: Reservation.getReservationStart(reservation.dateReservation),
       end: Reservation.getReservationEnd(reservation.dateReservation, reservation.reservationLength),
-      // draggable: true,
-      // resizable: {
-      //   beforeStart: true,
-      //   afterEnd: true
-      // },
       meta: reservation
     };
-    if (reservation.cancelled) {
-      event.color = colors.red;
-    }
-    else {
-      event.color = colors.blue;
-    }
-
+    event.color = reservation.cancelled ? colors.red : colors.blue;
     return event;
-
   }
 
   static fromJson(json: IReservation): Reservation {
@@ -90,15 +81,7 @@ export class Reservation {
     reservation.id = json.id;
     reservation.clientId = json.clientId;
     return reservation;
-
   }
-
-  static eventToReservationMapper(event: CalendarEvent): Reservation {
-    //TODO
-    return new Reservation();
-
-  }
-
 }
 
 
@@ -110,9 +93,5 @@ const colors: any = {
   blue: {
     primary: '#1e90ff',
     secondary: '#D1E8FF'
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA'
   }
 };

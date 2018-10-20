@@ -7,10 +7,10 @@
 
       <div class="col-sm-9" *ngIf="!openHours.value.isClose">
         <div class="row">
-          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.openHour" [spinners]="false" [disabled]="true"
+          <ngb-timepicker class="col-sm-5" [ngModel]="openHours.value.openHour" [spinners]="false" [disabled]="true"
                           [size]="'small'"></ngb-timepicker>
           <dd class="col-sm-2">-</dd>
-          <ngb-timepicker class="col-sm-5" [(ngModel)]="openHours.value.closeHour" [spinners]="false" [disabled]="true"
+          <ngb-timepicker class="col-sm-5" [ngModel]="openHours.value.closeHour" [spinners]="false" [disabled]="true"
                           [size]="'small'"></ngb-timepicker>
         </div>
       </div>
