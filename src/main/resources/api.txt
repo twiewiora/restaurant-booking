@@ -93,6 +93,11 @@ GET     /api/prices
         output: list
                 ["HIGH","MEDIUM","LOW"]
 
+GET     /api/client{2}
+        input: -
+        output: json
+                {"id":2,"username":"client","enabled":true}
+
 #################################################
 # Open hours
 

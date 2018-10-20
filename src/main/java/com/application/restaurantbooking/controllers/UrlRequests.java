@@ -28,6 +28,7 @@ public class UrlRequests {
     public static final String GET_RESERVATIONS_ALL_TABLES = "/api/reservation/all/dateFrom={from}/dateTo={to}";
     public static final String GET_TAGS = "/api/tags";
     public static final String GET_PRICES = "/api/prices";
+    public static final String GET_CLIENT_BY_ID = "/api/client{id}";
 
     // API for clients
     public static final String GET_SURROUNDING_RESTAURANTS = "/api/client/surroundingRestaurants";
