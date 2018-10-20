@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   passwordInput: string = '';
   errorMsg: string = '';
   result: string;
-  private loginForm: FormGroup;
+  public loginForm: FormGroup;
 
   constructor(private authenticationService: AuthenticationService,
               private http: HttpClient) { }
