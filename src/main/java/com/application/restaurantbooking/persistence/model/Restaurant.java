@@ -1,6 +1,7 @@
 package com.application.restaurantbooking.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
@@ -31,6 +32,7 @@ public class Restaurant {
 
     private Double latitude;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Price price;
 
@@ -142,6 +144,14 @@ public class Restaurant {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    @JsonProperty
+    public Collection<Price> getRestaurantPrice() {
+        if (price != null) {
+            return Collections.singleton(price);
+        }
+        return null;
     }
 
     public Double getPriority() {

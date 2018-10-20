@@ -69,11 +69,11 @@ DELETE	/api/table/delete/tableId={5}
 GET	    /api/restaurant
         input: -
         output: json
-                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","price":["HIGH"],"latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
+                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","restaurantPrice":["HIGH"],"latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"],"priority":null}
 
 POST	/api/restaurant/add
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "price":["HIGH"], "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "restaurantPrice":["HIGH"], "tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was created"}
 
@@ -151,13 +151,13 @@ POST    /api/reservation/cancel/reservationId={10}
 GET	    /api/reservation/forTable/tableId={5}/dateFrom={2018-06-15_18:00}/dateTo={2018-06-15_22:00}
         input: -
         output: list
-                [{"id":17,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00"}]
+                [{"id":17,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00","restaurantId":1}]
 
 GET	    /api/reservation/all/dateFrom={2018-06-15_18:00}/dateTo={2018-06-15_22:00}
         input: -
         output: list
-                [{"id":17,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00"},
-                 {"id":18,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":12,"dateReservation":"2018-06-15_19:00"}]
+                [{"id":17,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":11,"dateReservation":"2018-06-15_20:00","restaurantId":1},
+                 {"id":18,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"restaurantTableId":12,"dateReservation":"2018-06-15_19:00","restaurantId":1}]
 
 #################################################
 # Client
@@ -176,11 +176,16 @@ POST    /api/client/auth
 #################################################
 # Restaurant
 
+GET     /api/client/restaurant{1}
+        input: -
+        output: json
+        "{"id":1,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","price":["HIGH"],"phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"],"priority":0.972}"
+
 GET     /api/client/surroundingRestaurants?lat=50.0643816&lon=19.9423012&radius=1000&tags=PIZZA&tags=DUMPLINGS
         input: -
         output: list
                 {"restaurants":
-                ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","price":"HIGH","phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}"]}
+                ["{"id":9,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","price":["HIGH"],"phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"],"priority":0.972}"]}
 
 GET     /api/client/restaurant{9}/freeDates?date=2018-06-06_16:00&length=120&places=5
         input: -
@@ -198,8 +203,8 @@ GET     /api/client/reservations
         input: -
         output: list
                 {"reservations":
-                ["{"id":19,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13}",
-                 "{"id":20,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13}"]
+                ["{"id":19,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13,"restaurantId":1}",
+                 "{"id":20,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13,"restaurantId":1}"]
 
 DELETE  /api/client/reservation{19}/delete
         input: -

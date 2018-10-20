@@ -30,4 +30,7 @@ public class ErrorResponses {
     public static final String INTERNAL_ERROR = mapper
             .createObjectNode().put("desc", "Internal error!").toString();
 
+    public static final String JWT_TOKEN_EXPIRED = mapper
+            .createObjectNode().put("desc", "JWT token expired!").toString();
+
 }

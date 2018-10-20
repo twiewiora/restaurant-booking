@@ -49,7 +49,7 @@ public class RestaurantSearcher {
                 (40075.704 / 360) * 1000;
     }
 
-    private void calculateRestaurantPriority(Client client, Restaurant restaurant) {
+    public void calculateRestaurantPriority(Client client, Restaurant restaurant) {
         double restaurantVisits = (double) clientService.getStatisticsForRestaurant(client.getId(), restaurant.getId());
         double tagsVisits = (double) restaurant.getTags().stream()
                 .mapToInt(tag -> clientService.getStatisticsForTag(client.getId(), tag))

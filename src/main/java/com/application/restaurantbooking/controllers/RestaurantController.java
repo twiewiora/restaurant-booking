@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -424,20 +425,57 @@ public class RestaurantController {
         }
     }
 
+    @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_ID,
+            method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getRestaurantById(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    @PathVariable String id) {
+        Client client = getClientByJwt(request);
+        if (client == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ErrorResponses.UNAUTHORIZED_ACCESS;
+        }
+        Restaurant restaurant = restaurantService.getById(Long.decode(id));
+        restaurantSearcher.calculateRestaurantPriority(client, restaurant);
+        try {
+            if (restaurant != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                response.setStatus(HttpServletResponse.SC_OK);
+                return objectMapper.writeValueAsString(restaurant);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ErrorResponses.RESTAURANT_NOT_FOUND;
+            }
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.WARNING, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return ErrorResponses.INTERNAL_ERROR;
+        }
+    }
+
     private Restorer getRestorerByJwt(HttpServletRequest request) {
-        if (request.getHeader(tokenHeader) != null) {
-            String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            return restorerService.getByUsername(username);
+        try {
+            if (request.getHeader(tokenHeader) != null) {
+                String token = request.getHeader(tokenHeader).substring(7);
+                String username = jwtTokenUtil.getUsernameFromToken(token);
+                return restorerService.getByUsername(username);
+            }
+        } catch (ExpiredJwtException e) {
+            return null;
         }
         return null;
     }
 
     private Client getClientByJwt(HttpServletRequest request) {
-        if (request.getHeader(tokenHeader) != null) {
-            String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            return clientService.getByUsername(username);
+        try {
+            if (request.getHeader(tokenHeader) != null) {
+                String token = request.getHeader(tokenHeader).substring(7);
+                String username = jwtTokenUtil.getUsernameFromToken(token);
+                return clientService.getByUsername(username);
+            }
+        } catch (ExpiredJwtException e) {
+            return null;
         }
         return null;
     }
