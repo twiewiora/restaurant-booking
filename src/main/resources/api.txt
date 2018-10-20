@@ -69,11 +69,11 @@ DELETE	/api/table/delete/tableId={5}
 GET	    /api/restaurant
         input: -
         output: json
-                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","price":"HIGH","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
+                {"id":9,"name":"name","city":"city","street":"street","streetNumber":"32","phoneNumber":"123","website":"https://restaurant.com","price":["HIGH"],"latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"]}
 
 POST	/api/restaurant/add
         input: json
-               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "price":"HIGH", "tags": ["pizza", "kebab"]}
+               {"name": "NAME", "city": "CITY", "street": "STREET", "streetNumber":"32", "phoneNumber": "123", "website":"https://restaurant.com", "price":["HIGH"], "tags": ["pizza", "kebab"]}
         output: json
                 {"desc":"Restaurant was created"}
 
