@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="form-group" [formGroup]="reservationForm">
-      <label for="length">Duration</label>
+      <label for="length">Duration (min)</label>
       <input type="number" [(ngModel)]="reservation.reservationLength" class="form-control" id="length" name="length"
              formControlName="length" required>
       <div *ngIf="length.invalid && (length.dirty || length.touched)"
@@ -53,13 +53,14 @@
       </div>
     </div>
 
-    <button (click)="getAllFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">search all
+    <button (click)="getAllFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">
+      search all
     </button>
-    <button (click)="getBestFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">search best
+    <button (click)="getBestFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">
+      search best
     </button>
     <button class="btn btn-warning" (click)="canceled.emit(true)">Cancel</button>
   </form>
-
 
 
   <div *ngIf="showList">

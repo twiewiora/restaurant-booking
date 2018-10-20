@@ -17,7 +17,7 @@ import {ReservationCommunicationService} from "../reservation-communication.serv
 })
 export class AddReservationComponent implements OnInit {
 
-  DEFAULT_RESERVATION_LENGTH = 2;
+  DEFAULT_RESERVATION_LENGTH = 60;
   DEFAULT_RESERVATION_PLACES = 4;
   MINIMUN_RESERVATION_PLACES = 1;
   MINIMUM_RESERVATION_LENGTH = 1;
@@ -83,7 +83,7 @@ export class AddReservationComponent implements OnInit {
     this.reservation.dateReservation = this.reservation.dateReservation.replace('T', '_');
     this.reservationService.addReservation(reservation).subscribe(any => {
       const index = this.tableList.indexOf(table);
-      if(index > -1){
+      if (index > -1) {
         this.tableList.splice(index, 1);
       }
       this.reservationCommunicationService.reservationAdded(true);

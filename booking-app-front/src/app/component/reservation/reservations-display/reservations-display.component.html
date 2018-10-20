@@ -2,21 +2,40 @@
 
   <ng-template #modalContent let-close="close">
     <div class="modal-header">
-      <h5 class="modal-title">{{ modalData?.event.meta.comment}}</h5>
+      <h5 class="modal-title centerize">{{modalData.event.meta.comment}}</h5>
       <button type="button" class="close" (click)="close()">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body container">
 
-      <div>
-        <pre>Table identifier: {{ modalData?.event.meta.table.identifier}}</pre>
-        <pre>start: {{ modalData?.event.start }}</pre>
-        <pre>end: {{ modalData?.event.end }}</pre>
-        <pre>Reserved places: {{ modalData?.event.meta.reservedPlaces }}</pre>
+      <div class="row">
+        <span class="spread">table identifier: </span>
+        <span class="alert alert-info centerize">{{modalData.event.meta.table.identifier}}</span>
       </div>
-      <button class="btn btn-warning" (click)="cancelReservation(modalData?.event); close()">cancel</button>
-      <button class="btn btn-danger" (click)="deleteReservation(modalData?.event); close()">delete</button>
+      <div class="row">
+        <span class="spread">reservation: </span>
+        <ngb-timepicker class="spread" [ngModel]="{
+      hour: modalData.event.start.getHours(),
+      minute: modalData.event.start.getMinutes(),
+      second: modalData.event.start.getSeconds()
+    }"
+                        [spinners]="false" [disabled]="true"
+                        [size]="'small'"></ngb-timepicker>
+        <span class="spread">-</span>
+        <ngb-timepicker class="spread" [ngModel]="{
+      hour: modalData.event.end.getHours(),
+      minute: modalData.event.end.getMinutes(),
+      second: modalData.event.end.getSeconds()
+    }"
+                        [spinners]="false" [disabled]="true"
+                        [size]="'small'"></ngb-timepicker>
+
+      </div>
+      <div class="row float-right">
+        <button class="btn btn-warning spread" (click)="cancelReservation(modalData?.event); close()">cancel</button>
+        <button class="btn btn-danger spread" (click)="deleteReservation(modalData?.event); close()">delete</button>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-secondary" (click)="close()">OK</button>
@@ -76,8 +95,7 @@
       [events]="events"
       [refresh]="refresh"
       [eventWidth]="50"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)">
+      (eventClicked)="handleEvent('Clicked', $event.event)">
     </mwl-calendar-day-view>
   </div>
 </div>
