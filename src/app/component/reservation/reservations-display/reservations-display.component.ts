@@ -3,27 +3,11 @@ import {DATE_TIME_FORMAT, IReservation, Reservation, State} from "../../../model
 import {ReservationService} from "../../../service/reservation.service";
 import * as moment from "moment";
 import {NgbDateAdapter} from "@ng-bootstrap/ng-bootstrap";
-
-
-import {
-  ViewChild,
-  TemplateRef
-} from '@angular/core';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  addHours
-} from 'date-fns';
+import {ViewChild, TemplateRef} from '@angular/core';
+import {startOfDay, endOfDay,} from 'date-fns';
 import {Subject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent
-} from 'angular-calendar';
+import {CalendarEvent} from 'angular-calendar';
 import {NgbDateNativeAdapter} from "../../../adapters/ngbDateNativeAdapter";
 import {OpenHoursService} from "../../../service/open-hours.service";
 import {IOpenHours, OpenHours} from "../../../model/open-hours";
@@ -32,6 +16,8 @@ import {TableService} from "../../../service/table.service";
 import {Router} from "@angular/router";
 import {NotificationsService} from "angular2-notifications";
 import {ReservationCommunicationService} from "../reservation-communication.service";
+import {ClientService} from "../../../service/client.service";
+import {IClient} from "../../../model/client";
 
 
 @Component({
@@ -45,15 +31,15 @@ import {ReservationCommunicationService} from "../reservation-communication.serv
 
 export class ReservationsDisplayComponent implements OnInit {
 
-  HOURS_SEGMENT = 4;
 
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
-  view: string = 'day';
+  HOURS_SEGMENT = 4;
 
   openHours: OpenHours;
   tables: Map<number, Table>;
   viewDate: Date = new Date();
+  view = 'day';
 
   locale;
 
@@ -75,6 +61,7 @@ export class ReservationsDisplayComponent implements OnInit {
 
   constructor(private reservationService: ReservationService,
               private openHoursService: OpenHoursService,
+              private clientService: ClientService,
               private modal: NgbModal,
               @Inject(LOCALE_ID) locale: string,
               private tableService: TableService,
@@ -82,17 +69,6 @@ export class ReservationsDisplayComponent implements OnInit {
               private notificationService: NotificationsService,
               private reservationCommunicationService: ReservationCommunicationService) {
     this.locale = locale;
-  }
-
-  eventTimesChanged({
-                      event,
-                      newStart,
-                      newEnd
-                    }: CalendarEventTimesChangedEvent): void {
-    event.start = newStart;
-    event.end = newEnd;
-    this.handleEvent('Dropped or resized', event);
-    this.refresh.next();
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
@@ -115,15 +91,13 @@ export class ReservationsDisplayComponent implements OnInit {
       }
     });
     this.onDateSelection(this.viewDate);
-    this.getAllTables();
   }
 
   getReservationForAllTables(dateFrom: string, dateTo: string) {
     this.reservationService.getReservationsForAllTables(dateFrom, dateTo).subscribe(
       (reservations: IReservation[]) => {
         this.reservations = reservations.map((reservation: IReservation) => Reservation.fromJson(reservation));
-        this.events = this.reservations.map((reservation: Reservation) => Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
-        this.refresh.next();
+        this.getAllTables(this.reservations);
       });
   }
 
@@ -150,14 +124,29 @@ export class ReservationsDisplayComponent implements OnInit {
     });
   }
 
-  getAllTables() {
+  getAllTables(reservations: Reservation[]) {
     this.tableService.getTables().subscribe(
       (tables: Table[]) => {
         this.tables = Table.fromJsonToMap(tables);
+        reservations.forEach(reservation => this.getClient(reservation.clientId, reservation, this.tables[reservation.tableId]));
+        this.events = reservations.map((reservation: Reservation) => Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
+        this.refresh.next();
       });
   }
 
+  getClient(id: number, reservation: Reservation, table: Table){
+    if(id) {
+      this.clientService.getClient(id).subscribe(client => {
+        this.addEvent(Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId], <IClient>client));
+      });
+    }
+    else{
+      this.addEvent(Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
+    }
+  }
+
   onDateSelection(date: Date) {
+    this.events = [];
     let start: Date = startOfDay(date);
     let end: Date = endOfDay(date);
     let weekday = moment(date).format('dddd');
