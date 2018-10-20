@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -344,19 +345,27 @@ public class ReservationController {
     }
 
     private Restorer getRestorerByJwt(HttpServletRequest request) {
-        if (request.getHeader(tokenHeader) != null) {
-            String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            return restorerService.getByUsername(username);
+        try {
+            if (request.getHeader(tokenHeader) != null) {
+                String token = request.getHeader(tokenHeader).substring(7);
+                String username = jwtTokenUtil.getUsernameFromToken(token);
+                return restorerService.getByUsername(username);
+            }
+        } catch (ExpiredJwtException e) {
+            return null;
         }
         return null;
     }
 
     private Client getClientByJwt(HttpServletRequest request) {
-        if (request.getHeader(tokenHeader) != null) {
-            String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            return clientService.getByUsername(username);
+        try {
+            if (request.getHeader(tokenHeader) != null) {
+                String token = request.getHeader(tokenHeader).substring(7);
+                String username = jwtTokenUtil.getUsernameFromToken(token);
+                return clientService.getByUsername(username);
+            }
+        } catch (ExpiredJwtException e) {
+            return null;
         }
         return null;
     }

@@ -75,6 +75,14 @@ public class Reservation {
         return null;
     }
 
+    @JsonProperty
+    public Long getRestaurantId() {
+        if (restaurantTable != null && restaurantTable.getRestaurant() != null) {
+            return restaurantTable.getRestaurant().getId();
+        }
+        return null;
+    }
+
     public Integer getReservedPlaces() {
         return reservedPlaces;
     }

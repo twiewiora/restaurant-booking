@@ -7,7 +7,7 @@ import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,13 +47,18 @@ public class UserController {
     public String validateRestorer(HttpServletRequest request, HttpServletResponse response) {
         if (request.getHeader(tokenHeader) != null) {
             String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            if (restorerService.getByUsername(username) != null) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                return AcceptResponses.CORRECT_VALIDATION;
-            } else {
+            try {
+                String username = jwtTokenUtil.getUsernameFromToken(token);
+                if (restorerService.getByUsername(username) != null) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return AcceptResponses.CORRECT_VALIDATION;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return ErrorResponses.UNAUTHORIZED_ACCESS;
+                }
+            } catch (ExpiredJwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return ErrorResponses.UNAUTHORIZED_ACCESS;
+                return ErrorResponses.JWT_TOKEN_EXPIRED;
             }
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -73,16 +78,18 @@ public class UserController {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return ErrorResponses.UNAUTHORIZED_ACCESS;
                 }
-            } catch (SignatureException e) {
+            } catch (ExpiredJwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return ErrorResponses.UNAUTHORIZED_ACCESS;
+                return ErrorResponses.JWT_TOKEN_EXPIRED;
             }
         }
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return ErrorResponses.UNAUTHORIZED_ACCESS;
     }
 
-    @RequestMapping(value = UrlRequests.GET_CLIENT_BY_ID, method = RequestMethod.GET)
+    @RequestMapping(value = UrlRequests.GET_CLIENT_BY_ID,
+            produces = "application/json; charset=UTF-8",
+            method = RequestMethod.GET)
     public String getClientById(HttpServletRequest request, HttpServletResponse response,
                                 @PathVariable String id) {
         Restorer restorer = getRestorerByJwt(request);
@@ -90,7 +97,7 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
         }
-        Client client = clientService.getById(Long.parseLong(id));
+        Client client = clientService.getById(Long.decode(id));
         try {
             if (client != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
