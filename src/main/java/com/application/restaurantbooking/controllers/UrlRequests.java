@@ -5,6 +5,10 @@ public class UrlRequests {
     private UrlRequests(){
     }
 
+    // validation for users
+    public static final String VALIDATE_RESTORER = "/api/restorer/validate";
+    public static final String VALIDATE_CLIENT = "/api/client/validate";
+    // API for restorers
     public static final String GET_TABLES_FOR_RESTAURANT = "/api/tables";
     public static final String GET_TABLES_BY_SEARCH = "/api/tables/search";
     public static final String GET_FREE_TABLES = "/api/freeTables";

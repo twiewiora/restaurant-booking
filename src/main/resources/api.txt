@@ -1,4 +1,17 @@
 #################################################
+# Users
+#################################################
+# Validation
+
+GET     /api/restorer/validate
+        input: -
+        output: {"desc": "Correct validation"}
+
+GET     /api/client/validate
+        input: -
+        output: {"desc": "Correct validation"}
+
+#################################################
 # Restorer
 #################################################
 # Login & Registration
