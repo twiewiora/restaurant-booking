@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "client")
 public class Client extends User {
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL)
     private Set<Reservation> reservations;
 

@@ -24,6 +24,9 @@ public class ErrorResponses {
     public static final String UNAUTHORIZED_ACCESS = mapper
             .createObjectNode().put("desc", "Unauthorized access attempt").toString();
 
+    public static final String CLIENT_NOT_FOUND = mapper
+            .createObjectNode().put("desc", "Client was not found").toString();
+
     public static final String INTERNAL_ERROR = mapper
             .createObjectNode().put("desc", "Internal error!").toString();
 

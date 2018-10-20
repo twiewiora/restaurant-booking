@@ -36,4 +36,7 @@ public class AcceptResponses {
     public static final String RESERVATION_CANCELLED = mapper
             .createObjectNode().put("desc", "Reservation was cancelled").toString();
 
+    public static final String CORRECT_VALIDATION = mapper
+            .createObjectNode().put("desc", "Correct validation").toString();
+
 }

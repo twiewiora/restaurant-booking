@@ -5,6 +5,10 @@ public class UrlRequests {
     private UrlRequests(){
     }
 
+    // validation for users
+    public static final String VALIDATE_RESTORER = "/api/restorer/validate";
+    public static final String VALIDATE_CLIENT = "/api/client/validate";
+    // API for restorers
     public static final String GET_TABLES_FOR_RESTAURANT = "/api/tables";
     public static final String GET_TABLES_BY_SEARCH = "/api/tables/search";
     public static final String GET_FREE_TABLES = "/api/freeTables";
@@ -24,6 +28,7 @@ public class UrlRequests {
     public static final String GET_RESERVATIONS_ALL_TABLES = "/api/reservation/all/dateFrom={from}/dateTo={to}";
     public static final String GET_TAGS = "/api/tags";
     public static final String GET_PRICES = "/api/prices";
+    public static final String GET_CLIENT_BY_ID = "/api/client{id}";
 
     // API for clients
     public static final String GET_SURROUNDING_RESTAURANTS = "/api/client/surroundingRestaurants";
