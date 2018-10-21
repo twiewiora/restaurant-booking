@@ -1,19 +1,17 @@
 package com.application.restaurantbooking.controllers;
 
-import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
+import com.application.restaurantbooking.jwt.jwttoken.JwtTokenUtil;
 import com.application.restaurantbooking.persistence.model.Client;
 import com.application.restaurantbooking.persistence.model.Restorer;
 import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.persistence.service.UserServiceManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,16 +32,20 @@ public class UserController {
 
     private RestorerService restorerService;
 
+    private UserServiceManager userServiceManager;
+
     @Autowired
     public UserController(JwtTokenUtil jwtTokenUtil,
                           ClientService clientService,
-                          RestorerService restorerService) {
+                          RestorerService restorerService,
+                          UserServiceManager userServiceManager) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.clientService = clientService;
         this.restorerService = restorerService;
+        this.userServiceManager = userServiceManager;
     }
 
-    @RequestMapping(value = UrlRequests.VALIDATE_RESTORER, method = RequestMethod.GET)
+    @GetMapping(value = UrlRequests.VALIDATE_RESTORER, produces = "application/json; charset=UTF-8")
     public String validateRestorer(HttpServletRequest request, HttpServletResponse response) {
         if (request.getHeader(tokenHeader) != null) {
             String token = request.getHeader(tokenHeader).substring(7);
@@ -65,7 +67,7 @@ public class UserController {
         return ErrorResponses.UNAUTHORIZED_ACCESS;
     }
 
-    @RequestMapping(value = UrlRequests.VALIDATE_CLIENT, method = RequestMethod.GET)
+    @GetMapping(value = UrlRequests.VALIDATE_CLIENT, produces = "application/json; charset=UTF-8")
     public String validateClient(HttpServletRequest request, HttpServletResponse response) {
         if (request.getHeader(tokenHeader) != null) {
             String token = request.getHeader(tokenHeader).substring(7);
@@ -87,12 +89,10 @@ public class UserController {
         return ErrorResponses.UNAUTHORIZED_ACCESS;
     }
 
-    @RequestMapping(value = UrlRequests.GET_CLIENT_BY_ID,
-            produces = "application/json; charset=UTF-8",
-            method = RequestMethod.GET)
+    @GetMapping(value = UrlRequests.GET_CLIENT_BY_ID, produces = "application/json; charset=UTF-8")
     public String getClientById(HttpServletRequest request, HttpServletResponse response,
                                 @PathVariable String id) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -114,12 +114,4 @@ public class UserController {
         }
     }
 
-    private Restorer getRestorerByJwt(HttpServletRequest request) {
-        if (request.getHeader(tokenHeader) != null) {
-            String token = request.getHeader(tokenHeader).substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            return restorerService.getByUsername(username);
-        }
-        return null;
-    }
 }

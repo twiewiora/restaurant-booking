@@ -1,11 +1,10 @@
 package com.application.restaurantbooking.jwt;
 
-import com.application.restaurantbooking.jwt.jwtModel.JwtAuthenticationRequest;
+import com.application.restaurantbooking.jwt.jwtmodel.JwtAuthenticationRequest;
 
 public class RegistrationValidation {
 
     public RegistrationValidation(){
-        // TODO walidacja hasła przy zakładaniu konta
     }
 
 
@@ -14,7 +13,7 @@ public class RegistrationValidation {
     }
 
     private boolean validatePassword(String password) {
-        return true;
+        return !password.isEmpty();
     }
 
 }

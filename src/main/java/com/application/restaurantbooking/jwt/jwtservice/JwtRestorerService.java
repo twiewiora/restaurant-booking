@@ -1,6 +1,6 @@
-package com.application.restaurantbooking.jwt.jwtService;
+package com.application.restaurantbooking.jwt.jwtservice;
 
-import com.application.restaurantbooking.jwt.jwtFactory.JwtUserFactory;
+import com.application.restaurantbooking.jwt.jwtfactory.JwtUserFactory;
 import com.application.restaurantbooking.persistence.model.Restorer;
 import com.application.restaurantbooking.persistence.service.RestorerService;
 import org.springframework.beans.factory.annotation.Autowired;

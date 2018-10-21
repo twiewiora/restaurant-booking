@@ -1,11 +1,10 @@
 package com.application.restaurantbooking.config;
 
 import com.application.restaurantbooking.jwt.JwtAuthenticationEntryPoint;
-import com.application.restaurantbooking.jwt.jwtService.JwtClientService;
-import com.application.restaurantbooking.jwt.jwtService.JwtRestorerService;
-import com.application.restaurantbooking.jwt.jwtToken.JwtAuthorizationTokenFilter;
-import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
-import com.application.restaurantbooking.persistence.model.AuthorityName;
+import com.application.restaurantbooking.jwt.jwtservice.JwtClientService;
+import com.application.restaurantbooking.jwt.jwtservice.JwtRestorerService;
+import com.application.restaurantbooking.jwt.jwttoken.JwtAuthorizationTokenFilter;
+import com.application.restaurantbooking.jwt.jwttoken.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -61,10 +60,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @Override
     public AuthenticationManager authenticationManager() {
         List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-        authenticationProviders.add(new UserAuthenticationProvider(AuthorityName.ROLE_RESTORER, jwtRestorerService, bCryptPasswordEncoder));
-        authenticationProviders.add(new UserAuthenticationProvider(AuthorityName.ROLE_CLIENT, jwtClientService, bCryptPasswordEncoder));
+        authenticationProviders.add(new UserAuthenticationProvider(jwtRestorerService, bCryptPasswordEncoder));
+        authenticationProviders.add(new UserAuthenticationProvider(jwtClientService, bCryptPasswordEncoder));
         return new ProviderManager(authenticationProviders);
     }
 

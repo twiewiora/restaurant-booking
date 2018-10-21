@@ -147,11 +147,11 @@ public class Restaurant {
     }
 
     @JsonProperty
-    public Collection<Price> getRestaurantPrice() {
+    public List<Price> getRestaurantPrice() {
         if (price != null) {
-            return Collections.singleton(price);
+            return Collections.singletonList(price);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public Double getPriority() {

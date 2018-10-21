@@ -1,12 +1,11 @@
 package com.application.restaurantbooking.controllers;
 
-import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantbooking.persistence.builder.OpenHoursBuilder;
 import com.application.restaurantbooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantbooking.persistence.model.*;
 import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
-import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.persistence.service.UserServiceManager;
 import com.application.restaurantbooking.utils.RestaurantSearcher;
 import com.application.restaurantbooking.utils.RestaurantSearcherRequest;
 import com.application.restaurantbooking.utils.TableSearcher;
@@ -17,14 +16,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,12 +36,7 @@ public class RestaurantController {
 
     private static final Logger LOGGER = Logger.getLogger(RestaurantController.class.getName());
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
-
-    private JwtTokenUtil jwtTokenUtil;
-
-    private RestorerService restorerService;
+    private UserServiceManager userServiceManager;
 
     private ClientService clientService;
 
@@ -56,58 +49,39 @@ public class RestaurantController {
     private GeocodeUtil geocodeUtil;
 
     @Autowired
-    public RestaurantController(JwtTokenUtil jwtTokenUtil,
-                                RestorerService restorerService,
-                                ClientService clientService,
+    public RestaurantController(@NotNull UserServiceManager userServiceManager,
                                 RestaurantService restaurantService,
                                 TableSearcher tableSearcher,
                                 RestaurantSearcher restaurantSearcher,
                                 GeocodeUtil geocodeUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.restorerService = restorerService;
-        this.clientService = clientService;
+        this.userServiceManager = userServiceManager;
+        this.clientService = userServiceManager.getClientService();
         this.restaurantService = restaurantService;
         this.tableSearcher = tableSearcher;
         this.restaurantSearcher = restaurantSearcher;
         this.geocodeUtil = geocodeUtil;
     }
 
-    @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
             produces = "application/json; charset=UTF-8")
     public String getRestaurantByRestorerJwt(HttpServletRequest request,
                                              HttpServletResponse response) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
         }
         Restaurant restaurant = restorer.getRestaurant();
-
-        try {
-            if (restaurant != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
-            }
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
-        }
+        return returnRestaurantJson(restaurant, response);
     }
 
-    @RequestMapping(value = UrlRequests.POST_RESTAURANT_ADD,
-            method = RequestMethod.POST,
+    @PostMapping(value = UrlRequests.POST_RESTAURANT_ADD,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String createRestaurant(HttpServletRequest request,
                                  HttpServletResponse response,
                                  @RequestBody String json) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -160,14 +134,13 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.POST_RESTAURANT_UPDATE,
-            method = RequestMethod.POST,
+    @PostMapping(value = UrlRequests.POST_RESTAURANT_UPDATE,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String updateRestaurant(HttpServletRequest request,
                                  HttpServletResponse response,
                                  @RequestBody String json) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -213,12 +186,11 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_OPEN_HOURS_ALL,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_OPEN_HOURS_ALL,
             produces = "application/json; charset=UTF-8")
     public String getOpenHoursForAllDays(HttpServletRequest request,
                                          HttpServletResponse response) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -241,13 +213,12 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_OPEN_HOURS_DAY,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_OPEN_HOURS_DAY,
             produces = "application/json; charset=UTF-8")
     public String getOpenHoursForDay(HttpServletRequest request,
                                      HttpServletResponse response,
                                      @PathVariable String day) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -271,14 +242,13 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.POST_OPEN_HOURS_UPDATE,
-            method = RequestMethod.POST,
+    @PostMapping(value = UrlRequests.POST_OPEN_HOURS_UPDATE,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String updateOpenHours(HttpServletRequest request,
                                   HttpServletResponse response,
                                   @RequestBody String json) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -312,8 +282,7 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_TAGS,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_TAGS,
             produces = "application/json; charset=UTF-8")
     public String getTags(HttpServletResponse response) {
         try {
@@ -327,8 +296,7 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_PRICES,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_PRICES,
             produces = "application/json; charset=UTF-8")
     public String getPrices(HttpServletResponse response) {
         try {
@@ -342,8 +310,7 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
             produces = "application/json; charset=UTF-8")
     public String getSurroundingRestaurants(HttpServletRequest request,
                                             HttpServletResponse response,
@@ -351,7 +318,7 @@ public class RestaurantController {
                                             @RequestParam double lon,
                                             @RequestParam int radius,
                                             @RequestParam(required = false) String[] tags) {
-        Client client = getClientByJwt(request);
+        Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -388,8 +355,7 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
             produces = "application/json; charset=UTF-8")
     public String getProposalHours(HttpServletRequest request,
                                    HttpServletResponse response,
@@ -397,7 +363,7 @@ public class RestaurantController {
                                    @RequestParam String date,
                                    @RequestParam int length,
                                    @RequestParam int places) {
-        Client client = getClientByJwt(request);
+        Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -425,19 +391,22 @@ public class RestaurantController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_RESTAURANT_BY_ID,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_RESTAURANT_BY_ID,
             produces = "application/json; charset=UTF-8")
     public String getRestaurantById(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @PathVariable String id) {
-        Client client = getClientByJwt(request);
+        Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
         }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
         restaurantSearcher.calculateRestaurantPriority(client, restaurant);
+        return returnRestaurantJson(restaurant, response);
+    }
+
+    private String returnRestaurantJson(Restaurant restaurant, HttpServletResponse response) {
         try {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -452,32 +421,6 @@ public class RestaurantController {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ErrorResponses.INTERNAL_ERROR;
         }
-    }
-
-    private Restorer getRestorerByJwt(HttpServletRequest request) {
-        try {
-            if (request.getHeader(tokenHeader) != null) {
-                String token = request.getHeader(tokenHeader).substring(7);
-                String username = jwtTokenUtil.getUsernameFromToken(token);
-                return restorerService.getByUsername(username);
-            }
-        } catch (ExpiredJwtException e) {
-            return null;
-        }
-        return null;
-    }
-
-    private Client getClientByJwt(HttpServletRequest request) {
-        try {
-            if (request.getHeader(tokenHeader) != null) {
-                String token = request.getHeader(tokenHeader).substring(7);
-                String username = jwtTokenUtil.getUsernameFromToken(token);
-                return clientService.getByUsername(username);
-            }
-        } catch (ExpiredJwtException e) {
-            return null;
-        }
-        return null;
     }
 
     private void saveClientPreferences(Client client, Restaurant restaurant) {
