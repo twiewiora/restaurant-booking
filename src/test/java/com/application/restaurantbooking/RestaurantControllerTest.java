@@ -6,7 +6,6 @@ import com.application.restaurantbooking.persistence.model.Restaurant;
 import com.application.restaurantbooking.persistence.model.Tag;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,7 +42,6 @@ public class RestaurantControllerTest {
                 .build();
     }
 
-    @Test
     public void getTagsTest() throws Exception {
         List<Tag> tags = Arrays.asList(Tag.values());
 

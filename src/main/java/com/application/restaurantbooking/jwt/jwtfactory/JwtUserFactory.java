@@ -1,6 +1,6 @@
-package com.application.restaurantbooking.jwt.jwtFactory;
+package com.application.restaurantbooking.jwt.jwtfactory;
 
-import com.application.restaurantbooking.jwt.jwtModel.JwtUser;
+import com.application.restaurantbooking.jwt.jwtmodel.JwtUser;
 import com.application.restaurantbooking.persistence.model.Authority;
 import com.application.restaurantbooking.persistence.model.User;
 import org.springframework.security.core.GrantedAuthority;

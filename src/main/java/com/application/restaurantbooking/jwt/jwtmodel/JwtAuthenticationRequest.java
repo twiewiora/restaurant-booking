@@ -1,4 +1,4 @@
-package com.application.restaurantbooking.jwt.jwtModel;
+package com.application.restaurantbooking.jwt.jwtmodel;
 
 import java.io.Serializable;
 

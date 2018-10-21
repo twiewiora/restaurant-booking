@@ -25,6 +25,7 @@ public class GeocodeUtil {
     private String apiKey;
 
     public GeocodeUtil() {
+        // empty constructor for spring @Component
     }
 
     public Localization getLocalizationByAddress(String city, String street, String streetNumber) {

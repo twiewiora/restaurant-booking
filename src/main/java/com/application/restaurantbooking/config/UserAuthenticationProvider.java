@@ -1,32 +1,27 @@
 package com.application.restaurantbooking.config;
 
-import com.application.restaurantbooking.persistence.model.AuthorityName;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
-    private AuthorityName authorityName;
-
     private UserDetailsService userDetailsService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserAuthenticationProvider(AuthorityName authorityName, UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.authorityName = authorityName;
+    public UserAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         String username = authentication.getPrincipal() + "";
         String password = authentication.getCredentials() + "";
 

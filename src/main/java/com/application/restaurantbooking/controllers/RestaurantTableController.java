@@ -1,20 +1,17 @@
 package com.application.restaurantbooking.controllers;
 
-import com.application.restaurantbooking.jwt.jwtToken.JwtTokenUtil;
 import com.application.restaurantbooking.persistence.builder.RestaurantTableBuilder;
 import com.application.restaurantbooking.persistence.model.Restaurant;
 import com.application.restaurantbooking.persistence.model.RestaurantTable;
 import com.application.restaurantbooking.persistence.model.Restorer;
 import com.application.restaurantbooking.persistence.service.RestaurantTableService;
-import com.application.restaurantbooking.persistence.service.RestorerService;
+import com.application.restaurantbooking.persistence.service.UserServiceManager;
 import com.application.restaurantbooking.utils.TableSearcher;
 import com.application.restaurantbooking.utils.TableSearcherRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,34 +28,26 @@ public class RestaurantTableController {
 
     private static final Logger LOGGER = Logger.getLogger(RestaurantTableController.class.getName());
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
-
-    private JwtTokenUtil jwtTokenUtil;
-
-    private RestorerService restorerService;
+    private UserServiceManager userServiceManager;
 
     private RestaurantTableService restaurantTableService;
 
     private TableSearcher tableSearcher;
 
     @Autowired
-    public RestaurantTableController(JwtTokenUtil jwtTokenUtil,
-                                     RestorerService restorerService,
+    public RestaurantTableController(UserServiceManager userServiceManager,
                                      RestaurantTableService restaurantTableService,
                                      TableSearcher tableSearcher){
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.restorerService = restorerService;
+        this.userServiceManager = userServiceManager;
         this.restaurantTableService = restaurantTableService;
         this.tableSearcher = tableSearcher;
     }
 
-    @RequestMapping(value = UrlRequests.GET_TABLES_FOR_RESTAURANT,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_TABLES_FOR_RESTAURANT,
             produces = "application/json; charset=UTF-8")
     public String getAllTablesForRestaurant(HttpServletRequest request,
                                             HttpServletResponse response) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -81,15 +70,14 @@ public class RestaurantTableController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_TABLES_BY_SEARCH,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_TABLES_BY_SEARCH,
             produces = "application/json; charset=UTF-8")
     public String getTablesBySearch(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @RequestParam String date,
                                     @RequestParam int length,
                                     @RequestParam int places) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -115,14 +103,13 @@ public class RestaurantTableController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.GET_FREE_TABLES,
-            method = RequestMethod.GET,
+    @GetMapping(value = UrlRequests.GET_FREE_TABLES,
             produces = "application/json; charset=UTF-8")
     public String getFreeTables(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @RequestParam String date,
                                     @RequestParam int length) {
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -148,14 +135,13 @@ public class RestaurantTableController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.POST_TABLE_ADD,
-            method = RequestMethod.POST,
+    @PostMapping(value = UrlRequests.POST_TABLE_ADD,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String createRestaurantTable(HttpServletRequest request,
                                         HttpServletResponse response,
                                         @RequestBody String json){
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -186,14 +172,13 @@ public class RestaurantTableController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.POST_TABLE_UPDATE,
-            method = RequestMethod.POST,
+    @PostMapping(value = UrlRequests.POST_TABLE_UPDATE,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
     public String updateRestaurantTable(HttpServletRequest request,
                                         HttpServletResponse response,
                                         @RequestBody String json){
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -228,13 +213,12 @@ public class RestaurantTableController {
         }
     }
 
-    @RequestMapping(value = UrlRequests.DELETE_TABLE,
-            method = RequestMethod.DELETE,
+    @DeleteMapping(value = UrlRequests.DELETE_TABLE,
             produces = "application/json; charset=UTF-8")
     public String deleteRestaurantTable(HttpServletRequest request,
                                       HttpServletResponse response,
                                       @PathVariable String id){
-        Restorer restorer = getRestorerByJwt(request);
+        Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ErrorResponses.UNAUTHORIZED_ACCESS;
@@ -250,19 +234,6 @@ public class RestaurantTableController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ErrorResponses.RESTAURANT_TABLE_NOT_FOUND;
         }
-    }
-
-    private Restorer getRestorerByJwt(HttpServletRequest request) {
-        try {
-            if (request.getHeader(tokenHeader) != null) {
-                String token = request.getHeader(tokenHeader).substring(7);
-                String username = jwtTokenUtil.getUsernameFromToken(token);
-                return restorerService.getByUsername(username);
-            }
-        } catch (ExpiredJwtException e) {
-            return null;
-        }
-        return null;
     }
 
 }

@@ -56,12 +56,13 @@ public class DatabaseInitializer {
     }
 
     public void initializeDatabase() {
+        String cityName = "Krakow";
         if (restorerService.getByUsername("test") != null) {
             return;
         }
         Restorer restorer = createRestorer("test", "test1");
         Client client = createClient("client", "client");
-        Restaurant restaurant = createRestaurant(restorer, "Krakow", "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW);
+        Restaurant restaurant = createRestaurant(restorer, cityName, "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW);
 
         RestaurantTable table1 = createRestaurantTable(restaurant, 12);
         RestaurantTable table2 = createRestaurantTable(restaurant, 5);
@@ -78,7 +79,7 @@ public class DatabaseInitializer {
         createReservation(table6, "2018-09-14_18:00", 120, client);
 
         createOpenHours(restaurant);
-        restaurant = createRestaurant(restorer, "Krakow", "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH);
+        restaurant = createRestaurant(restorer, cityName, "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH);
 
         table1 = createRestaurantTable(restaurant, 12);
         table2 = createRestaurantTable(restaurant, 5);
@@ -92,24 +93,24 @@ public class DatabaseInitializer {
 
         createOpenHours(restaurant);
 
-        createOpenHours(createRestaurant(createRestorer("test2", "test2"), "Kraków", "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test3", "test3"), "Kraków", "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test4", "test4"), "Kraków", "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test5", "test5"), "Kraków", "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test6", "test6"), "Kraków", "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test7", "test7"), "Kraków", "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test8", "test8"), "Kraków", "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test9", "test9"), "Kraków", "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test10", "test10"), "Kraków", "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test11", "test11"), "Kraków", "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test12", "test12"), "Kraków", "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test13", "test13"), "Kraków", "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test14", "test14"), "Kraków", "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test15", "test15"), "Kraków", "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test16", "test16"), "Kraków", "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test17", "test17"), "Kraków", "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test18", "test18"), "Kraków", "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test19", "test19"), "Kraków", "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test2", "test2"), cityName, "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test3", "test3"), cityName, "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test4", "test4"), cityName, "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test5", "test5"), cityName, "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test6", "test6"), cityName, "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test7", "test7"), cityName, "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test8", "test8"), cityName, "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test9", "test9"), cityName, "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test10", "test10"), cityName, "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test11", "test11"), cityName, "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test12", "test12"), cityName, "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test13", "test13"), cityName, "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test14", "test14"), cityName, "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test15", "test15"), cityName, "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test16", "test16"), cityName, "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH));
+        createOpenHours(createRestaurant(createRestorer("test17", "test17"), cityName, "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test18", "test18"), cityName, "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW));
+        createOpenHours(createRestaurant(createRestorer("test19", "test19"), cityName, "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM));
     }
 
     private Restorer createRestorer(String userName, String password) {
@@ -180,22 +181,23 @@ public class DatabaseInitializer {
     }
 
     private void createOpenHours(Restaurant restaurant) {
+        String startHour = "12:30";
         try {
             SimpleDateFormat f = new SimpleDateFormat("HH:mm");
             Map<DayOfWeek, OpenHours> map = restaurant.getOpenHoursMap();
-            map.get(DayOfWeek.FRIDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.FRIDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.FRIDAY).setCloseHour(f.parse("23:30"));
             map.get(DayOfWeek.FRIDAY).setClose(false);
-            map.get(DayOfWeek.THURSDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.THURSDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.THURSDAY).setCloseHour(f.parse("22:30"));
             map.get(DayOfWeek.THURSDAY).setClose(false);
-            map.get(DayOfWeek.WEDNESDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.WEDNESDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.WEDNESDAY).setCloseHour(f.parse("22:30"));
             map.get(DayOfWeek.WEDNESDAY).setClose(false);
-            map.get(DayOfWeek.SATURDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.SATURDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.SATURDAY).setCloseHour(f.parse("20:30"));
             map.get(DayOfWeek.SATURDAY).setClose(false);
-            map.get(DayOfWeek.SUNDAY).setOpenHour(f.parse("12:30"));
+            map.get(DayOfWeek.SUNDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.SUNDAY).setCloseHour(f.parse("19:30"));
             map.get(DayOfWeek.SUNDAY).setClose(false);
             restaurantService.updateOpenHours(restaurant);

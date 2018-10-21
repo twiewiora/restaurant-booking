@@ -1,6 +1,6 @@
-package com.application.restaurantbooking.jwt.jwtToken;
+package com.application.restaurantbooking.jwt.jwttoken;
 
-import com.application.restaurantbooking.jwt.jwtModel.JwtUser;
+import com.application.restaurantbooking.jwt.jwtmodel.JwtUser;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;

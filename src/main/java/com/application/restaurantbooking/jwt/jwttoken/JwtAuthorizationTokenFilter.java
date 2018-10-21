@@ -1,7 +1,7 @@
-package com.application.restaurantbooking.jwt.jwtToken;
+package com.application.restaurantbooking.jwt.jwttoken;
 
-import com.application.restaurantbooking.jwt.jwtService.JwtClientService;
-import com.application.restaurantbooking.jwt.jwtService.JwtRestorerService;
+import com.application.restaurantbooking.jwt.jwtservice.JwtClientService;
+import com.application.restaurantbooking.jwt.jwtservice.JwtRestorerService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthorizationTokenFilter.class.getName());
 
     private JwtRestorerService jwtRestorerService;
     private JwtClientService jwtClientService;

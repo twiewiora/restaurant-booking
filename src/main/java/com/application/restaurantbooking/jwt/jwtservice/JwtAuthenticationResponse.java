@@ -1,4 +1,4 @@
-package com.application.restaurantbooking.jwt.jwtService;
+package com.application.restaurantbooking.jwt.jwtservice;
 
 import java.io.Serializable;
 
