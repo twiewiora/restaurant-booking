@@ -206,7 +206,7 @@ GET     /api/client/reservations
                 ["{"id":19,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13,"restaurantId":1}",
                  "{"id":20,"reservedPlaces":10,"reservationLength":120,"comment":"comments...","cancelled":false,"dateReservation":"2018-09-14_18:00","restaurantTableId":13,"restaurantId":1}"]
 
-DELETE  /api/client/reservation{19}/delete
+DELETE  /api/client/reservation{19}/cancel
         input: -
         output: json
-                {"desc":"Reservation was deleted"}
+                {"desc":"Reservation was cancelled"}

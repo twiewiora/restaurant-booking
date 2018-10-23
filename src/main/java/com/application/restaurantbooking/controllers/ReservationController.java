@@ -305,7 +305,7 @@ public class ReservationController {
         }
     }
 
-    @DeleteMapping(value = UrlRequests.DELETE_RESERVATION_BY_CLIENT,
+    @PostMapping(value = UrlRequests.POST_RESERVATION_CANCEL_BY_CLIENT,
             produces = "application/json; charset=UTF-8")
     public String deleteReservationByClient(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -317,9 +317,9 @@ public class ReservationController {
         }
         Reservation reservation = reservationService.getById(Long.decode(id));
         if (reservation != null) {
-            reservationService.deleteReservation(Long.decode(id));
+            reservationService.cancelReservation(reservation);
             response.setStatus(HttpServletResponse.SC_OK);
-            return AcceptResponses.RESERVATION_DELETED;
+            return AcceptResponses.RESERVATION_CANCELLED;
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ErrorResponses.RESERVATION_NOT_FOUND;
