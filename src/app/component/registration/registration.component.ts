@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {User} from "../../model/user";
 import {AuthenticationService} from "../../service/authentication.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {NotificationsService} from "angular2-notifications";
 
 @Component({
   selector: 'app-registration',
@@ -9,6 +10,12 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   styleUrls: ['./registration.component.scss']
 })
 export class RegistrationComponent implements OnInit {
+
+  private options = {
+    position: 'middle',
+    timeOut: 3000,
+    animate: 'fade'
+  };
 
   usernameInput: string = '';
   usernameRepeatInput: string = '';
@@ -18,7 +25,8 @@ export class RegistrationComponent implements OnInit {
   public registrationForm: FormGroup;
   private MIN: number = 5;
 
-  constructor(private authenticationService: AuthenticationService) {
+  constructor(private authenticationService: AuthenticationService,
+              private notificationService: NotificationsService) {
   }
 
   ngOnInit() {
@@ -51,18 +59,34 @@ export class RegistrationComponent implements OnInit {
   }
 
 
-
   onSubmit() {
     if (this.usernameInput === this.usernameRepeatInput && this.passwordInput === this.passwordRepeatInput) {
       this.authenticationService.register(new User(this.usernameInput, this.passwordInput))
-        .subscribe();
+        .subscribe(any => {
+            this.notificationService.success("Registration successful", '', this.options);
+          },
+          err => {
+            this.errorMsg = err.error;
+            this.errorAction(err.error);
+          });
     }
-    else if(this.usernameInput !== this.usernameRepeatInput) {
-      this.errorMsg = "Usernames don't match";
+    else if (this.usernameInput !== this.usernameRepeatInput) {
+      this.errorAction("Usernames don't match");
     }
-    else{
-      this.errorMsg = "Passwords don't match";
+    else {
+      this.errorAction("Passwords don't match");
     }
   }
+
+  errorAction(msg: string) {
+    this.errorMsg = msg;
+    this.registrationForm.reset({username: this.username.value, username2: this.username2.value});
+  }
+
+  cleanErrMsg(){
+    this.errorMsg = '';
+  }
+
+
 
 }

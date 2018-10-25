@@ -39,6 +39,10 @@ import { TableElementComponent } from './component/table-setting/table-element/t
 import {SimpleNotificationsModule} from "angular2-notifications";
 import {ReservationCommunicationService} from "./component/reservation/reservation-communication.service";
 import {ClientService} from "./service/client.service";
+import {ValidationService} from "./service/validation.service";
+import { ConfirmationDialogComponent } from './component/confirmation-dialog/confirmation-dialog.component';
+import {ConfirmationDialogService} from "./component/confirmation-dialog/confirmation-dialog.service";
+import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -58,6 +62,7 @@ import {ClientService} from "./service/client.service";
     RestaurantInfoComponent,
     ReservationsDisplayComponent,
     TableElementComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     NgbModule.forRoot(),
@@ -89,13 +94,18 @@ import {ClientService} from "./service/client.service";
     ReservationService,
     TableCommunicationService,
     ReservationCommunicationService,
+    ValidationService,
     ClientService,
     {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
     {provide: LOCALE_ID, useValue: 'en-gb' },
     NgbStringTimeAdapter,
-    NgbDateTimeAdapter
+    NgbDateTimeAdapter,
+    ConfirmationDialogService,
+    Location,
+    {provide: LocationStrategy, useClass: PathLocationStrategy},
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ConfirmationDialogComponent]
 })
 export class AppModule {
 }

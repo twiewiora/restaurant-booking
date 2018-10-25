@@ -13,3 +13,11 @@ $main-background-label-color: #80aaff;
   margin: $main-margin-length;
   padding: $main-padding-length;
 }
+
+.button-container {
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 100px;
+  margin: $main-margin-length;
+}

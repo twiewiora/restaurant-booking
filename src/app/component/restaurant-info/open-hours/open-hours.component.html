@@ -2,7 +2,7 @@
 
   <h4 class="alert-container">Open Hours</h4>
   <div *ngIf="!edit">
-    <dl class="row" *ngFor="let openHours of openHoursWeek | mapValues">
+    <div class="row" *ngFor="let openHours of openHoursWeek | mapValues">
       <h5 class="col-sm-3">{{openHours.key}}</h5>
 
       <div class="col-sm-9" *ngIf="!openHours.value.isClose">
@@ -17,11 +17,11 @@
       <div class="col-sm-9" *ngIf="openHours.value.isClose">
         <dd class="alert-danger alert-container">Closed</dd>
       </div>
-    </dl>
+    </div>
   </div>
 
   <div *ngIf="edit">
-    <dl class="row day-setter" *ngFor="let openHours of editOpenHoursWeek | mapValues">
+    <div class="row day-setter" *ngFor="let openHours of editOpenHoursWeek | mapValues">
       <label class="col-sm-3">{{openHours.key}}</label>
 
       <div class="col-sm-7" *ngIf="!openHours.value.isClose">
@@ -37,13 +37,13 @@
         </div>
       </div>
       <div class="col-sm-2">
-        <div class="row">
-          <span *ngIf="openHours.value.isClose" class="col-sm-6 alert-danger alert-container">Closed</span>
-          <span *ngIf="!openHours.value.isClose" class="col-sm-6">Closed</span>
-          <input class="col-sm-6" type="checkbox" [(ngModel)]="openHours.value.isClose">
+        <div class="is-closed-container">
+          <span *ngIf="openHours.value.isClose" class="alert-danger alert-container">Closed</span>
+          <span *ngIf="!openHours.value.isClose" class="">Closed</span>
+          <input class="" type="checkbox" [(ngModel)]="openHours.value.isClose">
         </div>
       </div>
-    </dl>
+    </div>
   </div>
 </div>
 

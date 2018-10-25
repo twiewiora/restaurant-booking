@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from "../../service/authentication.service";
 import {Observable} from "rxjs/Observable";
 import {HttpClient} from "@angular/common/http";
@@ -18,12 +18,14 @@ export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
 
   constructor(private authenticationService: AuthenticationService,
-              private http: HttpClient) { }
+              private http: HttpClient) {
+  }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
       'username': new FormControl(this.usernameInput, [Validators.required]),
-      'password': new FormControl(this.passwordInput, [Validators.required])});
+      'password': new FormControl(this.passwordInput, [Validators.required])
+    });
   }
 
   get username() {
@@ -35,14 +37,20 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authenticationService.login(this.usernameInput, this.passwordInput)
-      .catch((err: any, caught: Observable<Response>) => {
-      this.errorMsg = 'Failed to login';
-
-      return Observable.throw(err);
-    })
-      .subscribe( _ => {
-
+    this.authenticationService.login(this.usernameInput, this.passwordInput).subscribe(any => {
+      },
+      err => {
+        this.errorAction(err.error);
       });
+  }
+
+
+  errorAction(msg: string) {
+    this.errorMsg = msg;
+    this.loginForm.reset({username: this.username.value});
+  }
+
+  cleanErrMsg() {
+    this.errorMsg = '';
   }
 }

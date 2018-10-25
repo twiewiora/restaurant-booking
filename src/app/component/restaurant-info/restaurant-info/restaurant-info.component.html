@@ -46,7 +46,7 @@
     <div class="form-group container" [formGroup]="restaurantInfoForm">
       <div class="row">
         <div class="col-md-12">
-          <label for="name">Name</label>
+          <label for="name">Name*</label>
           <input type="text" [(ngModel)]="editRestaurant.name"
                  class="form-control {{name.invalid && (name.dirty || name.touched) ? '' : ''}}" id="name" name="name"
                  formControlName="name">
@@ -61,7 +61,7 @@
 
       <div class="row">
         <div class="col-md-12">
-          <label for="city">City</label>
+          <label for="city">City*</label>
           <input type="text" [(ngModel)]="editRestaurant.city" class="form-control" id="city" name="city"
                  formControlName="city">
           <div *ngIf="city.invalid && (city.dirty || city.touched)"
@@ -75,7 +75,7 @@
 
       <div class="row">
         <div class="col-md-8">
-          <label for="street">Street</label>
+          <label for="street">Street*</label>
           <input type="text" [(ngModel)]="editRestaurant.street" class="form-control" id="street" name="street"
                  formControlName="street">
           <div *ngIf="street.invalid && (street.dirty || street.touched)"
@@ -86,7 +86,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <label for="streetNumber">Street number</label>
+          <label for="streetNumber">Street number*</label>
           <input type="text" [(ngModel)]="editRestaurant.streetNumber" class="form-control" id="streetNumber"
                  name="streetNumber"
                  formControlName="streetNumber">
@@ -101,7 +101,7 @@
 
       <div class="row">
         <div class="col-md-12">
-          <label for="phone">Tel</label>
+          <label for="phone">Tel*</label>
           <input type="number" [(ngModel)]="editRestaurant.phoneNumber" class="form-control" id="phone" name="phone"
                  formControlName="phoneNumber">
           <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)"
@@ -123,39 +123,47 @@
                  formControlName="website">
         </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
-           title="Tags to choose from: {{autocompleteItems}}">
-        <label for="tags">Tags</label>
-        <tag-input [(ngModel)]="editRestaurant.tags"
-                   [onlyFromAutocomplete]="true"
-                   [modelAsStrings]="true"
-                   name="tags"
-                   id="tags">
-          <tag-input-dropdown
-            [showDropdownIfEmpty]="false"
-            [autocompleteItems]="autocompleteItems">
-          </tag-input-dropdown>
-        </tag-input>
+      <div class="row">
+        <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
+             title="Tags to choose from: {{autocompleteItems}}">
+          <label for="tags">Tags</label>
+          <tag-input [(ngModel)]="editRestaurant.tags"
+                     [onlyFromAutocomplete]="true"
+                     [modelAsStrings]="true"
+                     name="tags"
+                     id="tags"
+                     [ngModelOptions]="{standalone: true}">
+            <tag-input-dropdown
+              [showDropdownIfEmpty]="false"
+              [autocompleteItems]="autocompleteItems">
+            </tag-input-dropdown>
+          </tag-input>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
-           title="Prices to choose from: {{autocompleteItemsPrices}}">
-        <label for="price">Price</label>
-        <tag-input [(ngModel)]="editRestaurant.restaurantPrice"
-                   [onlyFromAutocomplete]="true"
-                   [modelAsStrings]="true"
-                   [maxItems]="1"
-                   name="price"
-                   id="price">
-          <tag-input-dropdown
-            [showDropdownIfEmpty]="false"
-            [autocompleteItems]="autocompleteItemsPrices">
-          </tag-input-dropdown>
-        </tag-input>
+      <div class="row">
+        <div class="col-md-12 d-inline-block" tabindex="0" data-toggle="tooltip"
+             title="Prices to choose from: {{autocompleteItemsPrices}}">
+          <label for="price">Price*</label>
+          <tag-input [(ngModel)]="editRestaurant.restaurantPrice"
+                     [onlyFromAutocomplete]="true"
+                     [modelAsStrings]="true"
+                     [maxItems]="1"
+                     name="price"
+                     id="price"
+                     formControlName="price">
+            <tag-input-dropdown
+              [showDropdownIfEmpty]="false"
+              [autocompleteItems]="autocompleteItemsPrices">
+            </tag-input-dropdown>
+          </tag-input>
+          <div *ngIf="price.invalid && (price.dirty || price.touched)"
+               class="alert alert-danger">
+            <div *ngIf="price.errors.required">
+              Price is required.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </form>
