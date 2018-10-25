@@ -10,4 +10,10 @@
 
 .open-hours-container {
   margin: $main-margin-length;
+
+
+  .is-closed-container{
+    align-items: center;
+    margin: $main-margin-length / 2;
+  }
 }

@@ -4,7 +4,8 @@ import {Table} from "./table";
 import {IClient} from "./client";
 
 export const DATE_TIME_FORMAT = 'YYYY-MM-DD_HH:mm';
-
+export const DATE_FORMAT = 'YYYY-MM-DD';
+export const TIME_FORMAT = 'HH:mm';
 export enum State {FREE, OCCUPIED, FINISHED}
 
 export interface IReservation {

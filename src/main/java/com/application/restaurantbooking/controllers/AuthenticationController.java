@@ -104,7 +104,7 @@ public class AuthenticationController {
     @PostMapping(value = "${jwt.route.authentication.register}")
     public ResponseEntity<Object> registerRestorer(@RequestBody JwtAuthenticationRequest registrationRequest) {
         if (jwtRestorerService.loadUserByUsername(registrationRequest.getUsername()) != null) {
-            return ResponseEntity.noContent().build();
+            throw new AuthenticationException("Username is unavailable!", null);
         } else {
             try {
                 RegistrationValidation registrationValidation = new RegistrationValidation();
@@ -120,6 +120,8 @@ public class AuthenticationController {
                     restorerService.createRestorer(restorer);
                     return ResponseEntity.noContent().build();
                 }
+            } catch (BadCredentialsException e) {
+                throw new AuthenticationException(exceptionText, e);
             } catch (Exception ex) {
                 return ResponseEntity.noContent().build();
             }

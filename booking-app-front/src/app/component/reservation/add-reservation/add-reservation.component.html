@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-md-6 date-time-containers">
           <ngb-datepicker #dp [(ngModel)]="date" name="date" [markDisabled]="isDisabled"
-                          [outsideDays]="'collapsed'">
+                          [outsideDays]="'collapsed'" (ngModelChange)="onDateSelection($event)">
           </ngb-datepicker>
         </div>
         <div class="col-md-6 form-group date-time-containers">
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="form-group" [formGroup]="reservationForm">
-      <label for="length">Duration (min)</label>
+      <label for="length">Duration (min)*</label>
       <input type="number" [(ngModel)]="reservation.reservationLength" class="form-control" id="length" name="length"
              formControlName="length" required>
       <div *ngIf="length.invalid && (length.dirty || length.touched)"
@@ -29,7 +29,7 @@
       </div>
 
 
-      <label for="places">Reserved Places</label>
+      <label for="places">Reserved Places*</label>
       <input type="number" [(ngModel)]="reservation.reservedPlaces" class="form-control" id="places" name="places"
              formControlName="places" required>
       <div *ngIf="places.invalid && (places.dirty || places.touched)"
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <label for="comment">Comment</label>
+      <label for="comment">Comment*</label>
       <input type="text" [(ngModel)]="reservation.comment" class="form-control" id="comment" name="comment"
              formControlName="comment">
       <div *ngIf="comment.invalid && (comment.dirty || comment.touched)"
@@ -64,6 +64,10 @@
 
 
   <div *ngIf="showList">
+    <div *ngIf="!isLoaded" class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100"
+           aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+    </div>
     <table *ngIf="tableList && tableList.length" class="table table-hover">
       <thead>
       <tr>
@@ -77,7 +81,8 @@
         <td>{{table.identifier}}</td>
         <td>{{table.maxPlaces}}</td>
         <td>{{table.comment}}</td>
-        <button class="btn btn-success" (click)="addReservation(table, reservation)">reserve</button>
+        <button class="btn btn-success" (click)="openConfirmationAddReservationDialog(table, reservation)">reserve
+        </button>
       </tr>
       </tbody>
     </table>
