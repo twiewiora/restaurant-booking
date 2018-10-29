@@ -74,6 +74,9 @@ public class GeocodeUtil {
 
     public String getCityByLocalization(Localization localization) {
         String cityName = null;
+        if (localization.getLongitude() == null || localization.getLatitude() == null) {
+            return null;
+        }
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(createURIByLocalization(localization));

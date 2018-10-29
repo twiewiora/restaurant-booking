@@ -18,5 +18,6 @@ public class RestaurantBookingApplication {
 		ConfigurableApplicationContext context = SpringApplication.run(RestaurantBookingApplication.class, args);
 
         context.getBean(DatabaseInitializer.class).initializeDatabase();
+        context.getBean(IndexBuilder.class).rebuildIndexes();
 	}
 }

@@ -181,7 +181,7 @@ GET     /api/client/restaurant{1}
         output: json
         "{"id":1,"name":"name","city":"city","street":"street","streetNumber":"streetNumber","website":"https://restaurant.com","price":["HIGH"],"phoneNumber":"123","latitude":"49.4124","longitude":"20.3232","tags":["PIZZA","KEBAB"],"priority":0.972}"
 
-GET     /api/client/surroundingRestaurants?lat=50.0643816&lon=19.9423012&radius=1000&tags=PIZZA&tags=DUMPLINGS
+GET     /api/client/searchQueryRestaurant?lat=50.0643816&lon=19.9423012&radius=1000&tags=PIZZA&tags=DUMPLINGS&price=HIGH&price=MEDIUM&name=M22
         input: -
         output: list
                 {"restaurants":

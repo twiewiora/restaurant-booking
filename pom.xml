@@ -108,6 +108,12 @@
             <version>26.0-jre</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <version>5.8.2.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -3,6 +3,8 @@ package com.application.restaurantbooking.utils;
 import com.application.restaurantbooking.persistence.model.Client;
 import com.application.restaurantbooking.persistence.model.Restaurant;
 import com.application.restaurantbooking.persistence.service.ClientService;
+import com.application.restaurantbooking.persistence.service.RestaurantService;
+import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
 import com.application.restaurantbooking.utils.geocoding.Localization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,26 +20,39 @@ public class RestaurantSearcher {
 
     private ClientService clientService;
 
+    private RestaurantService restaurantService;
+
+    private GeocodeUtil geocodeUtil;
+
     @Autowired
-    public RestaurantSearcher(ClientService clientService) {
+    public RestaurantSearcher(ClientService clientService,
+                              RestaurantService restaurantService,
+                              GeocodeUtil geocodeUtil) {
         this.clientService = clientService;
+        this.restaurantService = restaurantService;
+        this.geocodeUtil = geocodeUtil;
     }
 
-    public List<Restaurant> getSurroundingRestaurant(List<Restaurant> restaurantsInCity,
-                                                     RestaurantSearcherRequest request,
-                                                     Client client) {
+    public List<Restaurant> getRestaurantsByQuery(RestaurantSearcherRequest request, Client client) {
         int restaurantsLimit = 20;
-        List<Restaurant> restaurantsInRange = restaurantsInCity.stream()
+        String clientCityName = geocodeUtil.getCityByLocalization(request.getLocalization());
+        List<Restaurant> restaurants = restaurantService.getRestaurantByNameAndCity(request.getRestaurantName(),
+                clientCityName).stream()
                 .filter(restaurant -> isRestaurantInRange(restaurant, request))
                 .filter(restaurant -> request.getTags().isEmpty() || !Collections.disjoint(restaurant.getTags(), request.getTags()))
+                .filter(restaurant -> request.getPrices().isEmpty() || request.getPrices().contains(restaurant.getPrice()))
                 .collect(Collectors.toList());
 
-        restaurantsInRange.forEach(restaurant -> calculateRestaurantPriority(client, restaurant));
-        restaurantsInRange.sort(Comparator.comparing(Restaurant::getPriority).reversed());
-        return restaurantsInRange.stream().limit(restaurantsLimit).collect(Collectors.toList());
+        restaurants.forEach(restaurant -> calculateRestaurantPriority(client, restaurant));
+        restaurants.sort(Comparator.comparing(Restaurant::getPriority).reversed());
+        return restaurants.stream().limit(restaurantsLimit).collect(Collectors.toList());
     }
 
     private boolean isRestaurantInRange(Restaurant restaurant, RestaurantSearcherRequest request) {
+        if (request.getLocalization().getLatitude() == null || request.getLocalization().getLongitude() == null
+                || request.getRadius() == null) {
+            return true;
+        }
         return getDistanceToRestaurant(request.getLocalization(),
                 new Localization(restaurant.getLatitude(), restaurant.getLongitude())) < request.getRadius();
     }

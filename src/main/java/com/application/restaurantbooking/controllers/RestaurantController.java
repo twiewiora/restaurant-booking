@@ -314,10 +314,12 @@ public class RestaurantController {
             produces = "application/json; charset=UTF-8")
     public String getSurroundingRestaurants(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            @RequestParam double lat,
-                                            @RequestParam double lon,
-                                            @RequestParam int radius,
-                                            @RequestParam(required = false) String[] tags) {
+                                            @RequestParam (required = false) Double lat,
+                                            @RequestParam (required = false) Double lon,
+                                            @RequestParam (required = false) Integer radius,
+                                            @RequestParam(required = false) String[] tags,
+                                            @RequestParam(required = false) String[] prices,
+                                            @RequestParam(required = false) String name) {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -334,13 +336,17 @@ public class RestaurantController {
             for (String tag : tags) {
                 tagsSet.add(Tag.valueOf(tag.toUpperCase()));
             }
+            if (prices == null) {
+                prices = new String[0];
+            }
+            Set<Price> pricesSet = new HashSet<>();
+            for (String price : prices) {
+                pricesSet.add(Price.valueOf(price.toUpperCase()));
+            }
             Localization clientLocalization = new Localization(lat, lon);
             RestaurantSearcherRequest restaurantSearcherRequest = new RestaurantSearcherRequest(clientLocalization,
-                    radius, tagsSet);
-            String clientCityName = geocodeUtil.getCityByLocalization(clientLocalization);
-            List<Restaurant> restaurantsInCity = restaurantService.getRestaurantByCity(clientCityName);
-            List<Restaurant> result = restaurantSearcher.getSurroundingRestaurant(restaurantsInCity,
-                    restaurantSearcherRequest, client);
+                    radius, tagsSet, pricesSet, name);
+            List<Restaurant> result = restaurantSearcher.getRestaurantsByQuery(restaurantSearcherRequest, client);
 
             ArrayNode restaurantArray = objectMapper.createArrayNode();
             for (Restaurant restaurant : result) {

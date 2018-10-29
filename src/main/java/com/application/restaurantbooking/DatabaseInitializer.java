@@ -62,7 +62,7 @@ public class DatabaseInitializer {
         }
         Restorer restorer = createRestorer("test", "test1");
         Client client = createClient("client", "client");
-        Restaurant restaurant = createRestaurant(restorer, cityName, "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW);
+        Restaurant restaurant = createRestaurant(restorer, cityName, "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW, "M22");
 
         RestaurantTable table1 = createRestaurantTable(restaurant, 12);
         RestaurantTable table2 = createRestaurantTable(restaurant, 5);
@@ -79,7 +79,7 @@ public class DatabaseInitializer {
         createReservation(table6, "2018-09-14_18:00", 120, client);
 
         createOpenHours(restaurant);
-        restaurant = createRestaurant(restorer, cityName, "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH);
+        restaurant = createRestaurant(restorer, cityName, "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH, "Hot Chili");
 
         table1 = createRestaurantTable(restaurant, 12);
         table2 = createRestaurantTable(restaurant, 5);
@@ -93,24 +93,24 @@ public class DatabaseInitializer {
 
         createOpenHours(restaurant);
 
-        createOpenHours(createRestaurant(createRestorer("test2", "test2"), cityName, "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test3", "test3"), cityName, "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test4", "test4"), cityName, "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test5", "test5"), cityName, "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test6", "test6"), cityName, "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test7", "test7"), cityName, "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test8", "test8"), cityName, "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test9", "test9"), cityName, "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test10", "test10"), cityName, "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test11", "test11"), cityName, "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test12", "test12"), cityName, "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test13", "test13"), cityName, "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test14", "test14"), cityName, "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test15", "test15"), cityName, "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test16", "test16"), cityName, "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH));
-        createOpenHours(createRestaurant(createRestorer("test17", "test17"), cityName, "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM));
-        createOpenHours(createRestaurant(createRestorer("test18", "test18"), cityName, "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW));
-        createOpenHours(createRestaurant(createRestorer("test19", "test19"), cityName, "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM));
+        createOpenHours(createRestaurant(createRestorer("test2", "test2"), cityName, "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH, "Tortillas"));
+        createOpenHours(createRestaurant(createRestorer("test3", "test3"), cityName, "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW, "Sushi Bar"));
+        createOpenHours(createRestaurant(createRestorer("test4", "test4"), cityName, "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH, "El Toro"));
+        createOpenHours(createRestaurant(createRestorer("test5", "test5"), cityName, "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH, "Pizzerinia"));
+        createOpenHours(createRestaurant(createRestorer("test6", "test6"), cityName, "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM, "Fast Asian"));
+        createOpenHours(createRestaurant(createRestorer("test7", "test7"), cityName, "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH, "Fisherman"));
+        createOpenHours(createRestaurant(createRestorer("test8", "test8"), cityName, "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH, "Gulash"));
+        createOpenHours(createRestaurant(createRestorer("test9", "test9"), cityName, "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW, "Vege Fish"));
+        createOpenHours(createRestaurant(createRestorer("test10", "test10"), cityName, "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW, "Italiano"));
+        createOpenHours(createRestaurant(createRestorer("test11", "test11"), cityName, "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH, "Mexico"));
+        createOpenHours(createRestaurant(createRestorer("test12", "test12"), cityName, "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW, "Zeus"));
+        createOpenHours(createRestaurant(createRestorer("test13", "test13"), cityName, "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM, "Bawarska"));
+        createOpenHours(createRestaurant(createRestorer("test14", "test14"), cityName, "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH, "Pierogarnia"));
+        createOpenHours(createRestaurant(createRestorer("test15", "test15"), cityName, "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW, "Sea Bar"));
+        createOpenHours(createRestaurant(createRestorer("test16", "test16"), cityName, "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH, "Fit French"));
+        createOpenHours(createRestaurant(createRestorer("test17", "test17"), cityName, "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM, "Chinczyk"));
+        createOpenHours(createRestaurant(createRestorer("test18", "test18"), cityName, "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW, "Cantare"));
+        createOpenHours(createRestaurant(createRestorer("test19", "test19"), cityName, "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM, "American Burger"));
     }
 
     private Restorer createRestorer(String userName, String password) {
@@ -121,9 +121,9 @@ public class DatabaseInitializer {
         return restorerService.createRestorer(restorer);
     }
 
-    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber, Set<Tag> tags, Price price) {
+    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber, Set<Tag> tags, Price price, String name) {
         Restaurant restaurant = new RestaurantBuilder()
-                .name("name")
+                .name(name)
                 .city(city)
                 .street(street)
                 .streetNumber(streetNumber)

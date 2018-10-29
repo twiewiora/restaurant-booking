@@ -2,6 +2,11 @@ package com.application.restaurantbooking.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
@@ -9,6 +14,15 @@ import java.util.*;
 
 @Entity
 @Table(name = "restaurant")
+@Indexed
+@AnalyzerDef(name = "nameAnalyzer",
+        tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
+        filters = {
+                @TokenFilterDef(factory = LowerCaseFilterFactory.class),
+                @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = {
+                        @Parameter(name = "language", value = "English")
+                })
+        })
 public class Restaurant {
 
     @Id
@@ -16,8 +30,12 @@ public class Restaurant {
     @SequenceGenerator(name = "restaurant_seq", sequenceName = "restaurant_seq", allocationSize = 1)
     private Long id;
 
+    @Field(termVector = TermVector.YES)
+    @Analyzer(definition = "nameAnalyzer")
     private String name;
 
+    @Field(termVector = TermVector.YES)
+    @Analyzer(definition = "nameAnalyzer")
     private String city;
 
     private String street;
