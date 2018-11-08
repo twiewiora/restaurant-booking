@@ -36,10 +36,10 @@ export class Reservation {
 
   toJson(): string {
     return JSON.stringify({
-      tableId: this.tableId,
-      date: this.dateReservation,
-      length: this.reservationLength,
-      places: this.reservedPlaces,
+      restaurantTableId: this.tableId,
+      dateReservation: this.dateReservation,
+      reservationLength: this.reservationLength,
+      reservedPlaces: this.reservedPlaces,
       comment: this.comment
     });
   }
