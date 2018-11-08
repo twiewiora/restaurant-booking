@@ -34,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void cancelReservation(Reservation reservation) {
-        reservation.setCancelled(true);
+        reservation.setIsCancelled(true);
         reservationRepository.save(reservation);
     }
 }

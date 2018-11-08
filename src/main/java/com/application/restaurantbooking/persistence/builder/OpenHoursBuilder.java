@@ -23,7 +23,7 @@ public class OpenHoursBuilder {
     }
 
     public OpenHoursBuilder isClose(boolean isClose) {
-        openHours.setClose(isClose);
+        openHours.setIsClose(isClose);
         return this;
     }
 

@@ -30,7 +30,7 @@ public class ReservationBuilder {
     }
 
     public ReservationBuilder reservationDate(Date reservationDate ) {
-        reservation.setReservationDate(reservationDate);
+//        reservation.setReservationDate(reservationDate);
         return this;
     }
 
@@ -45,7 +45,7 @@ public class ReservationBuilder {
     }
 
     public ReservationBuilder cancelled(Boolean cancelled) {
-        reservation.setCancelled(cancelled);
+        reservation.setIsCancelled(cancelled);
         return this;
     }
 

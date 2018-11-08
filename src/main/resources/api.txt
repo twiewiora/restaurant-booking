@@ -54,7 +54,7 @@ POST	/api/table/add
 
 POST	/api/table/update
         input: json
-               {"tableId": "5", "maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
+               {"id": "5", "maxPlaces": "10", "comment": "comment...", "identifier": "table_id"}
         output: json
                 {"desc":"Restaurant table was updated"}
 
@@ -134,7 +134,7 @@ POST	/api/openHours/update
 
 POST	/api/reservation/add
         input: json
-               {"tableId": "5", "date": "2018-06-06_16:16", "length": "120", "places": "5", "comment": "comment..."}
+               {"restaurantTableId": "5", "dateReservation": "2018-06-06_16:16", "reservationLength": "120", "reservedPlaces": "5", "comment": "comment..."}
         output: json
                 {"desc":"Reservation was created"}
 
@@ -195,7 +195,7 @@ GET     /api/client/restaurant{9}/freeDates?date=2018-06-06_16:00&length=120&pla
 
 POST	/api/client/restaurant{id}/reservation/add
         input: json
-               {"date": "2018-06-06_16:16", "length": "120", "places": "5", "comment": "comment..."}
+               {"dateReservation": "2018-06-06_16:16", "reservationLength": "120", "reservedPlaces": "5", "comment": "comment..."}
         output: json
                 {"desc":"Reservation was created"}
 

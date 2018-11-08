@@ -187,19 +187,19 @@ public class DatabaseInitializer {
             Map<DayOfWeek, OpenHours> map = restaurant.getOpenHoursMap();
             map.get(DayOfWeek.FRIDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.FRIDAY).setCloseHour(f.parse("23:30"));
-            map.get(DayOfWeek.FRIDAY).setClose(false);
+            map.get(DayOfWeek.FRIDAY).setIsClose(false);
             map.get(DayOfWeek.THURSDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.THURSDAY).setCloseHour(f.parse("22:30"));
-            map.get(DayOfWeek.THURSDAY).setClose(false);
+            map.get(DayOfWeek.THURSDAY).setIsClose(false);
             map.get(DayOfWeek.WEDNESDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.WEDNESDAY).setCloseHour(f.parse("22:30"));
-            map.get(DayOfWeek.WEDNESDAY).setClose(false);
+            map.get(DayOfWeek.WEDNESDAY).setIsClose(false);
             map.get(DayOfWeek.SATURDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.SATURDAY).setCloseHour(f.parse("20:30"));
-            map.get(DayOfWeek.SATURDAY).setClose(false);
+            map.get(DayOfWeek.SATURDAY).setIsClose(false);
             map.get(DayOfWeek.SUNDAY).setOpenHour(f.parse(startHour));
             map.get(DayOfWeek.SUNDAY).setCloseHour(f.parse("19:30"));
-            map.get(DayOfWeek.SUNDAY).setClose(false);
+            map.get(DayOfWeek.SUNDAY).setIsClose(false);
             restaurantService.updateOpenHours(restaurant);
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
