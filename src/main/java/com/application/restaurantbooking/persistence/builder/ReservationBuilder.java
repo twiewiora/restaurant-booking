@@ -4,7 +4,7 @@ import com.application.restaurantbooking.persistence.model.Client;
 import com.application.restaurantbooking.persistence.model.Reservation;
 import com.application.restaurantbooking.persistence.model.RestaurantTable;
 
-import java.util.Date;
+import java.text.ParseException;
 
 public class ReservationBuilder {
 
@@ -29,8 +29,8 @@ public class ReservationBuilder {
         return this;
     }
 
-    public ReservationBuilder reservationDate(Date reservationDate ) {
-//        reservation.setReservationDate(reservationDate);
+    public ReservationBuilder reservationDate(String date) throws ParseException {
+        reservation.setDateReservation(date);
         return this;
     }
 

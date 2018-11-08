@@ -164,11 +164,10 @@ public class DatabaseInitializer {
 
     private Reservation createReservation(RestaurantTable restaurantTable, String date, Integer length, Client client) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
             Reservation reservation = new ReservationBuilder()
                     .client(client)
                     .restaurantTable(restaurantTable)
-                    .reservationDate(sdf.parse(date))
+                    .reservationDate(date)
                     .reservationLength(length)
                     .reservedPlaces(10)
                     .comment("comments...")

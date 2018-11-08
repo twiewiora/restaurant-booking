@@ -17,9 +17,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Component
 public class GeocodeUtil {
+
+    private static final Logger LOGGER = Logger.getLogger(GeocodeUtil.class.getName());
 
     @Value("${api.geocode.key}")
     private String apiKey;
@@ -46,7 +50,7 @@ public class GeocodeUtil {
             restaurantLocalization = getLocalizationFromResultJson(result.toString());
 
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage());
         }
 
         return restaurantLocalization;
@@ -92,7 +96,7 @@ public class GeocodeUtil {
             cityName = getCityNameFromResultJson(result.toString());
 
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage());
         }
 
         return StringUtils.stripAccents(cityName);

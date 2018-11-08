@@ -7,13 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Component
 public class IndexBuilder {
-
-    private static final Logger LOGGER = Logger.getLogger(IndexBuilder.class.getName());
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -23,12 +19,8 @@ public class IndexBuilder {
     }
 
     @Transactional
-    public void rebuildIndexes() {
+    public void rebuildIndexes() throws InterruptedException {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
-        try {
-            fullTextEntityManager.createIndexer().startAndWait();
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-        }
+        fullTextEntityManager.createIndexer().startAndWait();
     }
 }
