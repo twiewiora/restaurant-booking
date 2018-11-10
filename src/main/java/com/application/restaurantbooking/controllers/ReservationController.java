@@ -155,7 +155,7 @@ public class ReservationController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         Optional<RestaurantTable> restaurantTable = restorer.getRestaurant().getRestaurantTables().stream()
                 .filter(table -> table.getId().equals(Long.parseLong(id)))
@@ -176,12 +176,12 @@ public class ReservationController {
                         .collect(Collectors.toList());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return Collections.emptyList();
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -199,7 +199,7 @@ public class ReservationController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         try {
             Restaurant restaurant = restorer.getRestaurant();
@@ -219,12 +219,12 @@ public class ReservationController {
                         .collect(Collectors.toList());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return Collections.emptyList();
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -243,12 +243,12 @@ public class ReservationController {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
         if (restaurant == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            return Collections.emptyList();
         }
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
@@ -269,12 +269,12 @@ public class ReservationController {
                         .collect(Collectors.toList());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return Collections.emptyList();
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -290,7 +290,7 @@ public class ReservationController {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return ReservationsDTO.builder().build();
         }
         return ReservationsDTO.builder().reservations(client.getReservations().stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))

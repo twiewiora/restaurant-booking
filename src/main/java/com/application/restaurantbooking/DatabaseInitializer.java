@@ -2,10 +2,12 @@ package com.application.restaurantbooking;
 
 import com.application.restaurantbooking.persistence.builder.*;
 import com.application.restaurantbooking.persistence.model.*;
-import com.application.restaurantbooking.persistence.service.*;
+import com.application.restaurantbooking.persistence.service.ClientService;
+import com.application.restaurantbooking.persistence.service.RestaurantService;
+import com.application.restaurantbooking.persistence.service.RestaurantTableService;
+import com.application.restaurantbooking.persistence.service.RestorerService;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
-import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,16 +59,14 @@ public class DatabaseInitializer {
         }
         createRestaurant("test", "50.06148585", "19.93641489", "Krakow", "Rynek Glowny", "1");
         URL url = Resources.getResource("restaurants.csv");
-        try {
-            CharSource charSource = Resources.asCharSource(url, Charsets.UTF_8);
-            BufferedReader reader = charSource.openBufferedStream();
+        try (BufferedReader reader = Resources.asCharSource(url, Charsets.UTF_8).openBufferedStream()) {
             for (String line; (line = reader.readLine()) != null;) {
                 String[] restaurantData = line.split(";");
                 createRestaurant(restaurantData[2], restaurantData[0], restaurantData[1], restaurantData[3],
                         restaurantData[4], restaurantData[5]);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.log(Level.WARNING, e.getMessage());
         }
 
         Client client = new ClientBuilder()

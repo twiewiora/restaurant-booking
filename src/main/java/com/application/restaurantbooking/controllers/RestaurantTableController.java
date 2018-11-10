@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -60,7 +61,7 @@ public class RestaurantTableController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         Restaurant restaurant = restorer.getRestaurant();
         if (restaurant != null) {
@@ -70,7 +71,7 @@ public class RestaurantTableController {
                     .collect(Collectors.toList());
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -89,7 +90,7 @@ public class RestaurantTableController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         Restaurant restaurant = restorer.getRestaurant();
         try {
@@ -102,12 +103,12 @@ public class RestaurantTableController {
                         .collect(Collectors.toList());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return Collections.emptyList();
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -125,7 +126,7 @@ public class RestaurantTableController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return Collections.emptyList();
         }
         Restaurant restaurant = restorer.getRestaurant();
         try {
@@ -138,12 +139,12 @@ public class RestaurantTableController {
                         .collect(Collectors.toList());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return Collections.emptyList();
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -161,7 +162,7 @@ public class RestaurantTableController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return new RestaurantTableDTO();
         }
         Restaurant restaurant = restorer.getRestaurant();
         if (restaurant != null) {
@@ -172,7 +173,7 @@ public class RestaurantTableController {
             return modelMapper.map(createdRestaurantTable, RestaurantTableDTO.class);
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            return new RestaurantTableDTO();
         }
     }
 
@@ -190,7 +191,7 @@ public class RestaurantTableController {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return new RestaurantTableDTO();
         }
         Restaurant restaurant = restorer.getRestaurant();
         if (restaurant != null) {
@@ -206,11 +207,11 @@ public class RestaurantTableController {
                 return modelMapper.map(restaurantTable, RestaurantTableDTO.class);
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                return new RestaurantTableDTO();
             }
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            return new RestaurantTableDTO();
         }
     }
 

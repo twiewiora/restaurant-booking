@@ -4,10 +4,6 @@ import com.application.restaurantbooking.jwt.jwtmodel.JwtAuthenticationRequest;
 
 public class RegistrationValidation {
 
-    public RegistrationValidation(){
-    }
-
-
     public boolean validate(JwtAuthenticationRequest registrationRequest) {
         return validatePassword(registrationRequest.getPassword());
     }
