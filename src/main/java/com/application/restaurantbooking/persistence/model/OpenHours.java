@@ -1,5 +1,7 @@
 package com.application.restaurantbooking.persistence.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -7,6 +9,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "openHours")
+@Getter
+@Setter
 public class OpenHours {
 
     @Id
@@ -27,37 +31,6 @@ public class OpenHours {
         // empty constructor for hibernate
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getIsClose() {
-        return isClose;
-    }
-
-    public void setClose(Boolean close) {
-        isClose = close;
-    }
-
-    public Date getOpenHour() {
-        return openHour;
-    }
-
-    public void setOpenHour(Date openHour) {
-        this.openHour = openHour;
-    }
-
-    public Date getCloseHour() {
-        return closeHour;
-    }
-
-    public void setCloseHour(Date closeHour) {
-        this.closeHour = closeHour;
-    }
 }
 
 

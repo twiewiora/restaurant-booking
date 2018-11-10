@@ -1,6 +1,7 @@
 package com.application.restaurantbooking.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.EnumMap;
@@ -9,19 +10,18 @@ import java.util.Set;
 
 @Entity
 @Table(name = "client")
+@Getter
+@Setter
 public class Client extends User {
 
-    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL)
     private Set<Reservation> reservations;
 
-    @JsonIgnore
     @MapKeyClass(value = Tag.class)
     @MapKeyEnumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.LAZY)
     private Map<Tag, Integer> clientPreferencesTags = new EnumMap<>(Tag.class);
 
-    @JsonIgnore
     @MapKeyClass(value = Price.class)
     @MapKeyEnumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.LAZY)
@@ -37,27 +37,4 @@ public class Client extends User {
         }
     }
 
-    public Set<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(Set<Reservation> reservations) {
-        this.reservations = reservations;
-    }
-
-    public Map<Tag, Integer> getClientPreferencesTags() {
-        return clientPreferencesTags;
-    }
-
-    public void setClientPreferencesTags(Map<Tag, Integer> clientPreferencesTags) {
-        this.clientPreferencesTags = clientPreferencesTags;
-    }
-
-    public Map<Price, Integer> getClientPreferencesPrices() {
-        return clientPreferencesPrices;
-    }
-
-    public void setClientPreferencesPrices(Map<Price, Integer> clientPreferencesPrices) {
-        this.clientPreferencesPrices = clientPreferencesPrices;
-    }
 }

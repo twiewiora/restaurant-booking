@@ -14,7 +14,7 @@ public class RestaurantBookingApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		ConfigurableApplicationContext context = SpringApplication.run(RestaurantBookingApplication.class, args);
 
         context.getBean(DatabaseInitializer.class).initializeDatabase();

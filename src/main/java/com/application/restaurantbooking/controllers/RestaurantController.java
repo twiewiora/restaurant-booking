@@ -1,7 +1,10 @@
 package com.application.restaurantbooking.controllers;
 
+import com.application.restaurantbooking.controllers.dto.OpenHoursDTO;
+import com.application.restaurantbooking.controllers.dto.ProposalHoursDTO;
+import com.application.restaurantbooking.controllers.dto.RestaurantDTO;
+import com.application.restaurantbooking.controllers.dto.RestaurantSearchQueryResultDTO;
 import com.application.restaurantbooking.persistence.builder.OpenHoursBuilder;
-import com.application.restaurantbooking.persistence.builder.RestaurantBuilder;
 import com.application.restaurantbooking.persistence.model.*;
 import com.application.restaurantbooking.persistence.service.ClientService;
 import com.application.restaurantbooking.persistence.service.RestaurantService;
@@ -12,11 +15,14 @@ import com.application.restaurantbooking.utils.TableSearcher;
 import com.application.restaurantbooking.utils.TableSearcherRequest;
 import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
 import com.application.restaurantbooking.utils.geocoding.Localization;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.collect.Sets;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +36,7 @@ import java.time.DayOfWeek;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @RestController
 public class RestaurantController {
@@ -48,6 +55,8 @@ public class RestaurantController {
 
     private GeocodeUtil geocodeUtil;
 
+    private ModelMapper modelMapper;
+
     @Autowired
     public RestaurantController(@NotNull UserServiceManager userServiceManager,
                                 RestaurantService restaurantService,
@@ -60,55 +69,45 @@ public class RestaurantController {
         this.tableSearcher = tableSearcher;
         this.restaurantSearcher = restaurantSearcher;
         this.geocodeUtil = geocodeUtil;
+        this.modelMapper = new ModelMapper();
     }
 
+    @ApiOperation(value = "Get restaurant for restorer", response = RestaurantDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Restaurant Details", response = RestaurantDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_RESTAURANT_BY_RESTORER,
             produces = "application/json; charset=UTF-8")
-    public String getRestaurantByRestorerJwt(HttpServletRequest request,
-                                             HttpServletResponse response) {
+    public RestaurantDTO getRestaurantByRestorerJwt(HttpServletRequest request,
+                                                    HttpServletResponse response) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
-        Restaurant restaurant = restorer.getRestaurant();
-        return returnRestaurantJson(restaurant, response);
+        return modelMapper.map(restorer.getRestaurant(), RestaurantDTO.class);
     }
 
+    @ApiOperation(value = "Create restaurant", response = RestaurantDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Restaurant created", response = RestaurantDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @PostMapping(value = UrlRequests.POST_RESTAURANT_ADD,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String createRestaurant(HttpServletRequest request,
+    public RestaurantDTO createRestaurant(HttpServletRequest request,
                                  HttpServletResponse response,
-                                 @RequestBody String json) {
+                                 @RequestBody RestaurantDTO restaurantDTO) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
-
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(json);
-            JsonNode tagsNode = jsonNode.get("tags");
-            Set<Tag> tags = new HashSet<>();
-            if (tagsNode.isArray()) {
-                for (JsonNode tag : tagsNode) {
-                    tags.add(Tag.valueOf(tag.asText().toUpperCase()));
-                }
-            }
-            Restaurant restaurant = new RestaurantBuilder()
-                    .name(jsonNode.get("name").asText())
-                    .city(jsonNode.get("city").asText())
-                    .street(jsonNode.get("street").asText())
-                    .streetNumber(jsonNode.get("streetNumber").asText())
-                    .phoneNumber(jsonNode.get("phoneNumber").asText())
-                    .website(jsonNode.get("website").asText())
-                    .price(Price.valueOf(jsonNode.get("restaurantPrice").get(0).asText().toUpperCase()))
-                    .restorer(restorer)
-                    .tags(tags)
-                    .build();
-
+            Restaurant restaurant = modelMapper.map(restaurantDTO, Restaurant.class);
+            restaurant.setRestorer(restorer);
             Localization localization = geocodeUtil.getLocalizationByAddress(restaurant.getCity(),
                     restaurant.getStreet(), restaurant.getStreetNumber());
             restaurant.setLongitude(localization.getLongitude());
@@ -117,144 +116,133 @@ public class RestaurantController {
             Map<DayOfWeek, OpenHours> openHoursMap = new EnumMap<>(DayOfWeek.class);
             for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
                 OpenHours day = new OpenHoursBuilder()
-                        .openHour(sdf.parse("00:00"))
-                        .closeHour(sdf.parse("00:00"))
-                        .isClose(true)
+                        .openHour(sdf.parse("12:00"))
+                        .closeHour(sdf.parse("22:00"))
+                        .isClose(false)
                         .build();
                 openHoursMap.put(dayOfWeek, day);
             }
             restaurantService.addOpenHours(restaurant, openHoursMap);
-            restaurantService.createRestaurant(restaurant);
+            Restaurant createdRestaurant = restaurantService.createRestaurant(restaurant);
             response.setStatus(HttpServletResponse.SC_CREATED);
-            return AcceptResponses.RESTAURANT_CREATED;
-        } catch (IOException | ParseException e) {
+            return modelMapper.map(createdRestaurant, RestaurantDTO.class);
+        } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+            return null;
         }
     }
 
+    @ApiOperation(value = "Update restaurant details", response = RestaurantDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Restaurant updated", response = RestaurantDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @PostMapping(value = UrlRequests.POST_RESTAURANT_UPDATE,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String updateRestaurant(HttpServletRequest request,
+    public RestaurantDTO updateRestaurant(HttpServletRequest request,
                                  HttpServletResponse response,
-                                 @RequestBody String json) {
+                                 @RequestBody RestaurantDTO restaurantDTO) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restorer.getRestaurant();
+        if (restaurant != null) {
+            restaurant.setName(StringUtils.stripAccents(restaurantDTO.getName()));
+            restaurant.setCity(StringUtils.stripAccents(restaurantDTO.getCity()));
+            restaurant.setStreet(StringUtils.stripAccents(restaurantDTO.getStreet()));
+            restaurant.setStreetNumber(restaurantDTO.getStreetNumber());
+            restaurant.setPhoneNumber(restaurantDTO.getPhoneNumber());
+            restaurant.setWebsite(restaurantDTO.getWebsite());
+            restaurant.setPrice(restaurantDTO.getRestaurantPrice().stream().findAny().orElse(null));
+            Set<Tag> tags = Sets.newHashSet(restaurantDTO.getTags());
+            restaurant.setTags(tags);
 
-        try {
-            if (restaurant != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(json);
-                restaurant.setName(StringUtils.stripAccents(jsonNode.get("name").asText()));
-                restaurant.setCity(StringUtils.stripAccents(jsonNode.get("city").asText()));
-                restaurant.setStreet(StringUtils.stripAccents(jsonNode.get("street").asText()));
-                restaurant.setStreetNumber(jsonNode.get("streetNumber").asText());
-                restaurant.setPhoneNumber(jsonNode.get("phoneNumber").asText());
-                restaurant.setWebsite(jsonNode.get("website").asText());
-                restaurant.setPrice(Price.valueOf(jsonNode.get("restaurantPrice").get(0).asText().toUpperCase()));
-                JsonNode tagsNode = jsonNode.get("tags");
-                Set<Tag> tags = new HashSet<>();
-                if (tagsNode.isArray()) {
-                    for (JsonNode tag : tagsNode) {
-                        tags.add(Tag.valueOf(tag.asText().toUpperCase()));
-                    }
-                }
-                restaurant.setTags(tags);
-
-                Localization localization = geocodeUtil.getLocalizationByAddress(restaurant.getCity(),
-                        restaurant.getStreet(), restaurant.getStreetNumber());
-                restaurant.setLongitude(localization.getLongitude());
-                restaurant.setLatitude(localization.getLatitude());
-                restaurantService.updateRestaurant(restaurant);
-                restaurantService.updateRestaurantTags(restaurant, tags);
-                response.setStatus(HttpServletResponse.SC_OK);
-                return AcceptResponses.RESTAURANT_UPDATED;
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+            Localization localization = geocodeUtil.getLocalizationByAddress(restaurant.getCity(),
+                    restaurant.getStreet(), restaurant.getStreetNumber());
+            restaurant.setLongitude(localization.getLongitude());
+            restaurant.setLatitude(localization.getLatitude());
+            restaurantService.updateRestaurant(restaurant);
+            restaurantService.updateRestaurantTags(restaurant, tags);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return modelMapper.map(restaurant, RestaurantDTO.class);
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
     }
 
+    @ApiOperation(value = "Get restaurant open hours for all days")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Open hours details"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_OPEN_HOURS_ALL,
             produces = "application/json; charset=UTF-8")
-    public String getOpenHoursForAllDays(HttpServletRequest request,
-                                         HttpServletResponse response) {
+    public Map<DayOfWeek, OpenHoursDTO> getOpenHoursForAllDays(HttpServletRequest request,
+                                                               HttpServletResponse response) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restorer.getRestaurant();
-
-        try {
-            if (restaurant != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant.getOpenHoursMap());
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
-            }
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+        if (restaurant != null) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return restaurant.getOpenHoursMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                    entry -> modelMapper.map(entry.getValue(), OpenHoursDTO.class)));
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
     }
 
+    @ApiOperation(value = "Get restaurant open hours for some day", response = OpenHoursDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Open hours details for day", response = OpenHoursDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_OPEN_HOURS_DAY,
             produces = "application/json; charset=UTF-8")
-    public String getOpenHoursForDay(HttpServletRequest request,
+    public OpenHoursDTO getOpenHoursForDay(HttpServletRequest request,
                                      HttpServletResponse response,
                                      @PathVariable String day) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restorer.getRestaurant();
-
-        try {
-            if (restaurant != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                response.setStatus(HttpServletResponse.SC_OK);
-                OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.valueOf(day.toUpperCase()));
-                return objectMapper.writeValueAsString(openHours);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
-            }
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+        if (restaurant != null) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.valueOf(day.toUpperCase()));
+            return modelMapper.map(openHours, OpenHoursDTO.class);
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
     }
 
+    @ApiOperation(value = "Update restaurant open hours")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Open hours updated"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @PostMapping(value = UrlRequests.POST_OPEN_HOURS_UPDATE,
             consumes = "application/json; charset=UTF-8",
             produces = "application/json; charset=UTF-8")
-    public String updateOpenHours(HttpServletRequest request,
+    public Map<DayOfWeek, OpenHoursDTO> updateOpenHours(HttpServletRequest request,
                                   HttpServletResponse response,
                                   @RequestBody String json) {
         Restorer restorer = userServiceManager.getRestorerByJwt(request);
         if (restorer == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restorer.getRestaurant();
-
         try {
             if (restaurant != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -266,104 +254,93 @@ public class RestaurantController {
                     OpenHours openHour = openHoursMap.get(dayOfWeek);
                     openHour.setOpenHour(sdf.parse(dayNode.get(0).asText()));
                     openHour.setCloseHour(sdf.parse(dayNode.get(1).asText()));
-                    openHour.setClose(dayNode.get(2).asBoolean());
+                    openHour.setIsClose(dayNode.get(2).asBoolean());
                 }
                 restaurantService.updateOpenHours(restaurant);
                 response.setStatus(HttpServletResponse.SC_OK);
-                return AcceptResponses.OPEN_HOURS_UPDATED;
+                return openHoursMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> modelMapper.map(entry.getValue(), OpenHoursDTO.class)));
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
+                return null;
             }
         } catch (IOException | ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+            return null;
         }
     }
 
+    @ApiOperation(value = "Get all tags")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "All tags"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_TAGS,
             produces = "application/json; charset=UTF-8")
-    public String getTags(HttpServletResponse response) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            response.setStatus(HttpServletResponse.SC_OK);
-            return objectMapper.writeValueAsString(Tag.values());
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
-        }
+    public List<Tag> getTags(HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        return Arrays.asList(Tag.values());
     }
 
+    @ApiOperation(value = "Get all prices")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "All prices"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_PRICES,
             produces = "application/json; charset=UTF-8")
-    public String getPrices(HttpServletResponse response) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            response.setStatus(HttpServletResponse.SC_OK);
-            return objectMapper.writeValueAsString(Price.values());
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
-        }
+    public List<Price> getPrices(HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        return Arrays.asList(Price.values());
     }
 
-    @GetMapping(value = UrlRequests.GET_SURROUNDING_RESTAURANTS,
+    @ApiOperation(value = "Get list restaurants by query", response = RestaurantSearchQueryResultDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Restaurants list", response = RestaurantSearchQueryResultDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
+    @GetMapping(value = UrlRequests.GET_SEARCH_QUERY_RESTAURANTS,
             produces = "application/json; charset=UTF-8")
-    public String getSurroundingRestaurants(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            @RequestParam (required = false) Double lat,
-                                            @RequestParam (required = false) Double lon,
-                                            @RequestParam (required = false) Integer radius,
-                                            @RequestParam(required = false) String[] tags,
-                                            @RequestParam(required = false) String[] prices,
-                                            @RequestParam(required = false) String name) {
+    public RestaurantSearchQueryResultDTO getSurroundingRestaurants(HttpServletRequest request,
+                                                                    HttpServletResponse response,
+                                                                    @RequestParam (required = false) Double lat,
+                                                                    @RequestParam (required = false) Double lon,
+                                                                    @RequestParam (required = false) Integer radius,
+                                                                    @RequestParam(required = false) String[] tags,
+                                                                    @RequestParam(required = false) String[] prices,
+                                                                    @RequestParam(required = false) String name) {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            response.setStatus(HttpServletResponse.SC_OK);
-
-            if (tags == null) {
-                tags = new String[0];
-            }
-            Set<Tag> tagsSet = new HashSet<>();
-            for (String tag : tags) {
-                tagsSet.add(Tag.valueOf(tag.toUpperCase()));
-            }
-            if (prices == null) {
-                prices = new String[0];
-            }
-            Set<Price> pricesSet = new HashSet<>();
-            for (String price : prices) {
-                pricesSet.add(Price.valueOf(price.toUpperCase()));
-            }
-            Localization clientLocalization = new Localization(lat, lon);
-            RestaurantSearcherRequest restaurantSearcherRequest = new RestaurantSearcherRequest(clientLocalization,
-                    radius, tagsSet, pricesSet, name);
-            List<Restaurant> result = restaurantSearcher.getRestaurantsByQuery(restaurantSearcherRequest, client);
-
-            ArrayNode restaurantArray = objectMapper.createArrayNode();
-            for (Restaurant restaurant : result) {
-                restaurantArray.add(objectMapper.writeValueAsString(restaurant));
-            }
-
-            return objectMapper.createObjectNode().putPOJO("restaurants", restaurantArray).toString();
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+        Set<Tag> tagsSet = new HashSet<>();
+        for (String tag : Optional.ofNullable(tags).orElse(new String[0])) {
+            tagsSet.add(Tag.valueOf(tag.toUpperCase()));
         }
+        Set<Price> pricesSet = new HashSet<>();
+        for (String price : Optional.ofNullable(prices).orElse(new String[0])) {
+            pricesSet.add(Price.valueOf(price.toUpperCase()));
+        }
+        Localization clientLocalization = new Localization(lat, lon);
+        RestaurantSearcherRequest restaurantSearcherRequest = new RestaurantSearcherRequest(clientLocalization,
+                radius, tagsSet, pricesSet, name);
+        List<Restaurant> result = restaurantSearcher.getRestaurantsByQuery(restaurantSearcherRequest, client);
+        response.setStatus(HttpServletResponse.SC_OK);
+        return RestaurantSearchQueryResultDTO.builder().restaurants(result
+                .stream().map(restaurant -> modelMapper.map(restaurant, RestaurantDTO.class))
+                .collect(Collectors.toList())).build();
     }
 
+    @ApiOperation(value = "Get list proposal hours for reservation", response = ProposalHoursDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Restaurants list", response = ProposalHoursDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_RESTAURANT_FREE_DATES,
             produces = "application/json; charset=UTF-8")
-    public String getProposalHours(HttpServletRequest request,
+    public ProposalHoursDTO getProposalHours(HttpServletRequest request,
                                    HttpServletResponse response,
                                    @PathVariable String id,
                                    @RequestParam String date,
@@ -372,61 +349,46 @@ public class RestaurantController {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
         try {
             if (restaurant != null) {
                 saveClientPreferences(client, restaurant);
-                ObjectMapper objectMapper = new ObjectMapper();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
                 TableSearcherRequest tableRequest = new TableSearcherRequest(sdf.parse(date), length, places);
                 List<String> proposalHours = tableSearcher.getNearHoursReservation(restaurant, tableRequest);
                 response.setStatus(HttpServletResponse.SC_OK);
-                ArrayNode proposalArray = objectMapper.createArrayNode();
-                proposalHours.forEach(proposalArray::add);
-                return objectMapper.createObjectNode().putPOJO("proposalHours", proposalArray).toString();
+                return ProposalHoursDTO.builder().proposalHours(proposalHours).build();
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
+                return null;
             }
         } catch (ParseException e) {
             LOGGER.log(Level.WARNING, e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
+            return null;
         }
     }
 
+    @ApiOperation(value = "Get restaurant for client by restaurant id", response = RestaurantDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Restaurant details", response = RestaurantDTO.class),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping(value = UrlRequests.GET_RESTAURANT_BY_ID,
             produces = "application/json; charset=UTF-8")
-    public String getRestaurantById(HttpServletRequest request,
+    public RestaurantDTO getRestaurantById(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @PathVariable String id) {
         Client client = userServiceManager.getClientByJwt(request);
         if (client == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ErrorResponses.UNAUTHORIZED_ACCESS;
+            return null;
         }
         Restaurant restaurant = restaurantService.getById(Long.decode(id));
         restaurantSearcher.calculateRestaurantPriority(client, restaurant);
-        return returnRestaurantJson(restaurant, response);
-    }
-
-    private String returnRestaurantJson(Restaurant restaurant, HttpServletResponse response) {
-        try {
-            if (restaurant != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                response.setStatus(HttpServletResponse.SC_OK);
-                return objectMapper.writeValueAsString(restaurant);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return ErrorResponses.RESTAURANT_NOT_FOUND;
-            }
-        } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ErrorResponses.INTERNAL_ERROR;
-        }
+        return modelMapper.map(restaurant, RestaurantDTO.class);
     }
 
     private void saveClientPreferences(Client client, Restaurant restaurant) {

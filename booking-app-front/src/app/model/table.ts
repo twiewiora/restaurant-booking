@@ -23,7 +23,7 @@ export class Table implements ITable {
 
   public toJson(): string {
     return JSON.stringify({
-      tableId: this.id,
+      id: this.id,
       maxPlaces: this.maxPlaces,
       comment: this.comment,
       identifier: this.identifier

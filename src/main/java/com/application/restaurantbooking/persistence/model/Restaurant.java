@@ -1,7 +1,7 @@
 package com.application.restaurantbooking.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
@@ -23,6 +23,8 @@ import java.util.*;
                         @Parameter(name = "language", value = "English")
                 })
         })
+@Getter
+@Setter
 public class Restaurant {
 
     @Id
@@ -50,14 +52,12 @@ public class Restaurant {
 
     private Double latitude;
 
-    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Price price;
 
     @Transient
     private Double priority;
 
-    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restorer_id", nullable = false)
     private Restorer restorer;
@@ -66,11 +66,9 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private Set<Tag> tags = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", orphanRemoval = true)
     private Set<RestaurantTable> restaurantTables = new HashSet<>();
 
-    @JsonIgnore
     @MapKeyClass(value = DayOfWeek.class)
     @MapKeyEnumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER, targetClass = OpenHours.class)
@@ -80,131 +78,17 @@ public class Restaurant {
         // empty constructor for hibernate
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getStreetNumber() {
-        return streetNumber;
-    }
-
-    public void setStreetNumber(String streetNumber) {
-        this.streetNumber = streetNumber;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public Restorer getRestorer() {
-        return restorer;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Price getPrice() {
-        return price;
-    }
-
-    public void setPrice(Price price) {
-        this.price = price;
-    }
-
-    @JsonProperty
-    public List<Price> getRestaurantPrice() {
-        if (price != null) {
-            return Collections.singletonList(price);
+    public Set<Price> getRestaurantPrice() {
+        if (price == null) {
+            return Collections.emptySet();
         }
-        return Collections.emptyList();
+        return Collections.singleton(price);
     }
 
-    public Double getPriority() {
-        return priority;
+    public void setRestaurantPrice(Collection<Price> prices) {
+        if (prices != null && !prices.isEmpty()) {
+            this.price = prices.stream().findAny().orElse(null);
+        }
     }
 
-    public void setPriority(Double priority) {
-        this.priority = priority;
-    }
-
-    public void setRestorer(Restorer restorer) {
-        this.restorer = restorer;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public Set<RestaurantTable> getRestaurantTables() {
-        return restaurantTables;
-    }
-
-    public void setRestaurantTables(Set<RestaurantTable> restaurantTables) {
-        this.restaurantTables = restaurantTables;
-    }
-
-    public Map<DayOfWeek, OpenHours> getOpenHoursMap() {
-        return openHoursMap;
-    }
-
-    public void setOpenHoursMap(Map<DayOfWeek, OpenHours> openHoursMap) {
-        this.openHoursMap = openHoursMap;
-    }
 }

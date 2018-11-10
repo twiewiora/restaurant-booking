@@ -32,7 +32,7 @@ public class UrlRequests {
 
     // API for clients
     public static final String GET_RESTAURANT_BY_ID = "/api/client/restaurant{id}";
-    public static final String GET_SURROUNDING_RESTAURANTS = "/api/client/searchQueryRestaurant";
+    public static final String GET_SEARCH_QUERY_RESTAURANTS = "/api/client/searchQueryRestaurant";
     public static final String GET_RESTAURANT_FREE_DATES = "/api/client/restaurant{id}/freeDates";
     public static final String POST_RESERVATION_ADD_BY_CLIENT = "/api/client/restaurant{id}/reservation/add";
     public static final String GET_RESERVATIONS_LIST= "/api/client/reservations";

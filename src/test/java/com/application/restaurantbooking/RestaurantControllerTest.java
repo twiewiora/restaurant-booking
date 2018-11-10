@@ -63,7 +63,7 @@ public class RestaurantControllerTest {
         restaurant.setStreet("street");
         Mockito.when(restaurantService.getAll()).thenReturn(Collections.singletonList(restaurant));
 
-        mockMvc.perform(get(UrlRequests.GET_SURROUNDING_RESTAURANTS)
+        mockMvc.perform(get(UrlRequests.GET_SEARCH_QUERY_RESTAURANTS)
                 .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.restaurants").isArray())
