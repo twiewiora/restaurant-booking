@@ -14,7 +14,8 @@ import java.util.Set;
 public class RestaurantTable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "table_seq")
+    @SequenceGenerator(name = "table_seq", sequenceName = "table_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

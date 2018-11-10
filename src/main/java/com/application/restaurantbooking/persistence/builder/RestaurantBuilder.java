@@ -65,6 +65,12 @@ public class RestaurantBuilder {
         return this;
     }
 
+    public RestaurantBuilder localization(Double lat, Double lon) {
+        restaurant.setLatitude(lat);
+        restaurant.setLongitude(lon);
+        return this;
+    }
+
     public Restaurant build() {
         return restaurant;
     }

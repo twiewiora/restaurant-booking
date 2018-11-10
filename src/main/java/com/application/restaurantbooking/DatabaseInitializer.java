@@ -3,19 +3,23 @@ package com.application.restaurantbooking;
 import com.application.restaurantbooking.persistence.builder.*;
 import com.application.restaurantbooking.persistence.model.*;
 import com.application.restaurantbooking.persistence.service.*;
-import com.application.restaurantbooking.utils.geocoding.GeocodeUtil;
-import com.application.restaurantbooking.utils.geocoding.Localization;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,186 +34,98 @@ public class DatabaseInitializer {
 
     private RestaurantTableService restaurantTableService;
 
-    private ReservationService reservationService;
-
     private ClientService clientService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private GeocodeUtil geocodeUtil;
 
     @Autowired
     public DatabaseInitializer(RestorerService restorerService,
                                RestaurantService restaurantService,
                                RestaurantTableService restaurantTableService,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
-                               ReservationService reservationService,
-                               ClientService clientService,
-                               GeocodeUtil geocodeUtil) {
+                               ClientService clientService) {
         this.restorerService = restorerService;
         this.restaurantService = restaurantService;
         this.restaurantTableService = restaurantTableService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.reservationService = reservationService;
         this.clientService = clientService;
-        this.geocodeUtil = geocodeUtil;
     }
 
     public void initializeDatabase() {
-        String cityName = "Krakow";
         if (restorerService.getByUsername("test") != null) {
             return;
         }
-        Restorer restorer = createRestorer("test", "test1");
-        Client client = createClient("client", "client");
-        Restaurant restaurant = createRestaurant(restorer, cityName, "sw. Marka", "22", Sets.newHashSet(Tag.PIZZA, Tag.KEBAB, Tag.DUMPLINGS), Price.LOW, "M22");
+        createRestaurant("test", "50.06148585", "19.93641489", "Krakow", "Rynek Glowny", "1");
+        URL url = Resources.getResource("restaurants.csv");
+        try {
+            CharSource charSource = Resources.asCharSource(url, Charsets.UTF_8);
+            BufferedReader reader = charSource.openBufferedStream();
+            for (String line; (line = reader.readLine()) != null;) {
+                String[] restaurantData = line.split(";");
+                createRestaurant(restaurantData[2], restaurantData[0], restaurantData[1], restaurantData[3],
+                        restaurantData[4], restaurantData[5]);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        RestaurantTable table1 = createRestaurantTable(restaurant, 12);
-        RestaurantTable table2 = createRestaurantTable(restaurant, 5);
-        RestaurantTable table3 = createRestaurantTable(restaurant, 2);
-        RestaurantTable table4 = createRestaurantTable(restaurant, 7);
-        RestaurantTable table5 = createRestaurantTable(restaurant, 4);
-        RestaurantTable table6 = createRestaurantTable(restaurant, 3);
-
-        createReservation(table1, "2018-09-14_22:30", 60, client);
-        createReservation(table2, "2018-09-14_20:00", 180, client);
-        createReservation(table3, "2018-09-14_19:00", 120, client);
-        createReservation(table4, "2018-09-14_18:00", 60, client);
-        createReservation(table5, "2018-09-14_17:00", 180, client);
-        createReservation(table6, "2018-09-14_18:00", 120, client);
-
-        createOpenHours(restaurant);
-        restaurant = createRestaurant(restorer, cityName, "Mikolajska", "3", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH, "Hot Chili");
-
-        table1 = createRestaurantTable(restaurant, 12);
-        table2 = createRestaurantTable(restaurant, 5);
-        table3 = createRestaurantTable(restaurant, 2);
-        table4 = createRestaurantTable(restaurant, 7);
-
-        createReservation(table1, "2018-09-14_22:30", 60, client);
-        createReservation(table2, "2018-09-14_20:00", 180, client);
-        createReservation(table3, "2018-09-14_19:00", 120, client);
-        createReservation(table4, "2018-09-14_18:00", 60, client);
-
-        createOpenHours(restaurant);
-
-        createOpenHours(createRestaurant(createRestorer("test2", "test2"), cityName, "Kawiory", "24", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.MEXICAN_CUISINE), Price.HIGH, "Tortillas"));
-        createOpenHours(createRestaurant(createRestorer("test3", "test3"), cityName, "Lea", "34", Sets.newHashSet(Tag.ASIAN_CUISINE, Tag.SUSHI), Price.LOW, "Sushi Bar"));
-        createOpenHours(createRestaurant(createRestorer("test4", "test4"), cityName, "Chopina", "33", Sets.newHashSet(Tag.SEAFOOD, Tag.SPANISH_CUISINE), Price.HIGH, "El Toro"));
-        createOpenHours(createRestaurant(createRestorer("test5", "test5"), cityName, "Podchorazych", "2", Sets.newHashSet(Tag.BURGER, Tag.PIZZA), Price.HIGH, "Pizzerinia"));
-        createOpenHours(createRestaurant(createRestorer("test6", "test6"), cityName, "Karmelicka", "6", Sets.newHashSet(Tag.FAST_FOOD, Tag.ASIAN_CUISINE), Price.MEDIUM, "Fast Asian"));
-        createOpenHours(createRestaurant(createRestorer("test7", "test7"), cityName, "Straszewskiego", "16", Sets.newHashSet(Tag.SEAFOOD, Tag.FISH), Price.HIGH, "Fisherman"));
-        createOpenHours(createRestaurant(createRestorer("test8", "test8"), cityName, "Rynek Glowny", "19", Sets.newHashSet(Tag.HUNGARIAN_CUISINE), Price.HIGH, "Gulash"));
-        createOpenHours(createRestaurant(createRestorer("test9", "test9"), cityName, "Rynek Glowny", "17", Sets.newHashSet(Tag.VEGETARIAN_CUISINE, Tag.FISH), Price.LOW, "Vege Fish"));
-        createOpenHours(createRestaurant(createRestorer("test10", "test10"), cityName, "Grodzka", "40", Sets.newHashSet(Tag.ITALIAN_CUISINE, Tag.PASTA), Price.LOW, "Italiano"));
-        createOpenHours(createRestaurant(createRestorer("test11", "test11"), cityName, "Stradomska", "11", Sets.newHashSet(Tag.MEXICAN_CUISINE), Price.HIGH, "Mexico"));
-        createOpenHours(createRestaurant(createRestorer("test12", "test12"), cityName, "Grodzka", "5", Sets.newHashSet(Tag.GREEK_CUISINE), Price.LOW, "Zeus"));
-        createOpenHours(createRestaurant(createRestorer("test13", "test13"), cityName, "Sienna", "12", Sets.newHashSet(Tag.GERMAN_CUISINE), Price.MEDIUM, "Bawarska"));
-        createOpenHours(createRestaurant(createRestorer("test14", "test14"), cityName, "Kanonicza", "15", Sets.newHashSet(Tag.POLISH_CUISINE, Tag.DUMPLINGS), Price.HIGH, "Pierogarnia"));
-        createOpenHours(createRestaurant(createRestorer("test15", "test15"), cityName, "sw. Tomasza", "15", Sets.newHashSet(Tag.SEAFOOD, Tag.SUSHI), Price.LOW, "Sea Bar"));
-        createOpenHours(createRestaurant(createRestorer("test16", "test16"), cityName, "Pijarska", "9", Sets.newHashSet(Tag.FIT_FOOD, Tag.FRENCH_CUISINE), Price.HIGH, "Fit French"));
-        createOpenHours(createRestaurant(createRestorer("test17", "test17"), cityName, "Miodowa", "25", Sets.newHashSet(Tag.CHINESE_CUISINE, Tag.ASIAN_CUISINE), Price.MEDIUM, "Chinczyk"));
-        createOpenHours(createRestaurant(createRestorer("test18", "test18"), cityName, "Rynek Glowny", "3", Sets.newHashSet(Tag.FAST_FOOD, Tag.PIZZA), Price.LOW, "Cantare"));
-        createOpenHours(createRestaurant(createRestorer("test19", "test19"), cityName, "Slawkowska", "17", Sets.newHashSet(Tag.AMERICAN_CUISINE, Tag.BURGER), Price.MEDIUM, "American Burger"));
+        Client client = new ClientBuilder()
+                .username("client")
+                .password(bCryptPasswordEncoder.encode("client"))
+                .build();
+        clientService.createClient(client);
     }
 
-    private Restorer createRestorer(String userName, String password) {
+    private void createRestaurant(String name, String lat, String lon, String city, String street, String streetNumber) {
         Restorer restorer = new RestorerBuilder()
-                .username(userName)
-                .password(bCryptPasswordEncoder.encode(password))
+                .username(name.toLowerCase().replaceAll("\\.", "")
+                .replaceAll(" ", ""))
+                .password(bCryptPasswordEncoder.encode("test"))
                 .build();
-        return restorerService.createRestorer(restorer);
-    }
-
-    private Restaurant createRestaurant(Restorer restorer, String city, String street, String streetNumber, Set<Tag> tags, Price price, String name) {
-        Restaurant restaurant = new RestaurantBuilder()
-                .name(name)
-                .city(city)
-                .street(street)
-                .streetNumber(streetNumber)
-                .phoneNumber("123")
-                .price(price)
-                .restorer(restorer)
-                .tags(tags)
-                .build();
-        Localization localization = geocodeUtil.getLocalizationByAddress(city, street, streetNumber);
-        restaurant.setLongitude(localization.getLongitude());
-        restaurant.setLatitude(localization.getLatitude());
+        restorerService.createRestorer(restorer);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Map<DayOfWeek, OpenHours> openHoursMap = new EnumMap<>(DayOfWeek.class);
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             OpenHours day = null;
             try {
                 day = new OpenHoursBuilder()
-                        .openHour(sdf.parse("00:00"))
-                        .closeHour(sdf.parse("00:00"))
-                        .isClose(true)
+                        .openHour(sdf.parse("12:00"))
+                        .closeHour(sdf.parse("22:00"))
+                        .isClose(false)
                         .build();
             } catch (ParseException e) {
                 LOGGER.log(Level.WARNING, e.getMessage());
             }
             openHoursMap.put(dayOfWeek, day);
         }
+        Restaurant restaurant = new RestaurantBuilder()
+                .restorer(restorer)
+                .name(name)
+                .city(city)
+                .street(street)
+                .streetNumber(streetNumber)
+                .phoneNumber("123456789")
+                .price(Price.values()[new Random().nextInt(Price.values().length)])
+                .website("http://restaurant.com")
+                .tags(Sets.newHashSet(Tag.values()[new Random().nextInt(Tag.values().length)], Tag.values()[new Random().nextInt(Tag.values().length)]))
+                .openHours(openHoursMap)
+                .localization(Double.parseDouble(lat), Double.parseDouble(lon))
+                .build();
         restaurantService.addOpenHours(restaurant, openHoursMap);
-        return restaurantService.createRestaurant(restaurant);
+
+        for (int i = 2; i <= 10; i+=2) {
+            createRestaurantTable(restaurant, i);
+        }
     }
 
-    private RestaurantTable createRestaurantTable(Restaurant restaurant, Integer places) {
+    private void createRestaurantTable(Restaurant restaurant, Integer places) {
         RestaurantTable restaurantTable = new RestaurantTableBuilder()
                 .restaurant(restaurant)
+                .identifier("ID" + places)
+                .comment("Table for " + places)
                 .maxPlaces(places)
                 .build();
-        return restaurantTableService.createRestaurantTable(restaurantTable);
+        restaurantTableService.createRestaurantTable(restaurantTable);
     }
 
-    private Reservation createReservation(RestaurantTable restaurantTable, String date, Integer length, Client client) {
-        try {
-            Reservation reservation = new ReservationBuilder()
-                    .client(client)
-                    .restaurantTable(restaurantTable)
-                    .reservationDate(date)
-                    .reservationLength(length)
-                    .reservedPlaces(10)
-                    .comment("comments...")
-                    .build();
-            return reservationService.createReservation(reservation);
-        } catch (ParseException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-        }
-        return null;
-    }
-
-    private void createOpenHours(Restaurant restaurant) {
-        String startHour = "12:30";
-        try {
-            SimpleDateFormat f = new SimpleDateFormat("HH:mm");
-            Map<DayOfWeek, OpenHours> map = restaurant.getOpenHoursMap();
-            map.get(DayOfWeek.FRIDAY).setOpenHour(f.parse(startHour));
-            map.get(DayOfWeek.FRIDAY).setCloseHour(f.parse("23:30"));
-            map.get(DayOfWeek.FRIDAY).setIsClose(false);
-            map.get(DayOfWeek.THURSDAY).setOpenHour(f.parse(startHour));
-            map.get(DayOfWeek.THURSDAY).setCloseHour(f.parse("22:30"));
-            map.get(DayOfWeek.THURSDAY).setIsClose(false);
-            map.get(DayOfWeek.WEDNESDAY).setOpenHour(f.parse(startHour));
-            map.get(DayOfWeek.WEDNESDAY).setCloseHour(f.parse("22:30"));
-            map.get(DayOfWeek.WEDNESDAY).setIsClose(false);
-            map.get(DayOfWeek.SATURDAY).setOpenHour(f.parse(startHour));
-            map.get(DayOfWeek.SATURDAY).setCloseHour(f.parse("20:30"));
-            map.get(DayOfWeek.SATURDAY).setIsClose(false);
-            map.get(DayOfWeek.SUNDAY).setOpenHour(f.parse(startHour));
-            map.get(DayOfWeek.SUNDAY).setCloseHour(f.parse("19:30"));
-            map.get(DayOfWeek.SUNDAY).setIsClose(false);
-            restaurantService.updateOpenHours(restaurant);
-        } catch (ParseException e) {
-            LOGGER.log(Level.WARNING, e.getMessage());
-        }
-    }
-
-    private Client createClient(String username, String password) {
-        Client client = new ClientBuilder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode(password))
-                .build();
-        return clientService.createClient(client);
-    }
 }
