@@ -20,12 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.logging.Logger;
 
 @RestController
 public class UserController {
-
-    private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
     @Value("${jwt.header}")
     private String tokenHeader;
