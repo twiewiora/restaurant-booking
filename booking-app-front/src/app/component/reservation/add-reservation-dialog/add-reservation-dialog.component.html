@@ -1,15 +1,19 @@
-<div class="container border border-primary main-containers rounded">
-
-  <h1>Search For Availability</h1>
+<div class="modal-header">
+  <h4 class="modal-title">Search For Availability</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
   <form>
     <div class="form-group container">
       <div class="row">
         <div class="col-md-6 date-time-containers">
           <ngb-datepicker #dp [(ngModel)]="date" name="date" [markDisabled]="isDisabled"
-                          [outsideDays]="'collapsed'" (ngModelChange)="onDateSelection($event)">
+                          [outsideDays]="'collapsed'" (ngModelChange)="eraseReservationOptions()">
           </ngb-datepicker>
         </div>
-        <div class="col-md-6 form-group date-time-containers">
+        <div class="col-md-6 date-time-containers">
           <ngb-timepicker [(ngModel)]="time" name="time" (ngModelChange)="eraseReservationOptions()"></ngb-timepicker>
         </div>
       </div>
@@ -59,7 +63,6 @@
     <button (click)="getBestFreeTableList(reservation)" class="btn btn-success" [disabled]="!reservationForm.valid">
       search best
     </button>
-    <button type="button" class="btn btn-warning" (click)="canceled.emit(true)">Cancel</button>
   </form>
 
 
@@ -93,4 +96,3 @@
     </div>
   </div>
 </div>
-
