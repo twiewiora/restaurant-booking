@@ -9,6 +9,8 @@ public class ReservationDTO {
 
     private Long id;
 
+    private Long clientId;
+
     private Integer reservedPlaces;
 
     private Integer reservationLength;
