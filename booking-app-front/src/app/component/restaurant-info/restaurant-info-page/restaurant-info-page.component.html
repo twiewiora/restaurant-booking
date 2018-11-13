@@ -2,19 +2,27 @@
 
   <div class="row">
     <div class="col-md-10">
+      <div *ngIf="!restaurantInfoIsLoaded" class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100"
+             aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+      </div>
       <app-restaurant-info [edit]="edit" [restaurant]="restaurant" [editRestaurant]="editRestaurant"
                            [autocompleteItems]="autocompleteItems" [autocompleteItemsPrices]="autocompleteItemsPrices" #restaurantInfoComp></app-restaurant-info>
+      <div *ngIf="!openHoursIsLoaded" class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100"
+             aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+      </div>
       <app-open-hours *ngIf="!create" [edit]="edit" [openHoursWeek]="openHoursWeek"
                       [editOpenHoursWeek]="editOpenHoursWeek"
                       (openHoursValidated)="openHoursValid($event)"
                       #openHoursComp></app-open-hours>
     </div>
     <div class="col-md-2">
-      <div class="position-fixed button-container">
-        <button *ngIf="!edit && !create" class="btn btn-warning position-fixed" (click)="toggleEdit()">edit</button>
-        <div *ngIf="!create && edit">
+      <div class="button-container">
+        <button *ngIf="!edit && !create" class="btn btn-warning" (click)="toggleEdit()">edit</button>
+        <div *ngIf="!create && edit" class="couple-buttons">
           <button class="btn btn-danger" (click)="toggleEdit()">cancel</button>
-          <button class="btn btn-success " (click)="save()"
+          <button class="btn btn-success " (click)="openConfirmationUpdateRestaurantInfoDialog()"
                   [disabled]="!(restaurantInfoComp.restaurantInfoForm.valid && validOpenHours)">save
           </button>
         </div>

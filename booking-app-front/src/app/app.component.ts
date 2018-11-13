@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {NotificationsService, NotificationType} from "angular2-notifications";
+import {Component} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {NotificationsService} from "angular2-notifications";
 
 @Component({
   selector: 'app-root',
@@ -9,11 +9,7 @@ import {NotificationsService, NotificationType} from "angular2-notifications";
 })
 export class AppComponent {
 
-
   constructor(private http: HttpClient,
               private _notifications: NotificationsService) {
   }
-
-
-
 }

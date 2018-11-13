@@ -4,6 +4,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {TableCommunicationService} from "../table-communication.service";
 import {TableService} from "../../../service/table.service";
 import {NotificationsService} from "angular2-notifications";
+import {ConfirmationDialogService} from "../../confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: '[app-table-element]',
@@ -28,7 +29,8 @@ export class TableElementComponent implements OnInit {
 
   constructor(private tableService: TableService,
               private tableCommunicationService: TableCommunicationService,
-              private notificationService: NotificationsService) {
+              private notificationService: NotificationsService,
+              private confirmationDialogService: ConfirmationDialogService) {
   }
 
   ngOnInit() {
@@ -68,5 +70,28 @@ export class TableElementComponent implements OnInit {
 
       }
     );
+  }
+
+
+  public openConfirmationDeleteTableDialog(table: ITable) {
+    this.confirmationDialogService.confirm('Delete Table', `Do you really want to delete ${ table.identifier || 'this table'} ?`, 'DELETE', 'cancel', 'btn-danger', 'btn-secondary')
+      .then((confirmed) => {
+        if (confirmed) {
+          this.deleteTable(table);
+        }
+      })
+      .catch(() => {
+      });
+  }
+
+  public openConfirmationUpdateTableDialog(table: ITable) {
+    this.confirmationDialogService.confirm('Update Table', `Do you really want to update ${ table.identifier} ?`, 'SAVE', 'cancel', 'btn-success', 'btn-secondary')
+      .then((confirmed) => {
+        if (confirmed) {
+          this.updateTable(table);
+        }
+      })
+      .catch(() => {
+      });
   }
 }

@@ -5,7 +5,11 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 export class ReservationCommunicationService {
 
   private reservationUpdate = new BehaviorSubject(false);
+  private reservationUrlUpdate = new BehaviorSubject({});
+  private reservationDateUpdate = new BehaviorSubject(undefined);
   updateList = this.reservationUpdate.asObservable();
+  dateUpdate = this.reservationDateUpdate.asObservable();
+  urlUpdate = this.reservationUrlUpdate.asObservable();
 
   constructor() { }
 
@@ -20,5 +24,13 @@ export class ReservationCommunicationService {
 
   reservationDeleted(reservationDelete: boolean){
     this.reservationUpdate.next(reservationDelete);
+  }
+
+  reservationDateChanged(reservationDate: Date){
+    this.reservationDateUpdate.next(reservationDate);
+  }
+
+  reservationUrlChange(queryDictionary: {}){
+    this.reservationUrlUpdate.next(queryDictionary);
   }
 }
