@@ -1,45 +1,39 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ReservationService} from "../../../service/reservation.service";
-import {DATE_FORMAT, IReservation, Reservation} from "../../../model/reservation";
-import {TableService} from "../../../service/table.service";
-import {ITable, Table} from "../../../model/table";
+import {NgbActiveModal, NgbDateAdapter, NgbDateStruct, NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
 import {NgbDateTimeAdapter} from "../../../adapters/ngbDateTimeAdapter";
-import {NgbDateAdapter, NgbDateStruct, NgbTimeStruct} from "@ng-bootstrap/ng-bootstrap";
-import {NotificationsService} from "angular2-notifications";
-import {startOfDay} from "date-fns";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {DATE_FORMAT, Reservation} from "../../../model/reservation";
+import {ITable, Table} from "../../../model/table";
+import {ReservationService} from "../../../service/reservation.service";
 import {ReservationCommunicationService} from "../reservation-communication.service";
+import {TableService} from "../../../service/table.service";
+import {startOfDay} from "date-fns";
+import {NotificationsService} from "angular2-notifications";
 import {ConfirmationDialogService} from "../../confirmation-dialog/confirmation-dialog.service";
-import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import {NgbDateNativeAdapter} from "../../../adapters/ngbDateNativeAdapter";
-import * as moment from "moment";
-import {ActivatedRoute} from "@angular/router";
-import {UrlQueryConverter} from "../../../converters/url-query.converter";
 
 @Component({
-  selector: 'app-add-reservation',
-  templateUrl: './add-reservation.component.html',
-  styleUrls: ['./add-reservation.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
-    Location,
-    {provide: LocationStrategy, useClass: PathLocationStrategy},]
+  selector: 'app-add-reservation-dialog',
+  templateUrl: './add-reservation-dialog.component.html',
+  styleUrls: ['./add-reservation-dialog.component.scss'],
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
 })
-export class AddReservationComponent implements OnInit {
+export class AddReservationDialogComponent implements OnInit {
 
   DEFAULT_RESERVATION_LENGTH = 60;
   DEFAULT_RESERVATION_PLACES = 4;
   MINIMUN_RESERVATION_PLACES = 1;
   MINIMUM_RESERVATION_LENGTH = 1;
 
+  @Input() date: Date;
+
   isLoaded = true;
 
-  @Output() canceled = new EventEmitter<boolean>();
 
   tableList: ITable[];
   reservation: Reservation = new Reservation();
   showList: boolean = false;
 
-  date: Date;
   time: NgbTimeStruct;
   private options = {
     position: 'middle',
@@ -48,28 +42,15 @@ export class AddReservationComponent implements OnInit {
   };
   public reservationForm: FormGroup;
 
-  defaultValues() {
-    this.time = NgbDateTimeAdapter.fromModel(new Date());
-    this.reservation.reservationLength = this.DEFAULT_RESERVATION_LENGTH;
-    this.reservation.reservedPlaces = this.DEFAULT_RESERVATION_PLACES;
-  }
-
-  constructor(private reservationService: ReservationService,
+  constructor(private activeModal: NgbActiveModal,
+              private reservationService: ReservationService,
               private tableService: TableService,
               private notificationsService: NotificationsService,
               private reservationCommunicationService: ReservationCommunicationService,
-              private confirmationDialogService: ConfirmationDialogService,
-              private location: Location,
-              private activatedRoute: ActivatedRoute) {
+              private confirmationDialogService: ConfirmationDialogService) {
   }
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      const fixedParams = UrlQueryConverter.fixQueryDictionary(params);
-      this.date = fixedParams['date']
-        ? moment(fixedParams['date'], DATE_FORMAT).toDate()
-        : new Date();
-    });
     this.defaultValues();
     this.reservationForm = new FormGroup({
       'length': new FormControl(this.reservation.reservationLength, [
@@ -80,10 +61,16 @@ export class AddReservationComponent implements OnInit {
     });
   }
 
-  setUrl() {
-    let params = {};
 
-    this.reservationCommunicationService.reservationUrlChange(params);
+  public dismiss() {
+    this.activeModal.dismiss();
+  }
+
+
+  defaultValues() {
+    this.time = NgbDateTimeAdapter.fromModel(this.date);
+    this.reservation.reservationLength = this.DEFAULT_RESERVATION_LENGTH;
+    this.reservation.reservedPlaces = this.DEFAULT_RESERVATION_PLACES;
   }
 
   get length() {
@@ -117,43 +104,38 @@ export class AddReservationComponent implements OnInit {
   }
 
   getBestFreeTableList(reservation: Reservation) {
-    this.showList = true;
     this.isLoaded = false;
     this.reservation.setDateReservation(this.date, NgbDateTimeAdapter.toModel(this.time));
     this.tableService.searchBestFreeTables(reservation.dateReservation, reservation.reservationLength, reservation.reservedPlaces).subscribe(tableList => {
       this.tableList = Table.fromJsonToArray(tableList);
+      this.showList = true;
       this.isLoaded = true;
     })
   }
 
   getAllFreeTableList(reservation: Reservation) {
-    this.showList = true;
     this.isLoaded = false;
     this.reservation.setDateReservation(this.date, NgbDateTimeAdapter.toModel(this.time));
     this.tableService.searchAllFreeTables(reservation.dateReservation, reservation.reservationLength).subscribe(tableList => {
       this.tableList = Table.fromJsonToArray(tableList);
+      this.showList = true;
       this.isLoaded = true;
     })
   }
 
   public openConfirmationAddReservationDialog(table: ITable, reservation: Reservation) {
     const msg = `<ul><li>table: ${table.identifier}</li><li>reservation length: ${reservation.reservationLength} min</li><li>data: ${reservation.comment}</li></ul>`;
+
     this.confirmationDialogService.confirm('Create Reservation', `<div>Do you really want to create this reservation?</div> ${msg}`, 'create', 'cancel', 'btn-success', 'btn-secondary')
       .then((confirmed) => {
         if (confirmed) {
           this.addReservation(table, reservation);
+          this.dismiss();
         }
       })
       .catch(() => {
       });
   }
-
-
-  onDateSelection(date: Date) {
-    this.reservationCommunicationService.reservationDateChanged(date);
-    this.eraseReservationOptions();
-  }
-
 
   eraseReservationOptions() {
     this.showList = false;

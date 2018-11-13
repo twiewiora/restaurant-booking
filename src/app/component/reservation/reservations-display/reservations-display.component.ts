@@ -21,6 +21,7 @@ import {IClient} from "../../../model/client";
 import {ConfirmationDialogService} from "../../confirmation-dialog/confirmation-dialog.service";
 import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import {UrlQueryConverter} from "../../../converters/url-query.converter";
+import {AddReservationDialogService} from "../add-reservation-dialog/add-reservation-dialog.service";
 
 
 @Component({
@@ -74,6 +75,7 @@ export class ReservationsDisplayComponent implements OnInit {
               private notificationService: NotificationsService,
               private reservationCommunicationService: ReservationCommunicationService,
               private confirmationDialogService: ConfirmationDialogService,
+              private addReservationDialogService: AddReservationDialogService,
               private location: Location,
               private activatedRoute: ActivatedRoute) {
     this.locale = locale;
@@ -89,6 +91,9 @@ export class ReservationsDisplayComponent implements OnInit {
     this.refresh.next();
   }
 
+  openAddReservationDialog(event: any) {
+    this.addReservationDialogService.confirm(event['date']);
+  }
 
   reservations: Reservation[];
 
@@ -156,23 +161,25 @@ export class ReservationsDisplayComponent implements OnInit {
   }
 
   getAllTables(reservations: Reservation[]) {
+    this.isLoaded = false;
     this.tableService.getTables().subscribe(
       (tables: Table[]) => {
         this.tables = Table.fromJsonToMap(tables);
-        reservations.forEach(reservation => this.getClient(reservation.clientId, reservation, this.tables[reservation.tableId]));
-        this.events = reservations.map((reservation: Reservation) => Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
-        this.refresh.next();
+        reservations.forEach(reservation => this.getClient(reservation.clientId, reservation, this.tables[reservation.restaurantTableId]));
+        this.isLoaded = true;
       });
   }
 
   getClient(id: number, reservation: Reservation, table: Table) {
     if (id) {
       this.clientService.getClient(id).subscribe(client => {
-        this.addEvent(Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId], <IClient>client));
+        this.addEvent(Reservation.reservationToEventMapper(reservation, table, <IClient>client));
+        this.isLoaded = true;
       });
     }
     else {
-      this.addEvent(Reservation.reservationToEventMapper(reservation, this.tables[reservation.tableId]));
+      this.addEvent(Reservation.reservationToEventMapper(reservation, table));
+      this.isLoaded = true;
     }
   }
 

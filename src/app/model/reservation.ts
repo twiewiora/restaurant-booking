@@ -10,26 +10,27 @@ export enum State {FREE, OCCUPIED, FINISHED}
 
 export interface IReservation {
 
-  id: number;
-  reservedPlaces: number;
-  reservationLength: number;
+
+  cancelled: boolean;
+  clientId: number;
   comment: string;
   dateReservation: string;
+  id: number;
+  reservationLength: number;
+  reservedPlaces: number;
   restaurantTableId: number;
-  clientId: number;
-  cancelled: boolean;
 }
 
 
 export class Reservation {
-  clientId: number;
-  id: number;
-  dateReservation: string;
-  reservationLength: number;
-  comment: string = '';
-  tableId: number;
-  reservedPlaces: number;
   cancelled: boolean;
+  clientId: number;
+  comment: string = '';
+  dateReservation: string;
+  id: number;
+  reservationLength: number;
+  reservedPlaces: number;
+  restaurantTableId: number;
   table: Table;
 
   constructor() {
@@ -37,7 +38,7 @@ export class Reservation {
 
   toJson(): string {
     return JSON.stringify({
-      restaurantTableId: this.tableId,
+      restaurantTableId: this.restaurantTableId,
       dateReservation: this.dateReservation,
       reservationLength: this.reservationLength,
       reservedPlaces: this.reservedPlaces,
@@ -74,7 +75,7 @@ export class Reservation {
 
   static fromJson(json: IReservation): Reservation {
     let reservation: Reservation = new Reservation();
-    reservation.tableId = json.restaurantTableId;
+    reservation.restaurantTableId = json.restaurantTableId;
     reservation.dateReservation = json.dateReservation;
     reservation.reservationLength = json.reservationLength;
     reservation.comment = json.comment;
