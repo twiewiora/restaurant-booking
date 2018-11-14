@@ -43,6 +43,8 @@ import {ValidationService} from "./service/validation.service";
 import { ConfirmationDialogComponent } from './component/confirmation-dialog/confirmation-dialog.component';
 import {ConfirmationDialogService} from "./component/confirmation-dialog/confirmation-dialog.service";
 import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
+import { AddReservationDialogComponent } from './component/reservation/add-reservation-dialog/add-reservation-dialog.component';
+import {AddReservationDialogService} from "./component/reservation/add-reservation-dialog/add-reservation-dialog.service";
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common'
     ReservationsDisplayComponent,
     TableElementComponent,
     ConfirmationDialogComponent,
+    AddReservationDialogComponent,
   ],
   imports: [
     NgbModule.forRoot(),
@@ -101,11 +104,12 @@ import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common'
     NgbStringTimeAdapter,
     NgbDateTimeAdapter,
     ConfirmationDialogService,
+    AddReservationDialogService,
     Location,
     {provide: LocationStrategy, useClass: PathLocationStrategy},
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmationDialogComponent]
+  entryComponents: [ConfirmationDialogComponent, AddReservationDialogComponent]
 })
 export class AppModule {
 }

@@ -21,3 +21,10 @@ $main-background-label-color: #80aaff;
   top: 100px;
   margin: $main-margin-length;
 }
+
+
+.date-time-containers{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
