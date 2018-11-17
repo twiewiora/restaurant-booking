@@ -35,10 +35,6 @@ export class ReservationService {
     return this.http.post<IReservation>(`${environment.baseUrl}/reservation/cancel/reservationId=${reservation.id}`, [], options);
   }
 
-  deleteReservation(reservation: IReservation): Observable<IReservation> {
-    return this.http.delete<IReservation>(`${environment.baseUrl}/reservation/delete/reservationId=${reservation.id}`);
-  }
-
   getReservationsForOneTable(tableId: number, dateFrom: string, dateTo: string): Observable<IReservation[]> {
     return this.http.get<IReservation[]>(`${environment.baseUrl}/reservation/forTable/tableId=${tableId}/dateFrom=${dateFrom}/dateTo=${dateTo}`)
       .pipe(
