@@ -17,7 +17,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {NotificationsService} from "angular2-notifications";
 import {ReservationCommunicationService} from "../reservation-communication.service";
 import {ClientService} from "../../../service/client.service";
-import {IClient} from "../../../model/client";
+import {Client, IClient} from "../../../model/client";
 import {ConfirmationDialogService} from "../../confirmation-dialog/confirmation-dialog.service";
 import {Location, LocationStrategy, PathLocationStrategy} from "@angular/common";
 import {UrlQueryConverter} from "../../../converters/url-query.converter";
@@ -44,6 +44,7 @@ export class ReservationsDisplayComponent implements OnInit {
 
   openHours: OpenHours;
   tables: Map<number, Table>;
+  clients: Map<number, Client> = new Map<number, Client>();
   viewDate: Date;
   view = 'day';
 
@@ -146,13 +147,6 @@ export class ReservationsDisplayComponent implements OnInit {
       });
   }
 
-  deleteReservation(event: CalendarEvent<IReservation>) {
-    this.reservationService.deleteReservation(event.meta).subscribe(any => {
-      this.notificationService.error("Reservation Deleted", '', this.options);
-      this.onDateSelection(this.viewDate);
-    });
-  }
-
   cancelReservation(event: CalendarEvent<IReservation>) {
     this.reservationService.cancelReservation(event.meta).subscribe(any => {
       this.notificationService.warn("Reservation Canceled", '', this.options);
@@ -171,8 +165,13 @@ export class ReservationsDisplayComponent implements OnInit {
   }
 
   getClient(id: number, reservation: Reservation, table: Table) {
-    if (id) {
+    if (id && this.clients.has(id)) {
+      Reservation.reservationToEventMapper(reservation, table, <IClient>this.clients.get(id));
+      this.isLoaded = true;
+    }
+    else if (id) {
       this.clientService.getClient(id).subscribe(client => {
+        this.clients.set(id, client);
         this.addEvent(Reservation.reservationToEventMapper(reservation, table, <IClient>client));
         this.isLoaded = true;
       });
@@ -191,18 +190,6 @@ export class ReservationsDisplayComponent implements OnInit {
     let weekday = moment(date).format('dddd');
     this.getOpeningHoursForDay(weekday);
     this.getReservationForAllTables(moment(start).format(DATE_TIME_FORMAT), moment(end).format(DATE_TIME_FORMAT));
-  }
-
-  public openConfirmationDeleteReservationDialog(event: CalendarEvent<IReservation>) {
-    this.confirmationDialogService.confirm('Delete Reservation', `Do you really want to delete ${event.meta.comment} reservation?`, 'DELETE', 'back', 'btn-danger', 'btn-secondary')
-      .then((confirmed) => {
-        if (confirmed) {
-          this.deleteReservation(event);
-          close();
-        }
-      })
-      .catch(() => {
-      });
   }
 
   public openConfirmationCancelReservationDialog(event: CalendarEvent<IReservation>) {
