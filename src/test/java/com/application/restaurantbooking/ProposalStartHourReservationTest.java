@@ -118,7 +118,7 @@ public class ProposalStartHourReservationTest {
             table1.getReservation().add(createReservation(table1, "2018-06-15_18:00", 120, 7));
             table2.getReservation().add(createReservation(table2, "2018-06-15_18:00", 60, 5));
             table3.getReservation().add(createReservation(table3, "2018-06-15_18:30", 60, 2));
-            request = new TableSearcherRequest(date.parse("2018-06-14"), 120, 9);
+            request = new TableSearcherRequest(date.parse("2018-06-16"), 120, 9);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -234,17 +234,15 @@ public class ProposalStartHourReservationTest {
             table1.getReservation().add(createReservation(table1, "2018-06-15_18:00", 120, 7));
             table2.getReservation().add(createReservation(table2, "2018-06-15_18:00", 60, 5));
             table3.getReservation().add(createReservation(table3, "2018-06-15_18:30", 60, 2));
-            request = new TableSearcherRequest(sdf.parse("2018-06-15_15:30"), 60, 11);
+            request = new TableSearcherRequest(sdf.parse("2018-06-15_20:30"), 60, 11);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         List<String> result = tableSearcher.getNearHoursReservation(restaurant, request);
-        assertEquals(5, result.size());
-        assertTrue(result.contains("14:30"));
-        assertTrue(result.contains("15:00"));
-        assertTrue(result.contains("15:30"));
-        assertTrue(result.contains("16:00"));
-        assertTrue(result.contains("16:30"));
+        assertEquals(3, result.size());
+        assertTrue(result.contains("20:00"));
+        assertTrue(result.contains("20:30"));
+        assertTrue(result.contains("21:00"));
     }
 
     @Test
@@ -259,10 +257,8 @@ public class ProposalStartHourReservationTest {
             e.printStackTrace();
         }
         List<String> result = tableSearcher.getNearHoursReservation(restaurant, request);
-        assertEquals(3, result.size());
+        assertEquals(1, result.size());
         assertTrue(result.contains("19:00"));
-        assertTrue(result.contains("17:00"));
-        assertTrue(result.contains("17:30"));
     }
 
     @Test
