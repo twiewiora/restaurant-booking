@@ -12,8 +12,6 @@ public interface ClientService {
 
     Client createClient(Client client);
 
-    void deleteClient(Long id);
-
     void updateClient(Client client);
 
     Integer getStatisticsForPrice(Long clientId, Price price);

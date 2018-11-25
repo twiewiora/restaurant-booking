@@ -113,33 +113,6 @@ public class ReservationController {
         }
     }
 
-    @ApiOperation(value = "Delete reservation")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Reservation deleted"),
-            @ApiResponse(code = 500, message = "Internal Server Error"),
-    })
-    @DeleteMapping(value = UrlRequests.DELETE_RESERVATION)
-    public void deleteReservation(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    @PathVariable String id){
-        Restorer restorer = userServiceManager.getRestorerByJwt(request);
-        if (restorer == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-        Set<Reservation> reservations = new HashSet<>();
-        restorer.getRestaurant().getRestaurantTables().forEach(table -> reservations.addAll(table.getReservation()));
-        Optional<Reservation> reservation = reservations.stream()
-                .filter(res -> res.getId().equals(Long.decode(id)))
-                .findFirst();
-        if (reservation.isPresent()) {
-            reservationService.deleteReservation(Long.decode(id));
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
-    }
-
     @ApiOperation(value = "Get reservation for table")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Reservations list"),

@@ -8,8 +8,6 @@ public interface ReservationService {
 
     Reservation createReservation(Reservation reservation);
 
-    void deleteReservation(Long id);
-
     void cancelReservation(Reservation reservation);
 
 }

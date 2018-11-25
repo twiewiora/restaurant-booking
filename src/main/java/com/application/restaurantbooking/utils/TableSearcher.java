@@ -23,15 +23,42 @@ public class TableSearcher {
     }
 
     public List<RestaurantTable> getFreeTables(Restaurant restaurant, TableSearcherRequest request) {
-        Date dateFrom = request.getDate();
-        Date dateTo = DateUtils.addMinutes(request.getDate(), request.getLength());
-        Set<RestaurantTable> freeRestaurantTables = new HashSet<>();
-        for (RestaurantTable table : restaurant.getRestaurantTables()) {
-            if (table.getReservation().stream().noneMatch(res -> isReservationBlocker(res, dateFrom, dateTo))) {
-                freeRestaurantTables.add(table);
+        if (isRequestInOpenHours(restaurant, request)) {
+            Date dateFrom = request.getDate();
+            Date dateTo = DateUtils.addMinutes(request.getDate(), request.getLength());
+            Set<RestaurantTable> freeRestaurantTables = new HashSet<>();
+            for (RestaurantTable table : restaurant.getRestaurantTables()) {
+                if (table.getReservation().stream().noneMatch(res -> isReservationBlocker(res, dateFrom, dateTo))) {
+                    freeRestaurantTables.add(table);
+                }
             }
+            return new ArrayList<>(freeRestaurantTables);
+        } else {
+            return Collections.emptyList();
         }
-        return new ArrayList<>(freeRestaurantTables);
+    }
+
+    private boolean isRequestInOpenHours(Restaurant restaurant, TableSearcherRequest request) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.ENGLISH);
+        OpenHours openHours = restaurant.getOpenHoursMap().get(DayOfWeek.valueOf(sdf.format(request.getDate())
+                .toUpperCase()));
+        if (openHours.getIsClose()) {
+            return false;
+        }
+        Calendar startReservation = Calendar.getInstance();
+        startReservation.setTime(request.getDate());
+        startReservation.set(Calendar.DAY_OF_MONTH, 1);
+        startReservation.set(Calendar.MONTH, 0);
+        startReservation.set(Calendar.YEAR, 1970);
+        Calendar endReservation = Calendar.getInstance();
+        endReservation.setTime(startReservation.getTime());
+        endReservation.add(Calendar.MINUTE, request.getLength());
+        if (startReservation.getTime().equals(openHours.getOpenHour())
+                || endReservation.getTime().equals(openHours.getCloseHour())) {
+            return true;
+        }
+        return startReservation.getTime().after(openHours.getOpenHour())
+                && endReservation.getTime().before(openHours.getCloseHour());
     }
 
     private boolean isReservationBlocker(Reservation reservation, Date dateFrom, Date dateTo) {

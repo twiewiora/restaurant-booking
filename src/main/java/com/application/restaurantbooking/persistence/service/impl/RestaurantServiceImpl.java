@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,11 +49,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Restaurant> getRestaurantByCity(String city) {
-        return restaurantRepository.findByCity(city);
-    }
-
-    @Override
     public List<Restaurant> getRestaurantByNameAndCity(String name, String city) {
         if (name == null && city == null) {
             return getAll();
@@ -74,7 +68,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             queryStream = queryStream.must(queryBuilder
                     .keyword()
                     .fuzzy()
-                    .withEditDistanceUpTo(2)
+                    .withEditDistanceUpTo(1)
                     .withPrefixLength(0)
                     .onField("name")
                     .matching("*" + name + "*")
@@ -84,7 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             queryStream = queryStream.must(queryBuilder
                     .keyword()
                     .fuzzy()
-                    .withEditDistanceUpTo(2)
+                    .withEditDistanceUpTo(1)
                     .withPrefixLength(0)
                     .onField("city")
                     .matching("*" + city + "*")
@@ -123,13 +117,5 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void updateOpenHours(Restaurant restaurant) {
         restaurant.getOpenHoursMap().values().forEach(openHours -> openHoursRepository.save(openHours));
         restaurantRepository.save(restaurant);
-    }
-
-    @Override
-    public void deleteOpenHours(Restaurant restaurant) {
-        List<OpenHours> oldOpenHours = new ArrayList<>(restaurant.getOpenHoursMap().values());
-        restaurant.getOpenHoursMap().clear();
-        restaurantRepository.save(restaurant);
-        oldOpenHours.forEach(openHours -> openHoursRepository.delete(openHours));
     }
 }

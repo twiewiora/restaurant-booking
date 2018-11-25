@@ -15,8 +15,6 @@ public interface RestaurantService {
 
     List<Restaurant> getAll();
 
-    List<Restaurant> getRestaurantByCity(String city);
-
     List<Restaurant> getRestaurantByNameAndCity(String name, String city);
 
     Restaurant createRestaurant(Restaurant restaurant);
@@ -28,7 +26,5 @@ public interface RestaurantService {
     void addOpenHours(Restaurant restaurant, Map<DayOfWeek, OpenHours> openHoursMap);
 
     void updateOpenHours(Restaurant restaurant);
-
-    void deleteOpenHours(Restaurant restaurant);
 
 }
