@@ -149,7 +149,7 @@ export class ReservationsDisplayComponent implements OnInit {
 
   cancelReservation(event: CalendarEvent<IReservation>) {
     this.reservationService.cancelReservation(event.meta).subscribe(any => {
-      this.notificationService.warn("Reservation Canceled", '', this.options);
+      this.notificationService.error("Reservation Canceled", '', this.options);
       this.onDateSelection(this.viewDate);
     });
   }
@@ -193,7 +193,7 @@ export class ReservationsDisplayComponent implements OnInit {
   }
 
   public openConfirmationCancelReservationDialog(event: CalendarEvent<IReservation>) {
-    this.confirmationDialogService.confirm('Cancel Reservation', `Do you really want to cancel ${event.meta.comment} reservation ?`, 'CANCEL', 'back', 'btn-warning', 'btn-secondary')
+    this.confirmationDialogService.confirm('Cancel Reservation', `Do you really want to cancel ${event.meta.comment} reservation ?`, 'CANCEL', 'back', 'btn-danger', 'btn-secondary')
       .then((confirmed) => {
         if (confirmed) {
           this.cancelReservation(event);
