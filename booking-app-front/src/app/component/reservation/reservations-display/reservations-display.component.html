@@ -32,8 +32,13 @@
                         [size]="'small'"></ngb-timepicker>
 
       </div>
-      <div class="row float-right">
-        <button class="btn btn-warning spread" (click)="openConfirmationCancelReservationDialog(modalData?.event)">
+      <div class="row">
+        <span class="spread">state: </span>
+        <span *ngIf="!modalData.event.meta.cancelled" class="alert centerize alert-success">set</span>
+        <span *ngIf="modalData.event.meta.cancelled" class="alert centerize alert-danger">canceled</span>
+      </div>
+      <div *ngIf="!modalData.event.meta.cancelled" class="row float-right">
+        <button class="btn btn-danger spread" (click)="openConfirmationCancelReservationDialog(modalData?.event)">
           cancel
         </button>
       </div>

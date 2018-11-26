@@ -63,6 +63,9 @@ export class Reservation {
     if (client) {
       reservation.comment = client.username;
     }
+    if(reservation.comment == ''){
+      reservation.comment = '[no data]';
+    }
     const event: CalendarEvent<Reservation> = {
       title: reservation.comment,
       start: Reservation.getReservationStart(reservation.dateReservation),
