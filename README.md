@@ -1,6 +1,6 @@
-# Restaurant Booking
-Web application for booking restaurant.
+# Restaurant Booking  [![Build Status](https://travis-ci.org/twiewiora/restaurant-booking.svg?branch=master)](https://travis-ci.org/twiewiora/restaurant-booking)
 
+Web application for booking restaurant.
 
 Zbudowac front:   
   ->wejsc do katalogu booking-app-front   
